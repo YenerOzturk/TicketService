@@ -1,0 +1,894 @@
+﻿@{ ViewData["Title"] = "Privacy Policy"; }
+
+    <script>
+
+    var ticketNo = 1;
+
+    function GetSubTickets(ticketId) {
+
+        ticketNo = ticketId;
+
+        $.ajax({
+            type: 'GET',
+            url: '../../Ticket/GetSubTickets',
+            data: { ticketId: ticketId },
+            success: function (data) {
+
+                $('#subTickets').empty();
+
+                if (data == "") {
+
+                    Swal.fire("Bilgilendirme!", "Alt İş Kaydı Bulunamadı.", "info");
+
+                } else {
+                    $('#subTickets').append(data);
+                }
+
+            }
+        });
+    }
+
+    var _ticketId = 1;
+    function ShowMailModal(ticketId) {
+
+        $("#modalSendMail").modal();
+        _ticketId = ticketId;
+    }
+
+    function SendMail() {
+
+        var data = [{ name: "TicketId", value: ticketNo }];
+
+        $.ajax({
+            type: 'GET',
+            url: '../../Ticket/SendMail',
+            data: data,
+            success: function (data) {
+
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Mail Gönderildi',
+                    showConfirmButton: true,
+                    timer: 1500
+                });
+
+            }
+        });
+    }
+
+    function SubTicketAdd() {
+
+        var myForm = document.getElementsByName('frmSubTicket');
+
+        var fileupload = $('[name="File"]').get(0);
+        var files = fileupload.files;
+
+        var fd = new FormData(myForm[0]);
+        fd.append('File', files[0]);
+
+        fd.append('TicketId', ticketNo);
+
+        var startDate = GetFormatedDate($("#StartDate").data("datetimepicker").getDate());
+
+        var endDate = GetFormatedDate($("#EndDate").data("datetimepicker").getDate());
+
+        fd.append('StartDate', startDate);
+        fd.append('EndDate', endDate);
+
+        $.ajax({
+            type: 'POST',
+            url: '../../Ticket/SaveSubTicket',
+            data: data,
+            success: function () {
+
+                $("[name='Id']").val(0);
+                $("[name='Description']").val('');
+                GetSubTickets(ticketNo);
+            }
+        });
+    }
+
+    function DeleteSubTicket(id, ticketId) {
+
+        var callback = function () {
+
+            var data = $('[name="frmSubTicket"]').serializeArray();
+
+            data.splice(0, 1);
+
+            data.push({ name: "Id", value: id });
+
+            $.ajax({
+                type: 'POST',
+                url: '../../Ticket/DeleteSubTicket',
+                data: data,
+                success: function () {
+                    GetSubTickets(ticketId);
+                }
+            });
+        }
+
+        ShowMessageBox("Emin misiniz?", "Kayıt Silinecektir", "question", callback)
+    }
+
+    function UpdateSubTicket(id, ticketId) {
+
+        var myForm = document.getElementsByName('frmSubTicket');
+
+        var fileupload = $('[name="File"]').get(0);
+        var files = fileupload.files;
+
+        var fd = new FormData(myForm[0]);
+        fd.append('File', files[0]);
+
+        fd.append('Id', id);
+
+        var startDate = GetFormatedDate($("#StartDate").data("datetimepicker").getDate());
+
+        var endDate = GetFormatedDate($("#EndDate").data("datetimepicker").getDate());
+
+        fd.append('StartDate', startDate);
+        fd.append('EndDate', endDate);
+
+        $.ajax({
+            type: 'POST',
+            url: '../../Ticket/CompleteSubTicket',
+            data: data,
+            success: function () {
+               
+                GetSubTickets(ticketId);
+
+
+            }
+        });
+    }
+
+    function TicketSaveChanges(showSubTicketModal) {
+
+        var myForm = document.getElementsByName('frmProject');
+
+        var fileupload = $('[name="File"]').get(0);
+        var files = fileupload.files;
+
+        var fd = new FormData(myForm[0]);
+        fd.append('File', files[0]);
+
+        $.ajax({
+            type: 'POST',
+            url: '../../Ticket/SaveTicket',
+            data: fd,
+            success: function (result) {
+                $('[name="frmTicket"]').trigger("reset");
+
+                Swal.fire({
+                    icon: 'success',
+                    title: 'İşlem Başarılı',
+                    showConfirmButton: true,
+                    timer: 1500
+                });
+
+                table.ajax.reload();
+
+                $('#modalTicket').modal('hide');
+
+                if (showSubTicketModal) {
+
+                    if (result > 0) {
+                        ticketNo = result;
+                    }
+
+                    $('#modalSubTicket').modal();
+                }
+            }
+        });
+
+    }
+
+    function ClearForm() {
+
+        $("[name='Id']").val(0);
+        $('[name="frmTicket"]').trigger("reset");
+        RenderDateTimePicker('StartDate', '')
+        RenderDateTimePicker('EndDate', '')
+    }
+
+    function FillForm(id,event) {
+        event.stopPropagation();
+        $.ajax({
+            type: 'GET',
+            url: '../../Ticket/GetTicketById',
+            data: { id: id },
+            success: function (data) {
+
+
+                ticketNo = data["id"];
+
+                for (var key in data) {
+
+                    var dom = $('[name="frmTicket"]').find(':input').filter(function () {
+                        return $(this).attr('name').toLowerCase().indexOf(key.toLowerCase()) > -1;
+                    });
+
+                   
+
+                    var a = dom[0];
+                    if (a !== undefined && a.name.toLowerCase().indexOf('startdate') > -1) {
+
+                        RenderDateTimePicker('StartDate', data[key])
+
+                    } else if (a !== undefined && a.name.toLowerCase().indexOf('enddate') > -1) {
+
+                        RenderDateTimePicker('EndDate', data[key])
+
+                    } else if(!dom.is(':checkbox')){
+                        dom.val(data[key]);
+                    }
+
+
+                    if (dom.is(':checkbox')) {
+                        dom.prop('checked', data[key]);
+                    }
+
+                    if (key == "attachment") {
+                        $('#mailAttc').attr("href", "../" + data[key]);                    }
+
+                }
+
+                $("#modalTicket").modal();
+
+            }
+        });
+
+
+        }
+
+    function FillSubTicketForm(id) {
+
+        $.ajax({
+            type: 'GET',
+            url: '../../Ticket/GetSubTicket',
+            data: { id: id },
+            success: function (data) {
+
+
+                for (var key in data) {
+
+                    var dom = $('[name="frmSubTicket"]').find(':input:not(.datetimepicker-input)').filter(function () {
+
+                        if (key.indexOf("date")<0)
+                            return $(this).attr('name').toLowerCase().indexOf(key.toLowerCase()) > -1;
+                    });
+
+                  
+                    var a = dom[0];
+                    if (a !== undefined && a.name.toLowerCase().indexOf('startdate') > -1) {
+
+                        RenderDateTimePicker('StartDate', data[key])
+
+                    } else if (a !== undefined && a.name.toLowerCase().indexOf('enddate') > -1) {
+
+                        RenderDateTimePicker('EndDate', data[key])
+
+                    } else if (!dom.is(':checkbox')) {
+                        dom.val(data[key]);
+                    }
+
+                    if (dom.is(':checkbox')) {
+                        dom.prop('checked', data[key]);
+                    }
+                }
+
+                $("#modalSubTicket").modal();
+
+            }
+        });
+    }
+
+    function ClearSubTicketForm() {
+        $("[name='Id']").val(0);
+        $("[name='Description']").val('');
+        RenderDateTimePicker('StartDate', '')
+        RenderDateTimePicker('EndDate', '')
+     }
+
+    </script>
+<!--begin::Todo-->
+<div class="d-flex flex-row">
+    <!--begin::List-->
+    <div class="flex-row-fluid">
+        <div class="d-flex flex-column flex-grow-1">
+            <!--begin::Row-->
+            <div class="row">
+                <div class="col-xl-8">
+                    <!--begin::Card-->
+                    <div class="card card-custom card-stretch" id="kt_todo_list">
+                        <!--begin::Body-->
+                        <div class="card-body p-0">
+                            <!--begin::Responsive container-->
+                            <div class="table-responsive">
+                                <div class="card card-custom gutter-b">
+                                    <div class="card-header flex-wrap py-3">
+                                        <div class="card-title">
+                                            <h3 class="card-label">
+                                                İş Listesi
+                                            </h3>
+                                        </div>
+                                        <div class="card-toolbar">
+                                            <!--begin::Dropdown-->
+                                            <div class="dropdown dropdown-inline mr-2">
+                                                <button type="button" class="btn btn-light-primary font-weight-bolder dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                    <span class="svg-icon svg-icon-md">
+                                                        <!--begin::Svg Icon | path:assets/media/svg/icons/Design/PenAndRuller.svg-->
+                                                        <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
+                                                            <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                                                                <rect x="0" y="0" width="24" height="24" />
+                                                                <path d="M3,16 L5,16 C5.55228475,16 6,15.5522847 6,15 C6,14.4477153 5.55228475,14 5,14 L3,14 L3,12 L5,12 C5.55228475,12 6,11.5522847 6,11 C6,10.4477153 5.55228475,10 5,10 L3,10 L3,8 L5,8 C5.55228475,8 6,7.55228475 6,7 C6,6.44771525 5.55228475,6 5,6 L3,6 L3,4 C3,3.44771525 3.44771525,3 4,3 L10,3 C10.5522847,3 11,3.44771525 11,4 L11,19 C11,19.5522847 10.5522847,20 10,20 L4,20 C3.44771525,20 3,19.5522847 3,19 L3,16 Z" fill="#000000" opacity="0.3" />
+                                                                <path d="M16,3 L19,3 C20.1045695,3 21,3.8954305 21,5 L21,15.2485298 C21,15.7329761 20.8241635,16.200956 20.5051534,16.565539 L17.8762883,19.5699562 C17.6944473,19.7777745 17.378566,19.7988332 17.1707477,19.6169922 C17.1540423,19.602375 17.1383289,19.5866616 17.1237117,19.5699562 L14.4948466,16.565539 C14.1758365,16.200956 14,15.7329761 14,15.2485298 L14,5 C14,3.8954305 14.8954305,3 16,3 Z" fill="#000000" />
+                                                            </g>
+                                                        </svg>
+                                                        <!--end::Svg Icon-->
+                                                    </span>Dışa Aktar
+                                                </button>
+                                                <!--begin::Dropdown Menu-->
+                                                <div class="dropdown-menu dropdown-menu-sm dropdown-menu-right">
+                                                    <!--begin::Navigation-->
+                                                    <ul class="navi flex-column navi-hover py-2">
+                                                        <li class="navi-header font-weight-bolder text-uppercase font-size-sm text-primary pb-2">Choose an option:</li>
+                                                        <li class="navi-item">
+                                                            <a href="#" class="navi-link">
+                                                                <span class="navi-icon">
+                                                                    <i class="la la-file-excel-o"></i>
+                                                                </span>
+                                                                <span class="navi-text">Excel</span>
+                                                            </a>
+                                                        </li>
+                                                        <li class="navi-item">
+                                                            <a id="btnPdf" class="navi-link">
+                                                                <span class="navi-icon">
+                                                                    <i class="la la-file-pdf-o"></i>
+                                                                </span>
+                                                                <span class="navi-text">PDF</span>
+                                                            </a>
+                                                        </li>
+                                                    </ul>
+                                                    <!--end::Navigation-->
+                                                </div>
+                                                <!--end::Dropdown Menu-->
+                                            </div>
+                                            <!--end::Dropdown-->
+                                            <!--begin::Button-->
+                                            <a onclick="ClearForm()" class="btn btn-primary font-weight-bolder" data-toggle="modal" data-target="#modalTicket">
+                                                <span class="svg-icon svg-icon-md">
+                                                    <!--begin::Svg Icon | path:assets/media/svg/icons/Design/Flatten.svg-->
+                                                    <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
+                                                        <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                                                            <rect x="0" y="0" width="24" height="24" />
+                                                            <circle fill="#000000" cx="9" cy="15" r="6" />
+                                                            <path d="M8.8012943,7.00241953 C9.83837775,5.20768121 11.7781543,4 14,4 C17.3137085,4 20,6.6862915 20,10 C20,12.2218457 18.7923188,14.1616223 16.9975805,15.1987057 C16.9991904,15.1326658 17,15.0664274 17,15 C17,10.581722 13.418278,7 9,7 C8.93357256,7 8.86733422,7.00080962 8.8012943,7.00241953 Z" fill="#000000" opacity="0.3" />
+                                                        </g>
+                                                    </svg>
+                                                    <!--end::Svg Icon-->
+                                                </span>Yeni Kayıt
+                                            </a>
+                                            <!--end::Button-->
+                                        </div>
+                                    </div>
+                                    <div class="card-body">
+
+                                        <form class="kt-form kt-form--fit mb-15">
+                                            <div class="row mb-6">
+                                                <div class="col-lg-3 mb-lg-0 mb-6">
+                                                    <label>Ticket Id:</label>
+                                                    <input type="text" class="form-control datatable-input" id="Id" data-col-index="0" />
+                                                </div>
+                                                <div class="col-lg-3 mb-lg-0 mb-6">
+                                                    <label>Destek Tipi:</label>
+                                                    <select class="form-control datatable-input" id="SupportType" data-col-index="6">
+                                                        <option value="1">Yerinde Destek</option>
+                                                        <option value="2">Telefon</option>
+                                                        <option value="3">Mail</option>
+                                                        <option value="4">Uzaktan Destek</option>
+                                                    </select>
+                                                </div>
+                                                <div class="col-lg-3 mb-lg-0 mb-6">
+                                                    <label class="col-md-12">Cari Adı:</label>
+                                                    <select multiple="multiple" class="form-control datatable-input" id="CardCode" data-col-index="0">
+                                                        <option value="0">Hepsi</option>
+                                                    </select>
+                                                </div>
+                                                <div class="col-lg-3 mb-lg-0 mb-6">
+                                                    <label>Açıklama:</label>
+                                                    <input type="text" class="form-control datatable-input" id="Description" data-col-index="0" />
+                                                </div>
+                                                <div class="col-lg-3 mb-lg-0 mb-6">
+                                                    <label class="col-md-12">Kullanıcı:</label>
+                                                    <select multiple="multiple" class="form-control datatable-input" id="UserId" data-col-index="0">
+                                                        <option value="0">Hepsi</option>
+                                                    </select>
+                                                </div>
+                                                <div class="col-lg-3 mb-lg-0 mb-6">
+                                                    <label class="col-md-12">Durum:</label>
+                                                    <select multiple="multiple" class="form-control datatable-input" id="Status" data-col-index="6">
+                                                        <option value="0">Hepsi</option>
+                                                        <option value="1">Açık</option>
+                                                        <option value="2">Kapalı</option>
+                                                        <option value="4">Yeni Talep</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="row mt-8">
+                                                <div class="col-lg-12">
+                                                    <button type="button" class="btn btn-primary btn-primary--icon" id="reload">
+                                                        <span>
+                                                            <i class="la la-search"></i>
+                                                            <span>Ara</span>
+                                                        </span>
+                                                    </button>&#160;&#160;
+                                                    <button class="btn btn-secondary btn-secondary--icon" id="kt_reset">
+                                                        <span>
+                                                            <i class="la la-close"></i>
+                                                            <span>Temizle</span>
+                                                        </span>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </form>
+
+                                        <!--begin: Datatable-->
+                                        <table class="table table-bordered table-hover table-checkable" id="ticketList">
+                                            <thead>
+                                                <tr>
+                                                    <th>Id</th>
+                                                    <th>Cari</th>
+                                                    <th>Kullanıcı</th>
+                                                    <th>Proje</th>
+                                                    <th>Oluşturma Tarihi</th>
+                                                    <th>Destek Tipi</th>
+                                                    <th>Durum</th>
+                                                    <th>#</th>
+                                                </tr>
+                                            </thead>
+                                        </table>
+                                        <!--end: Datatable-->
+                                    </div>
+                                </div>
+
+                            </div>
+                            <!--end::Responsive container-->
+
+                        </div>
+                        <!--end::Body-->
+                    </div>
+                    <!--end::Card-->
+                </div>
+
+
+                <div class="col-xl-4 pt-10 pt-xl-0">
+                    <div class="card card-custom card-stretch" style="overflow:scroll;" id="kt_todo_list">
+                        <div class="card-header align-items-center flex-wrap py-6 border-0 h-auto">
+                            <div class="d-flex flex-wrap align-items-center">
+
+                            </div>
+                            <div class="d-flex align-items-center my-2">
+                                <span class="btn btn-light-danger btn-sm text-uppercase font-weight-bolder" style="margin-right:2px;" onclick="SendMail()" title="Previose page">Mail Gönder</span>
+                                <span class="btn btn-light-success btn-sm text-uppercase font-weight-bolder" onclick="ClearSubTicketForm()" data-toggle="modal" data-target="#modalSubTicket" title="Previose page">Yeni İş</span>
+                            </div>
+                        </div>
+                        <div class="card-body p-0">
+                            <div class="table-responsive">
+                                <div class="list list-hover min-w-500px" data-inbox="list" id="subTickets">
+
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+            <!--end::Row-->
+        </div>
+    </div>
+    <!--end::List-->
+</div>
+
+
+
+
+<div class="modal fade" id="modalSendMail" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="staticBackdrop" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Mail Gönder</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <i aria-hidden="true" class="ki ki-close"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="card card-custom">
+
+                    <form name="frmMessage">
+
+                        <div class="card-body">
+                            <div class="form-group mb-8">
+
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-2 col-form-label">Mesaj</label>
+                                <div class="col-10">
+                                    <textarea class="form-control" id="Message" rows="4" cols="50"></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                    </form>
+
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light-primary font-weight-bold" data-dismiss="modal">Kapat</button>
+                <button type="button" onclick="SendMail()" class="btn btn-primary font-weight-bold">Kaydet</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<div class="modal fade" id="modalSubTicket" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="staticBackdrop" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Alt İş</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <i aria-hidden="true" class="ki ki-close"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="card card-custom">
+
+                    <form name="frmSubTicket" class="form">
+
+                        <div class="card-body">
+                            <div class="form-group mb-8">
+                                <input type="hidden" name="id" />
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-lg-2 col-form-label">Açıklama</label>
+                                <div class="col-lg-10">
+                                    <textarea class="form-control" name="Description" rows="4" cols="50"></textarea>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-lg-2 col-form-label">Kullanıcı</label>
+                                <div class="col-lg-10">
+                                    <select name="UserId" class="form-control">
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="example-datetime-local-input" class="col-lg-2 col-form-label">Başlangıç Tarihi</label>
+                                <div class="col-lg-10">
+                                    <input type="text" class="form-control datetimepicker-input" placeholder="Tarih Seç" id="StartDate" />
+
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="example-datetime-local-input" class="col-lg-2 col-form-label">Bitiş Tarihi</label>
+                                <div class="col-lg-10">
+                                    <input type="text" class="form-control datetimepicker-input" placeholder="Tarih Seç" id="EndDate" />
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <div class="col-lg-2"></div>
+                                <label class="checkbox">
+                                    <input type="checkbox" name="AllDay" value="true" />
+                                    <span></span>
+                                    Tüm Gün
+                                </label>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-lg-2 col-form-label">Durum</label>
+                                <div class="col-lg-10">
+                                    <select name="Status" class="form-control">
+                                        <option value="1">Açık</option>
+                                        <option value="2">Kapalı</option>
+                                        <option value="3">Yazılımda</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <div class="col-lg-2"></div>
+                                <label class="checkbox">
+                                    <input type="checkbox" name="CloseTicket" value="true" />
+                                    <span></span>
+                                    Ticket Kapat
+                                </label>
+                            </div>
+                            <div class="form-group">
+                                <label>Dosya Eki:</label>
+                                <input type="file" name="File" value="@Model.Attachment" />
+                                <input type="hidden" name="Attachment" value="@Model.Attachment" />
+                                @if (!string.IsNullOrEmpty(Model.Attachment))
+                                {
+                                 <a href="@Model.Attachment">@Model.Attachment</a>
+                                }
+                            </div>
+                        </div>
+
+                    </form>
+
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light-primary font-weight-bold" data-dismiss="modal">Kapat</button>
+                <button type="button" onclick="SubTicketAdd()" class="btn btn-primary font-weight-bold">Kaydet</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="modalTicket" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="staticBackdrop" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Ticket Giriş</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <i aria-hidden="true" class="ki ki-close"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="card card-custom">
+
+                    <!--begin::Form-->
+                    <form name="frmTicket" class="form">
+                        <input type="hidden" name="Id" />
+                        <input type="hidden" name="Status" />
+
+                        <div class="card-body">
+                            <div class="form-group mb-8">
+
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-lg-2 col-form-label">Cari</label>
+                                <div class="col-lg-10">
+                                    <select name="CardCode" class="form-control">
+                                    </select>
+                                </div>
+                            </div>
+
+
+                            <div class="form-group row">
+                                <label class="col-lg-2 col-form-label">Ürün</label>
+                                <div class="col-lg-10">
+                                    <select class="form-control" name="ProductId">
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-lg-2 col-form-label">Kullanıcı</label>
+                                <div class="col-lg-10">
+                                    <select name="UserId" class="form-control">
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-lg-2 col-form-label">Proje</label>
+                                <div class="col-lg-10">
+                                    <select name="ProjectId" class="form-control">
+                                        <option value="-1">Proje Bağımsız</option>
+                                        <option value="21">A Proje</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-lg-2 col-form-label">Destek Tipi</label>
+                                <div class="col-lg-10">
+                                    <select name="SupportType" class="form-control">
+                                        <option value="1">Yerinde Destek</option>
+                                        <option value="2">Telefon</option>
+                                        <option value="3">Mail</option>
+                                        <option value="4">Uzaktan Destek</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <div class="col-lg-2"></div>
+                                <label class="checkbox">
+                                    <input type="checkbox" name="Billing" value="true" />
+                                    <span></span>
+                                    Faturalandırma
+                                </label>
+                            </div>
+
+                            <div class="form-group row">
+                                <label class="col-lg-2 col-form-label">Açıklama</label>
+                                <div class="col-lg-10">
+                                    <textarea class="form-control" name="Description" rows="4" cols="50"></textarea>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Dosya Eki:</label>
+                                <input type="file" name="File" value="@Model.Attachment" />
+                                <input type="hidden" name="Attachment" value="@Model.Attachment" />
+                                @if (!string.IsNullOrEmpty(Model.Attachment))
+                                {
+                                     <a href="@Model.Attachment">@Model.Attachment</a>
+                                }
+                            </div>
+
+                            <a href="" id="mailAttc">Mail Eklenti</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light-primary font-weight-bold" data-dismiss="modal">Kapat</button>
+                <button type="button" onclick="TicketSaveChanges(false)" class="btn btn-primary font-weight-bold">Kaydet</button>
+                <button type="button" onclick="TicketSaveChanges(true)" class="btn btn-success font-weight-bold">Kaydet Ve SubTicket Aç</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script>
+var table;
+    $(document).ready(function () {
+
+        $('#Status').multiselect({
+            enableFiltering: true,
+            includeSelectAllOption: true,
+            enableCaseInsensitiveFiltering: true,
+            buttonWidth: '100%'
+        });
+
+        RenderDateTimePicker('StartDate', '')
+        RenderDateTimePicker('EndDate','')
+       
+        $('[name="CardCode"]').change(function () {
+            callback();
+        });
+
+        $('[name="ProductId"]').change(function () {
+            callback();
+        });
+
+        function callback() {
+
+            var data = [];
+
+            var cardCode = $('[name="CardCode"]').val();
+            var productId = $('[name="ProductId"]').val();
+
+            data.push({ name: "cardCode", value: cardCode });
+            data.push({ name: "productId", value: productId });
+
+            FillDropDown("/JsonObject/GetProjectsForDropDown", "ProjectId",null, data);
+        }
+
+      //  FillMultiDropDown("/JsonObject/GetUsersForDropDown", "#UserId");
+       // FillMultiDropDown("/JsonObject/GetCustomersForDropDown", "#CardCode");
+
+        FillDropDown("/JsonObject/GetCustomersForDropDown", "CardCode");
+
+        FillDropDown("/JsonObject/GetProductsForDropDown", "ProductId",null,null, callback);
+
+
+        FillDropDown("/JsonObject/GetUsersForDropDown", "UserId","@ViewData["UserId"]");
+
+        $("#menuUser").removeClass("menu-item-open menu-item-here");
+        $("#menuTicket").removeClass("menu-item-open menu-item-here").addClass("menu-item-open menu-item-here");
+        $("#menuCalendar").removeClass("menu-item-open menu-item-here");
+        $("#menuProject").removeClass("menu-item-open menu-item-here");
+        $("#menuVersion").removeClass("menu-item-open menu-item-here");
+        $("#menuCustomer").removeClass("menu-item-open menu-item-here");
+        $("#menuReport").removeClass("menu-item-open menu-item-here");
+
+        $("#reload").click(function () {
+            table.ajax.reload();
+        });
+
+
+
+        table = $('#ticketList').DataTable({
+            dom: 'frtip',
+            "processing": true,
+            "searching": false,
+            "info": false,
+            "paging": false,
+            "serverSide": true,
+            "ordering":false,
+            buttons: [
+                'copy',
+                'excel',
+                'csv',
+                'pdf'
+            ],
+            "ajax": {
+                "url": "../../Ticket/GetTickets",
+                "dataType": "JSON",
+                "data": function (d) {
+                    d.id = $('#Id').val();
+                    d.cardCode = $('#CardCode').val();
+                    d.userId = $('#UserId').val();
+                    d.status = $('#Status').val();
+                    d.description = $('#Description').val();
+                    d.supportType = $('#SupportType').val();
+                }
+            },
+            "columns": [
+                {
+                    "data": "id",
+                    "autoWidth": true,
+                },
+                {
+                    "data": "cardName",
+                    "autoWidth": true,
+                },
+                {
+                    "data": "nameSurname",
+                    "autoWidth": true,
+                },
+                {
+                    "data": "projectName",
+                    "autoWidth": true,
+                },
+                {
+                    "data": "createDateAsString",
+                    "autoWidth": true,
+                },
+                {
+                    "data": "supportType",
+                    "autoWidth": true,
+                    "render": function (data, type, row) {
+
+                       return '<span>' + data + '</span>';
+                    }
+                },
+                {
+                    "data": "status",
+                    "autoWidth": true,
+                    "render": function (data, type, row) {
+
+                        if (data === "YeniTalep") {
+                            return '<span class="label label-danger label-pill label-inline mr-2">Yeni</span>';
+                        }
+                        else if (data === "Development") {
+                            return '<span class="label label-warning label-pill label-inline mr-2">Yazılımda</span>'
+                        }
+                        else if (data === "Close") {
+                            return '<span class="label label-dark label-inline mr-2">Kapalı</span>'
+                        } else {
+                            return '<span class="label label-info label-inline mr-2">Açık</span>';
+                        }
+                    }
+                },
+                {
+                    "data": "id",
+                    "render": function (data, type, row) {
+                        return '<a href="#" class="btn btn-icon btn-sm btn-outline-success" onclick="FillForm(' + data + ',event)"> <i class="flaticon-edit"></i></a>'
+                    }
+                }
+
+            ]
+        });
+
+
+    $('#ticketList tbody').on('click', 'tr', function () {
+        var data = table.row(this).data();
+
+        GetSubTickets(data.id)
+    });
+
+    $('#btnPdf').on('click', function () {
+
+        table.button(3).trigger();
+    });
+
+
+
+    });</script>

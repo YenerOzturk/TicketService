@@ -1,0 +1,148 @@
+﻿@model Ticket.Presentation.ViewModels.ProjectViewModel
+@{ ViewData["Title"] = "Project"; }
+
+
+<script>function SaveChanges() {
+
+        var myForm = document.getElementsByName('frmProject');
+
+        var fileupload = $('[name="File"]').get(0);
+        var files = fileupload.files;
+
+        var fd = new FormData(myForm[0]);
+        fd.append('File', files[0]);
+
+         var startDate = GetFormatedDate($("#StartDate").datepicker('getDate'));
+
+         var endDate = GetFormatedDate($("#EndDate").datepicker('getDate'));
+
+         fd.append("StartDate",startDate);
+
+         fd.append("EndDate", endDate);
+
+        $.ajax({
+            type: 'POST',
+            url: '../../Project/SaveProject',
+            data: fd,
+            processData: false,
+            contentType: false,
+            success: function () {
+               
+
+                window.history.back();
+            }
+        });
+
+    }
+
+
+
+    $(document).ready(function () {
+
+
+
+        FillDropDown("/JsonObject/GetCustomersForDropDown", "CardCode", null);
+        FillDropDown("/JsonObject/GetProductsForDropDown", "ProductId", null);
+
+        $("#menuUser").removeClass("menu-item-open menu-item-here");
+        $("#menuTicket").removeClass("menu-item-open menu-item-here");
+        $("#menuCalendar").removeClass("menu-item-open menu-item-here");
+        $("#menuProject").removeClass("menu-item-open menu-item-here").addClass("menu-item-open menu-item-here");
+        $("#menuVersion").removeClass("menu-item-open menu-item-here");
+        $("#menuCustomer").removeClass("menu-item-open menu-item-here");
+        $("#menuReport").removeClass("menu-item-open menu-item-here");
+
+    })</script>
+
+
+<div class="col-lg-12">
+    <div class="card card-custom gutter-b example example-compact">
+        <form class="form" name="frmProject" enctype="multipart/form-data">
+            <div class="card-body">
+                <input type="hidden" value="@Model.Id" name="Id" />
+                <div class="form-group">
+                    <label>Proje Adı:</label>
+                    <input type="text" class="form-control form-control-solid" name="ProjectName" placeholder="Proje Adı" value="@Model.ProjectName" />
+                </div>
+                <div class="form-group">
+                    <label>Proje Açıklama:</label>
+                    <textarea class="form-control form-control-solid" name="Description" rows="3">@Model.Description</textarea>
+                </div>
+                <div class="form-group">
+                    <label>Ürün:</label>
+                    <select class="form-control" name="ProductId">
+                        <option value="1">SmartWM</option>
+                        <option value="2">SAP</option>
+                        <option value="3">SCM</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Müşteri:</label>
+                    <select class="form-control" name="CardCode">
+                        <option value="1">Oto İsmail</option>
+                        <option value="2">Vepa</option>
+                        <option value="3">Sanmar</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Başlangıç Tarihi:</label>
+                    <input type="text" class="form-control form-control-solid" placeholder="Başlangıç Tarihi" id="StartDate"  />
+                </div>
+                <div class="form-group">
+                    <label>Bitiş Tarihi:</label>
+                    <input type="text" class="form-control form-control-solid" placeholder="Bitiş Tarihi" id="EndDate" value="@Model.EndDate" />
+                </div>
+                <div class="form-group">
+                    <label>Adam / Gün:</label>
+                    <input type="number" class="form-control form-control-solid" placeholder="Adam / Gün" name="ManHour" value="@Model.ManHour" />
+                </div>
+                <div class="form-group">
+                    <label>Proje Yetkilileri:</label>
+                    <input type="text" class="form-control form-control-solid" placeholder="Yetkili Kişiler" name="ProjectOwners" value="@Model.ManHour" />
+                </div>
+                <div class="form-group">
+                    <label>Durum:</label>
+                    <select class="form-control" name="Status">
+                        <option value="1">Aktif</option>
+                        <option value="2">Pasif</option>
+                        <option value="3">Kapalı</option>
+                    </select>
+                </div>
+                <div class="form-group row">
+                    <label class="checkbox">
+                        @Html.CheckBoxFor(x => x.Billing, new { @class = "form-control form-control-solid" })
+                        <span></span>
+                        Faturalandırma
+                    </label>
+                </div>
+                <div class="form-group">
+                    <label>Dosya Eki:</label>
+                    <input type="file" name="File" value="@Model.Attachment" />
+                    <input type="hidden" name="Attachment" value="@Model.Attachment" />
+                    @if (!string.IsNullOrEmpty(Model.Attachment))
+                    {
+                        <a href="@Model.Attachment">@Model.Attachment</a>
+                    }
+
+                </div>
+            </div>
+            <div class="card-footer">
+                <button type="button" onclick="SaveChanges()" class="btn btn-primary mr-2">Kaydet</button>
+                <button type="button" onclick="javascript:window.history.back();" class="btn btn-secondary">İptal</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<script>
+    $(document).ready(function () {
+
+
+        FillDropDown("/JsonObject/GetCustomersForDropDown","CardCode", '@Model.CardCode');
+        FillDropDown("/JsonObject/GetProductsForDropDown",'ProductId' ,'@Model.ProductId');
+        RenderDatePicker('StartDate', '@Model.StartDate');
+        RenderDatePicker('EndDate', '@Model.EndDate');
+
+    });
+</script>

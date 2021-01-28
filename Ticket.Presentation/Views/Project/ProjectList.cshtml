@@ -1,0 +1,108 @@
+﻿
+
+<div class="card card-custom">
+    <div class="card-header flex-wrap border-0 pt-6 pb-0">
+        <div class="card-title">
+            <h3 class="card-label">
+                Proje Listesi
+            </h3>
+        </div>
+        <div class="card-toolbar">
+            <!--begin::Dropdown-->
+            <div class="dropdown dropdown-inline mr-2">
+
+            </div>
+            <!--end::Dropdown-->
+            <!--begin::Button-->
+            <a href="../../Home/Privacy" class="btn btn-primary font-weight-bolder">
+                <i class="la la-plus"></i>Yeni Kayıt
+            </a>
+            <!--end::Button-->
+        </div>
+    </div>
+    <div class="card-body">
+        <!--begin: Datatable-->
+        <table class="table table-separate table-head-custom table-checkable" id="projectList">
+            <thead>
+                <tr>
+                    <th>Proje ID</th>
+                    <th>Cari İsim</th>
+                    <th>Başlangıç Tarihi</th>
+                    <th>Bitiş Tarihi</th>
+                    <th>Ürün</th>
+                    <th>Adam/Gün</th>
+                    <th>Toplam Çalışma Zamanı</th>
+                    <th>#</th>
+                </tr>
+            </thead>
+        </table>
+        <!--end: Datatable-->
+    </div>
+</div>
+
+<script>$(document).ready(function () {
+
+        $("#menuUser").removeClass("menu-item-open menu-item-here");
+        $("#menuTicket").removeClass("menu-item-open menu-item-here");
+        $("#menuCalendar").removeClass("menu-item-open menu-item-here");
+        $("#menuProject").removeClass("menu-item-open menu-item-here").addClass("menu-item-open menu-item-here");
+        $("#menuVersion").removeClass("menu-item-open menu-item-here");
+        $("#menuCustomer").removeClass("menu-item-open menu-item-here");
+    $("#menuReport").removeClass("menu-item-open menu-item-here");
+
+        var table = $('#projectList').DataTable({
+            "processing": true,
+            "searching": false,
+            "info": false,
+            "paging": false,
+            "serverSide": true,
+            "ordering": false,
+            "ajax": {
+                "url": "../../Project/GetProjects",
+                "dataType": "JSON",
+                "data": function (d) {
+
+                }
+            },
+            "columns": [
+                {
+                    "data": "id",
+                    "autoWidth": true,
+                },
+                {
+                    "data": "cardName",
+                    "autoWidth": true,
+                },
+                {
+                    "data": "startDateAsString",
+                    "autoWidth": true,
+                },
+                {
+                    "data": "endDateAsString",
+                    "autoWidth": true,
+                },
+                {
+                    "data": "productName",
+                    "autoWidth": true,
+                },
+                {
+                    "data": "manHour",
+                    "autoWidth": true,
+                },
+                {
+                    "data": "totalWorkingTime",
+                    "autoWidth": true,
+                },
+                {
+                    "data": "id",
+                    "render": function (data, type, row) {
+                        return '<a href="/Home/Privacy/' + data + '" class="btn btn-primary">Düzenle</a>'
+                    }
+                }
+
+            ]
+        });
+    })</script>
+
+
+

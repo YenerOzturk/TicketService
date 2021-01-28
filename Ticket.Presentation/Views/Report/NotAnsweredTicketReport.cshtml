@@ -1,0 +1,101 @@
+﻿
+<div class="card card-custom">
+    <div class="card-header flex-wrap border-0 pt-6 pb-0">
+        <div class="card-title">
+            <h3 class="card-label">
+                Cevaplanmayan Ticket Raporu
+            </h3>
+        </div>
+    </div>
+    <div class="card-body">
+
+       
+
+        <!--begin: Datatable-->
+        <table class="table table-separate table-head-custom table-checkable" id="report">
+            <thead>
+                <tr>
+                    <th>Ticket ID</th>
+                    <th>Cari</th>
+                    <th>Kullanıcı</th>
+                    <th>Proje Id</th>
+                    <th>Başlangıç Tarihi</th>
+                    <th>Bitiş Tarihi</th>
+                    <th>Destek Tipi</th>
+                </tr>
+            </thead>
+        </table>
+        <!--end: Datatable-->
+    </div>
+</div>
+
+<script>var table;
+    $(document).ready(function () {
+
+        $("#reload").click(function () {
+            table.ajax.reload();
+        });
+
+        $("#menuReport").removeClass("menu-item-open menu-item-here").addClass("menu-item-open menu-item-here");;
+        $("#menuUser").removeClass("menu-item-open menu-item-here");
+        $("#menuTicket").removeClass("menu-item-open menu-item-here");
+        $("#menuCalendar").removeClass("menu-item-open menu-item-here");
+        $("#menuProject").removeClass("menu-item-open menu-item-here");
+        $("#menuVersion").removeClass("menu-item-open menu-item-here");
+        $("#menuCustomer").removeClass("menu-item-open menu-item-here");
+
+
+        table = $('#report').DataTable({
+            "processing": true,
+            "searching": false,
+            "info": false,
+            "paging": false,
+            "serverSide": true,
+            "ordering": false,
+            "ajax": {
+                "url": "../../Report/GetNotAnsweredTicketReport",
+                "dataType": "JSON",
+                "data": function (d) {
+                }
+            },
+            "columns": [
+                {
+                    "data": "id",
+                    "autoWidth": true,
+                },
+                {
+                    "data": "cardName",
+                    "autoWidth": true,
+                },
+                {
+                    "data": "nameSurname",
+                    "autoWidth": true,
+                },
+                {
+                    "data": "projectName",
+                    "autoWidth": true,
+                },
+                {
+                    "data": "startDateAsString",
+                    "autoWidth": true,
+                },
+                {
+                    "data": "endDateAsString",
+                    "autoWidth": true,
+                },
+                {
+                    "data": "supportType",
+                    "autoWidth": true,
+                    "render": function (data, type, row) {
+
+                        return '<span>' + data + '</span>';
+                    }
+                }
+                
+
+            ]
+        });
+    })</script>
+
+
+

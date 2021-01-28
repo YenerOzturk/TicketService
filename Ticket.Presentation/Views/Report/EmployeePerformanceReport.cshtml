@@ -1,0 +1,159 @@
+﻿
+<script>
+
+    function RenderTable() {
+
+        var data = $('#frmFilter').serializeArray();
+
+        var startDate = GetFormatedDate($("#StartDate").datepicker('getDate'));
+
+        var endDate = GetFormatedDate($("#EndDate").datepicker('getDate'));
+
+        data.push({ name: "StartDate", value: startDate });
+
+        data.push({ name: "EndDate", value: endDate });
+
+        $.ajax({
+            type: 'GET',
+            url: '../Report/GetEmployeePerformanceReport',
+            data:data,
+            success: function (result) {
+
+                var pivot = new WebDataRocks({
+                    container: "#output",
+                    toolbar: true,
+                    report: {
+                        dataSource: {
+                            data: result
+                        },
+                        slice: {
+                            rows: [
+                                {
+                                    uniqueName: "cardName",
+                                    caption: "Cari Adı"
+                                },
+                                {
+                                    uniqueName: "nameSurname",
+                                    caption: "Atanan Kişi"
+                                },
+                                {
+                                    uniqueName: "ticketDescription",
+                                    caption: "Ticket Açıklama"
+                                },
+                                {
+                                    uniqueName: "subTicketDescription",
+                                    caption: "SubTicket Açıklama"
+                                }
+                            ],
+
+                            measures: [
+
+                                {
+                                    "uniqueName": "totalWorkDay",
+                                    caption: "Toplam Çalışma (Gün)",
+                                    "aggregation": "sum"
+                                },
+                                {
+                                    "uniqueName": "totalWorkHour",
+                                    caption: "Toplam Çalışma (Saat)",
+                                    "aggregation": "sum"
+                                }
+                            ],
+
+                        }
+                    },
+                    global: {
+                        // replace this path with the path to your own translated file
+                        localization: "https://cdn.webdatarocks.com/loc/tr.json"
+                    }
+                });
+
+
+
+            }
+        });
+
+    }
+
+
+</script>
+
+<div class="card card-custom">
+    <div class="card-header flex-wrap border-0 pt-6 pb-0">
+        <div class="card-title">
+            <h3 class="card-label">
+               Çalışan Detay Raporu
+            </h3>
+        </div>
+    </div>
+    <div class="card-body">
+        <form class="kt-form kt-form--fit mb-15" id="frmFilter">
+            <div class="row mb-6">
+                <div class="col-lg-3 mb-lg-0 mb-6">
+                    <label>Başlangıç Tarihi:</label>
+                    <input type="text" class="form-control datetimepicker-input" placeholder="Tarih Seç" id="StartDate" />
+                </div>
+                <div class="col-lg-3 mb-lg-0 mb-6">
+                    <label>Bitiş Tarihi:</label>
+                    <input type="text" class="form-control datetimepicker-input" placeholder="Tarih Seç" id="EndDate" />
+                </div>
+                <div class="col-lg-3 mb-lg-0 mb-6">
+                    <label>Kullanıcı:</label>
+                    <select name="UserId" class="form-control">
+                    </select>
+                </div>
+            </div>
+            <div class="row mt-8">
+                <div class="col-lg-12">
+                    <button type="button" class="btn btn-primary btn-primary--icon" id="reload">
+                        <span>
+                            <i class="la la-search"></i>
+                            <span>Ara</span>
+                        </span>
+                    </button>&#160;&#160;
+                    <button class="btn btn-secondary btn-secondary--icon" id="kt_reset">
+                        <span>
+                            <i class="la la-close"></i>
+                            <span>Temizle</span>
+                        </span>
+                    </button>
+                </div>
+            </div>
+        </form>
+        <div id="output" style="width:100%"></div>
+
+    </div>
+</div>
+
+<script>var table;
+    $(document).ready(function () {
+
+        $("#menuReport").removeClass("menu-item-open menu-item-here").addClass("menu-item-open menu-item-here");;
+        $("#menuUser").removeClass("menu-item-open menu-item-here");
+        $("#menuTicket").removeClass("menu-item-open menu-item-here");
+        $("#menuCalendar").removeClass("menu-item-open menu-item-here");
+        $("#menuProject").removeClass("menu-item-open menu-item-here");
+        $("#menuVersion").removeClass("menu-item-open menu-item-here");
+        $("#menuCustomer").removeClass("menu-item-open menu-item-here");
+
+        RenderDatePicker("StartDate", new Date(new Date().setMonth(new Date().getMonth() - 1)));
+        RenderDatePicker("EndDate", new Date());
+
+        FillDropDown("/JsonObject/GetUsersForDropDown", "UserId","@ViewData["UserId"]");
+
+
+        setTimeout(function () { RenderTable();}, 1000);
+      
+
+
+        $('#reload').on("click", function () {
+
+            RenderTable();
+        });
+
+
+
+    })</script>
+
+
+

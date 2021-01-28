@@ -1,0 +1,166 @@
+﻿
+<script>
+
+    function DeleteUser(id) {
+
+        function callback=function() {
+
+            var data = [{ name: "Id", value: id }];
+
+            $.ajax({
+                type: 'POST',
+                url: '../../User/DeleteUser',
+                data: data,
+                success: function () {
+
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'İşlem Başarılı',
+                        showConfirmButton: true,
+                        timer: 1500
+                    })
+
+                    table.ajax.reload();
+                }
+            });
+        }
+
+        ShowMessageBox("Emin misiniz?", "Kayıt Silinecektir", "question", callback)
+
+}
+    </script>
+<div class="card card-custom">
+    <div class="card-header flex-wrap border-0 pt-6 pb-0">
+        <div class="card-title">
+            <h3 class="card-label">
+                Kullanıcı Listesi
+            </h3>
+        </div>
+        <div class="card-toolbar">
+            <!--begin::Dropdown-->
+            <div class="dropdown dropdown-inline mr-2">
+
+            </div>
+            <!--end::Dropdown-->
+            <!--begin::Button-->
+            <a href="../../User/Index" class="btn btn-primary font-weight-bolder">
+                <i class="la la-plus"></i>Yeni Kayıt
+            </a>
+            <!--end::Button-->
+        </div>
+    </div>
+    <div class="card-body">
+
+        <form class="kt-form kt-form--fit mb-15">
+            <div class="row mb-6">
+                <div class="col-lg-3 mb-lg-0 mb-6">
+                    <label>Cari Adı:</label>
+                    <input type="text" class="form-control datatable-input" id="CardName"  data-col-index="0" />
+                </div>
+                <div class="col-lg-3 mb-lg-0 mb-6">
+                    <label>Ad/Soyad:</label>
+                    <input type="text" class="form-control datatable-input" id="NameSurname"  data-col-index="0" />
+                </div>
+                <div class="col-lg-3 mb-lg-0 mb-6">
+                    <label>Email:</label>
+                    <input type="text" class="form-control datatable-input" id="Email"  data-col-index="0" />
+                </div>
+            </div>
+            <div class="row mt-8">
+                <div class="col-lg-12">
+                    <button type="button" class="btn btn-primary btn-primary--icon" id="reload">
+                        <span>
+                            <i class="la la-search"></i>
+                            <span>Ara</span>
+                        </span>
+                    </button>&#160;&#160;
+                    <button class="btn btn-secondary btn-secondary--icon" id="kt_reset">
+                        <span>
+                            <i class="la la-close"></i>
+                            <span>Temizle</span>
+                        </span>
+                    </button>
+                </div>
+            </div>
+        </form>
+
+        <!--begin: Datatable-->
+        <table class="table table-separate table-head-custom table-checkable" id="userList">
+            <thead>
+                <tr>
+                    <th>Ad/Soyad</th>
+                    <th>Email</th>
+                    <th>Cari Adı</th>
+                    <th>#</th>
+                    <th>#</th>
+                </tr>
+            </thead>
+        </table>
+        <!--end: Datatable-->
+    </div>
+</div>
+
+<script>var table;
+    $(document).ready(function () {
+
+        $("#reload").click(function () {
+            table.ajax.reload();
+        });
+
+
+        $("#menuUser").removeClass("menu-item-open menu-item-here").addClass("menu-item-open menu-item-here");
+        $("#menuTicket").removeClass("menu-item-open menu-item-here");
+        $("#menuCalendar").removeClass("menu-item-open menu-item-here");
+        $("#menuProject").removeClass("menu-item-open menu-item-here");
+        $("#menuVersion").removeClass("menu-item-open menu-item-here");
+        $("#menuCustomer").removeClass("menu-item-open menu-item-here");
+        $("#menuReport").removeClass("menu-item-open menu-item-here");
+
+
+        table = $('#userList').DataTable({
+            "processing": true,
+            "searching": false,
+            "info": false,
+            "paging": false,
+            "serverSide": true,
+            "ordering": false,
+            "ajax": {
+                "url": "../../User/GetUsers",
+                "dataType": "JSON",
+                "data": function (d) {
+                    d.cardName = $('#CardName').val();
+                    d.nameSurname = $('#NameSurname').val();
+                    d.email = $('#Email').val();
+                }
+            },
+            "columns": [
+                {
+                    "data": "nameSurname",
+                    "autoWidth": true,
+                },
+                {
+                    "data": "email",
+                    "autoWidth": true,
+                },
+                {
+                    "data": "cardName",
+                    "autoWidth": true,
+                },
+                {
+                    "data": "id",
+                    "render": function (data, type, row) {
+                        return '<a href="/User/Index/' + data + '" class="btn btn-primary">Düzenle</a>'
+                    }
+                },
+                {
+                    "data": "id",
+                    "render": function (data, type, row) {
+                        return '<a onclick="DeleteUser(' + data + ')" class="btn btn-danger">Sil</a>'
+                    }
+                }
+            ]
+        });
+    })</script>
+
+
+

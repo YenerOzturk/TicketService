@@ -1,0 +1,221 @@
+﻿@{ ViewData["Title"] = "Home Page"; }
+
+<link href="~/css/fullcalendar.bundle.css?v=7.0.4" rel="stylesheet" type="text/css" />
+
+<div class="card card-custom">
+    <div class="card-header">
+        <div class="card-title">
+            <h3 class="card-label">
+                Takvim
+            </h3>
+        </div>
+        <div class="card-toolbar">
+            <a href="#" class="btn btn-light-primary font-weight-bold" data-toggle="modal" data-target="#exampleModalScrollable">
+                <i class="ki ki-plus "></i> Add Event
+            </a>
+        </div>
+    </div>
+    <div class="card-body">
+        <div id="kt_calendar"></div>
+    </div>
+</div>
+
+
+
+<!-- Modal-->
+<div class="modal fade" id="exampleModalScrollable" tabindex="-1" role="dialog" aria-labelledby="staticBackdrop" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Yeni Event</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <i aria-hidden="true" class="ki ki-close"></i>
+                </button>
+            </div>
+            <div class="modal-body" style="height: 500px;">
+                <div class="col-lg-12">
+                    <div class="card card-custom gutter-b example example-compact">
+                        <form class="form" name="frmAppointment">
+                            <div class="card-body">
+                                <div class="form-group">
+                                    <label>Müşteri:</label>
+                                    <select class="form-control" name="CardCode">
+                                        <option>Oto İsmail</option>
+                                        <option>Vepa</option>
+                                        <option>Sanmar</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Başlık:</label>
+                                    <input type="text" name="Title" class="form-control form-control-solid" placeholder="Başlık" />
+                                </div>
+                                <div class="form-group">
+                                    <label>Açıklama:</label>
+                                    <input type="text" name="Description" class="form-control form-control-solid" placeholder="Açıklama" />
+                                </div>
+                                <div class="form-group">
+                                    <label>Başlangıç Tarihi:</label>
+                                    <input type="date" name="StartDate" value="@DateTime.Now.ToString("yyyy-MM-ddTHH:mm:00")" class="form-control form-control-solid" placeholder="Başlangıç Tarihi" />
+                                </div>
+                                <div class="form-group">
+                                    <label>Bitiş Tarihi:</label>
+                                    <input type="date" name="EndDate" value="@DateTime.Now.ToString("yyyy-MM-ddTHH:mm:00")" class="form-control form-control-solid" placeholder="Başlangıç Tarihi" />
+                                </div>
+                                <div class="form-group">
+                                    <label>Event Type:</label>
+                                    <select class="form-control" name="AppointmentType">
+                                        <option value="1">Ofis</option>
+                                        <option value="2">Deactive</option>
+                                        <option value="3">İzin</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light-primary font-weight-bold" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary font-weight-bold" onclick="Save()">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script src="~/js/fullcalendar.bundle.js?v=7.0.4"></script>
+
+
+<script>
+
+    function Save() {
+
+        var data = $('[name="frmAppointment"]').serializeArray();
+
+        $.ajax({
+            type: 'POST',
+            url: 'Home/AddNewApp',
+            data: data,
+        });
+
+    }
+
+
+    var events = @Html.Raw(Json.Serialize(ViewData["Events"]));
+
+    var KTCalendarBasic = function () {
+
+        return {
+            //main function to initiate the module
+            init: function () {
+                var todayDate = moment().startOf('day');
+                var YM = todayDate.format('YYYY-MM');
+                var YESTERDAY = todayDate.clone().subtract(1, 'day').format('YYYY-MM-DD');
+                var TODAY = todayDate.format('YYYY-MM-DD');
+                var TOMORROW = todayDate.clone().add(1, 'day').format('YYYY-MM-DD');
+
+                var calendarEl = document.getElementById('kt_calendar');
+                var calendar = new FullCalendar.Calendar(calendarEl, {
+                    plugins: ['bootstrap', 'interaction', 'dayGrid', 'timeGrid', 'list'],
+                    themeSystem: 'bootstrap',
+
+                    isRTL: KTUtil.isRTL(),
+
+                    header: {
+                        left: 'prev,next today',
+                        center: 'title',
+                        right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                    },
+
+                    height: 800,
+                    contentHeight: 780,
+                    aspectRatio: 3,  // see: https://fullcalendar.io/docs/aspectRatio
+
+                    nowIndicator: true,
+                    now: TODAY + 'T09:25:00', // just for demo
+
+                    views: {
+                        dayGridMonth: { buttonText: 'month' },
+                        timeGridWeek: { buttonText: 'week' },
+                        timeGridDay: { buttonText: 'day' }
+                    },
+
+                    defaultView: 'dayGridMonth',
+                    defaultDate: TODAY,
+
+                    editable: true,
+                    eventLimit: true, // allow "more" link when too many events
+                    navLinks: true,
+                    events: events,
+
+                    eventDrop: function (info) {
+
+                        var data = { Id: info.event.id, StartDate: info.event.start.toISOString(), EndDate: info.event.end.toISOString() };
+
+                        $.ajax({
+                            type: 'POST',
+                            url: 'Home/UpdateApp',
+                            data: data,
+                        });
+
+                    },
+
+                    eventClick: function (info) {
+                        alert('Event: ' + info.event.title);
+                        alert('Coordinates: ' + info.jsEvent.pageX + ',' + info.jsEvent.pageY);
+                        alert('View: ' + info.view.type);
+
+                        // change the border color just for fun
+                        info.el.style.borderColor = 'red';
+                    },
+
+                    eventResize: function (info) {
+
+                        var data = { Id: info.event.id, StartDate: info.event.start.toISOString(), EndDate: info.event.end.toISOString() };
+
+                        $.ajax({
+                            type: 'POST',
+                            url: 'Home/UpdateApp',
+                            data: data,
+                        });
+
+                    },
+
+                    eventRender: function (info) {
+                        var element = $(info.el);
+
+                        if (info.event.extendedProps && info.event.extendedProps.description) {
+                            if (element.hasClass('fc-day-grid-event')) {
+                                element.data('content', info.event.extendedProps.description);
+                                element.data('placement', 'top');
+                                KTApp.initPopover(element);
+                            } else if (element.hasClass('fc-time-grid-event')) {
+                                element.find('.fc-title').append('<div class="fc-description">' + info.event.extendedProps.description + '</div>');
+                            } else if (element.find('.fc-list-item-title').lenght !== 0) {
+                                element.find('.fc-list-item-title').append('<div class="fc-description">' + info.event.extendedProps.description + '</div>');
+                            }
+                        }
+                    }
+                });
+
+                calendar.render();
+            }
+        };
+    }();
+    jQuery(document).ready(function () {
+        KTCalendarBasic.init();
+
+        FillDropDown("/JsonObject/GetCustomersForDropDown", "CardCode");
+
+        $("#menuUser").removeClass("menu-item-open menu-item-here");
+        $("#menuTicket").removeClass("menu-item-open menu-item-here");
+        $("#menuCalendar").removeClass("menu-item-open menu-item-here").addClass("menu-item-open menu-item-here");
+        $("#menuProject").removeClass("menu-item-open menu-item-here");
+        $("#menuVersion").removeClass("menu-item-open menu-item-here");
+        $("#menuCustomer").removeClass("menu-item-open menu-item-here");
+        $("#menuReport").removeClass("menu-item-open menu-item-here");
+    });
+</script>

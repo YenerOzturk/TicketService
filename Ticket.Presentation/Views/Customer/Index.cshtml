@@ -1,0 +1,127 @@
+﻿@model Ticket.Presentation.Models.CustomerModel
+@{ ViewData["Title"] = "Customer"; }
+
+
+<script>function SaveChanges() {
+
+        var myForm = document.getElementsByName('frmCustomer');
+
+        var fileupload = $('[name="File"]').get(0);
+        var files = fileupload.files;
+
+        var fd = new FormData(myForm[0]);
+        fd.append('File', files[0]);
+
+        $.ajax({
+            type: 'POST',
+            url: '../../Customer/SaveCustomer',
+            processData: false,
+            contentType: false,
+            data: fd,
+            success: function () {
+
+                $('[name="frmCustomer"]').trigger("reset");
+
+                window.history.back();
+            }
+        });
+
+    }</script>
+
+
+<div class="col-lg-12">
+    <div class="card card-custom gutter-b example example-compact">
+        <form class="form" name="frmCustomer">
+            <div class="card-body">
+                <input type="hidden" value="@Model.Id" name="Id" />
+                <div class="form-group">
+                    <label>Cari Kodu:</label>
+                    <input type="text" class="form-control form-control-solid" name="CardCode" placeholder="Proje Adı" value="@Model.CardCode" />
+                </div>
+                <div class="form-group">
+                    <label>Cari Adı:</label>
+                    <input type="text" class="form-control form-control-solid" name="CardName" placeholder="Cari Adı" value="@Model.CardName" />
+                </div>
+                <div class="form-group">
+                    <label>Prefix:</label>
+                    <input type="text" class="form-control form-control-solid" name="KnownName" placeholder="Prefix" value="@Model.KnownName" />
+                </div>
+                <div class="form-group">
+                    <label>Telefon:</label>
+                    <input type="tel" class="form-control form-control-solid" name="Telephone" placeholder="Telefon" value="@Model.Telephone" />
+                </div>
+                <div class="form-group">
+                    <label>Email:</label>
+                    <input type="email" class="form-control form-control-solid" name="Email" placeholder="Email" value="@Model.Email" />
+                </div>
+                <div class="form-group">
+                    <label>Adam/Gün:</label>
+                    <input type="text" class="form-control form-control-solid" name="ManHourPrice" placeholder="Adam Gün" value="@Model.ManHourPrice" />
+                </div>
+                <div class="form-group">
+                    <label>Para Birimi:</label>
+                    @Html.DropDownListFor(x => x.Currency, new List<SelectListItem> {
+                        new SelectListItem { Text = "TRY", Value = "TRY" },
+                        new SelectListItem { Text = "USD", Value = "USD" },
+                        new SelectListItem { Text = "EUR", Value = "EUR" }
+               }, new { @class = "form-control form-control-solid" })
+                </div>
+                <div class="form-group">
+                    <label>Uzak MAsaüstü Bilgileri:</label>
+                    <textarea class="form-control form-control-solid" name="RemoteDesktopInfo" rows="3">@Model.RemoteDesktopInfo</textarea>
+                </div>
+                <div class="form-group">
+                    <label>VPN Bilgileri:</label>
+                    <textarea class="form-control form-control-solid" name="VPNInfo" rows="3">@Model.VPNInfo</textarea>
+                </div>
+                <div class="form-group">
+                    <label>Not:</label>
+                    <textarea class="form-control form-control-solid" name="Note" rows="3">@Model.Note</textarea>
+                </div>
+                <div class="form-group">
+                    <label>Danışman Email:</label>
+                    <textarea class="form-control form-control-solid" name="ConsultantMail" rows="3">@Model.ConsultantMail</textarea>
+                </div>
+                <div class="form-group row">
+                    <label class="checkbox">
+                        @Html.CheckBoxFor(x => x.IsActive)
+                        <span></span>
+                        Aktif mi
+                    </label>
+                </div>
+                <div class="form-group row">
+                    <label class="checkbox">
+                        @Html.CheckBoxFor(x => x.Reporting)
+                        <span></span>
+                        Raporlanacak mı
+                    </label>
+                </div>
+                <div class="form-group">
+                    <label>Dosya Eki:</label>
+                    <input type="file" name="File" value="@Model.Attachment" />
+
+                    @if (!string.IsNullOrEmpty(Model.Attachment))
+                    {
+                        <a href="@Model.Attachment">@Model.Attachment</a>
+                    }
+
+                </div>
+            </div>
+            <div class="card-footer">
+                <button type="button" onclick="SaveChanges()" class="btn btn-primary mr-2">Kaydet</button>
+                <button type="button" onclick="javascript:window.history.back();" class="btn btn-secondary">İptal</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>$(document).ready(function () {
+
+        $("#menuUser").removeClass("menu-item-open menu-item-here");
+        $("#menuTicket").removeClass("menu-item-open menu-item-here");
+        $("#menuCalendar").removeClass("menu-item-open menu-item-here");
+        $("#menuProject").removeClass("menu-item-open menu-item-here");
+        $("#menuVersion").removeClass("menu-item-open menu-item-here");
+        $("#menuCustomer").removeClass("menu-item-open menu-item-here").addClass("menu-item-open menu-item-here");
+        $("#menuReport").removeClass("menu-item-open menu-item-here");
+    });</script>

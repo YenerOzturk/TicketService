@@ -1,0 +1,98 @@
+﻿
+<div class="card card-custom">
+    <div class="card-header flex-wrap border-0 pt-6 pb-0">
+        <div class="card-title">
+            <h3 class="card-label">
+               SmartWM Versiyon Kontrol Raporu
+            </h3>
+        </div>
+    </div>
+    <div class="card-body">
+
+        <form class="kt-form kt-form--fit mb-15">
+            <div class="row mb-6">
+                <div class="col-lg-3 mb-lg-0 mb-6">
+                    <label>Versiyon Numarası:</label>
+                    <input type="text" class="form-control datatable-input" id="VersionNumber" data-col-index="0" />
+                </div>
+            </div>
+            <div class="row mt-8">
+                <div class="col-lg-12">
+                    <button type="button" class="btn btn-primary btn-primary--icon" id="reload">
+                        <span>
+                            <i class="la la-search"></i>
+                            <span>Ara</span>
+                        </span>
+                    </button>&#160;&#160;
+                    <button class="btn btn-secondary btn-secondary--icon" id="kt_reset">
+                        <span>
+                            <i class="la la-close"></i>
+                            <span>Temizle</span>
+                        </span>
+                    </button>
+                </div>
+            </div>
+        </form>
+
+        <!--begin: Datatable-->
+        <table class="table table-separate table-head-custom table-checkable" id="report">
+            <thead>
+                <tr>
+                    <th>Ticket Id</th>
+                    <th>Kullanıcı Adı</th>
+                    <th>Açıklama</th>
+                </tr>
+            </thead>
+        </table>
+        <!--end: Datatable-->
+    </div>
+</div>
+
+<script>var table;
+    $(document).ready(function () {
+
+        $("#reload").click(function () {
+            table.ajax.reload();
+        });
+
+        $("#menuReport").removeClass("menu-item-open menu-item-here").addClass("menu-item-open menu-item-here");;
+        $("#menuUser").removeClass("menu-item-open menu-item-here");
+        $("#menuTicket").removeClass("menu-item-open menu-item-here");
+        $("#menuCalendar").removeClass("menu-item-open menu-item-here");
+        $("#menuProject").removeClass("menu-item-open menu-item-here");
+        $("#menuVersion").removeClass("menu-item-open menu-item-here");
+        $("#menuCustomer").removeClass("menu-item-open menu-item-here");
+
+
+        table = $('#report').DataTable({
+            "processing": true,
+            "searching": false,
+            "info": false,
+            "serverSide": true,
+            "ajax": {
+                "url": "../../Report/GetSmartWmVersionControl",
+                "dataType": "JSON",
+                "data": function (d) {
+                    d.reportParam1 = $('#VersionNumber').val();
+                }
+            },
+            "columns": [
+                {
+                    "data": "ticketId",
+                    "autoWidth": true,
+                },
+                {
+                    "data": "subTicketUser",
+                    "autoWidth": true,
+                },
+                {
+                    "data": "description",
+                    "autoWidth": true,
+                }
+                
+            ]
+        });
+    })</script>
+
+
+
