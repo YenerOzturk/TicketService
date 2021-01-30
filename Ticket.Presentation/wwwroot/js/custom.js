@@ -112,8 +112,6 @@ function RenderDatePicker(selector, date) {
 
     $('#' + selector).on('changeDate', function (e) { $('[name="' + selector + '"]').val(moment(e.date).format()); })
 
-    $('[name="' + selector + '"]').val(new Date(date).toISOString());
-
     if (date === '') {
         picker.datepicker('setDate', new Date());
     } else {
@@ -143,9 +141,85 @@ function ShowMessageBox(title,text,icon,callback) {
 
 }
 
+
+
+
 function GetFormatedDate(date) {
 
    var formatted = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate() + " " + date.getHours()+ ":" + date.getMinutes() + ":" + date.getSeconds();
 
     return formatted;
+}
+
+var tagify;
+function GenerateTagify() {
+
+    $.ajax({
+        type: 'GET',
+        url: '/JsonObject/GetTicketLabels',
+        success: function (data) {
+
+            var input = document.getElementById('kt_tagify_5');
+            tagify = new Tagify(input, {
+                pattern: /^.{0,20}$/, // Validate typed tag(s) by Regex. Here maximum chars length is defined as "20"
+                delimiters: ", ", // add new tags when a comma or a space character is entered
+                maxTags: 6,
+                keepInvalidTags: true, // do not remove invalid tags (but keep them marked as invalid)
+                whitelist:data,
+                transformTag: transformTag,
+                dropdown: {
+                    enabled: 3,
+                }
+            });
+
+        }
+    });
+
+    
+
+    function transformTag(tagData) {
+        var states = [
+            'success',
+            'primary',
+            'danger',
+            'success',
+            'warning',
+            'dark',
+            'primary',
+            'info'];
+
+        tagData.class = 'tagify__tag tagify__tag--' + states[KTUtil.getRandomInt(0, 7)];
+
+        if (tagData.value.toLowerCase() == 'shit') {
+            tagData.value = 's✲✲t'
+        }
+    }
+}
+
+function GetTagifyValue() {
+
+    var retval = '';
+
+    for (var i = 0; i < tagify.value.length; i++) {
+
+        retval += tagify.value[i].value+",";
+    }
+
+    return retval.slice(0, -1);
+}
+
+
+function ClearTags() {
+
+    tagify.removeAllTags();
+}
+
+function AddTag(tags) {
+
+    var tagList = tags.split(',');
+
+    for (var i = 0; i < tagList.length; i++) {
+
+        tagify.addTags(tagList[i],false,true);
+    }
 }

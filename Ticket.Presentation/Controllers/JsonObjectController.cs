@@ -105,5 +105,14 @@ namespace Ticket.Presentation.Controllers
 
             return Ok(retval);
         }
+
+        public async Task<IActionResult> GetTicketLabels()
+        {
+            string url = $"Ticket/get-Labels";
+
+            var repositories = await HttpClientHelper.SendGetRequest<IEnumerable<string>>(url, CookieHelper.GetToken(Request, "oaut.Cookie"));
+
+            return Ok(repositories.ToList());
+        }
     }
 }

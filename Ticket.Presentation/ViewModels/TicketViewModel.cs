@@ -15,5 +15,7 @@ namespace Ticket.Presentation.ViewModels
         public bool AllDay { get; set; }
         public DateTime CreateDate { get; set; }
         public string Attachment { get; set; }
+        public DateTime EstimatedEndDate { get; set; }
+        public string TicketLabel { get; set; }
     }
 }

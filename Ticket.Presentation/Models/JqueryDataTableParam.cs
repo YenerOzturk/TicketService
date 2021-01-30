@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+
 namespace Ticket.Presentation.Models
 {
     public class JqueryDataTableParam
@@ -22,5 +24,9 @@ namespace Ticket.Presentation.Models
         public string cardName { get; set; }
         public string reportParam1 { get; set; }
         public string reportParam2 { get; set; }
+
+        public List<string> cardCodes { get; set; }
+        public List<string> userIds { get; set; }
+        public List<string> statuList { get; set; }
     }
 }

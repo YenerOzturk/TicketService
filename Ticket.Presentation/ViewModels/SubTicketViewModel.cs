@@ -11,5 +11,6 @@ namespace Ticket.Presentation.ViewModels
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
         public bool CloseTicket { get; set; }
+        public string Attachment { get; set; }
     }
 }

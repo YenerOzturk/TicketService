@@ -20,6 +20,8 @@ namespace Ticket.Presentation.Models
         public string Description { get; set; }
         public string Attachment { get; set; }
         public bool SendMail { get; set; }
+        public DateTime EstimatedEndDate { get; set; }
+        public string TicketLabel { get; set; }
 
         [JsonIgnore]
         public IFormFile File { get; set; }

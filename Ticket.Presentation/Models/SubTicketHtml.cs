@@ -20,6 +20,7 @@ namespace Ticket.Presentation.Models
                                             "<div class=\"mt-2\">" +
                                                 "<b>Bitiş Tarihi:</b> {EndDate}" +
                                             "</div>" +
+                                            "[Attachment]"+
                                         "</div>" +
                                         "<div class=\"d-flex align-items-center justify-content-end flex-wrap\" data-toggle=\"view\">" +
                              "<a onclick=\"FillSubTicketForm({id})\" class=\"btn btn-icon btn-primary btn-sm\"><i class=\"flaticon2-pen\"></i></a>" +

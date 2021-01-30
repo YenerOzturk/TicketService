@@ -31,31 +31,42 @@ namespace Ticket.Presentation.Controllers
             string urlParam = string.Empty;
 
 
-            if (!string.IsNullOrEmpty(param.cardCode))
+            if (param.cardCodes != null)
             {
-                urlParam += $"&CardCode={param.cardCode}";
+                foreach (var item in param.cardCodes)
+                {
+                    urlParam += $"&CardCodes={item}";
+                }
             }
+
 
             if (param.id > 0)
             {
                 urlParam += $"&Id={param.id}";
             }
 
-
-            if (!string.IsNullOrEmpty(param.userId))
+            if (param.userIds != null)
             {
-                urlParam += $"&UserName={param.userId}";
+                foreach (var item in param.userIds)
+                {
+                    urlParam += $"&UserIds={item}";
+                }
             }
+
 
             if (!string.IsNullOrEmpty(param.description))
             {
                 urlParam += $"&Description={param.description}";
             }
 
-            if (param.status > 0)
+            if (param.statuList != null)
             {
-                urlParam += $"&Status={param.status}";
+                foreach (var item in param.statuList)
+                {
+                    urlParam += $"&Status={item}";
+                }
             }
+
 
             if (param.supportType > 0)
             {
@@ -112,7 +123,15 @@ namespace Ticket.Presentation.Controllers
                     statusColor = "danger";
                 }
 
-                retval += html.Replace("{StartDate}",repo.StartDate.ToString("dd.MM.yyyy HH:mm")).Replace("{EndDate}",repo.EndDate.ToString("dd.MM.yyyy HH:mm")).Replace("{Description}", repo.Description).Replace("{UserName}", repo.UserName).Replace("{Status}", statusName).Replace("{StatusColor}", statusColor).Replace("{id}", repo.Id.ToString()).Replace("{ticketId}", ticketId.ToString());
+
+                string attachment = string.Empty;
+
+                if (!string.IsNullOrEmpty(repo.Attachment))
+                {
+                    attachment = $"<div class=\"mt-2\"><b>Eklenti:</b><a href=\"{repo.Attachment}\">{repo.Attachment}</a></div>";
+                }
+
+                retval += html.Replace("[Attachment]", attachment).Replace("{StartDate}", repo.StartDate.ToString("dd.MM.yyyy HH:mm")).Replace("{EndDate}", repo.EndDate.ToString("dd.MM.yyyy HH:mm")).Replace("{Description}", repo.Description).Replace("{UserName}", repo.UserName).Replace("{Status}", statusName).Replace("{StatusColor}", statusColor).Replace("{id}", repo.Id.ToString()).Replace("{ticketId}", ticketId.ToString());
 
             }
 
@@ -146,14 +165,14 @@ namespace Ticket.Presentation.Controllers
                     var userMail = User.FindFirstValue(ClaimTypes.Name);
 
                     model.UserId = UserHelper.GetByEmailAsync(userMail, CookieHelper.GetToken(Request, "oaut.Cookie")).Id;
-                   
+
                 }
 
-                result=await HttpClientHelper.SendPostRequest(model, "Ticket/create-ticket", CookieHelper.GetToken(Request, "oaut.Cookie"));
+                result = await HttpClientHelper.SendPostRequest(model, "Ticket/create-ticket", CookieHelper.GetToken(Request, "oaut.Cookie"));
             }
             else
             {
-                result=await HttpClientHelper.SendPostRequest(model, "Ticket/update-ticket", CookieHelper.GetToken(Request, "oaut.Cookie"));
+                result = await HttpClientHelper.SendPostRequest(model, "Ticket/update-ticket", CookieHelper.GetToken(Request, "oaut.Cookie"));
             }
 
             return Ok(result);
@@ -174,7 +193,6 @@ namespace Ticket.Presentation.Controllers
                 model.Attachment = "/attachments/" + model.File.FileName;
             }
 
-
             if (model.Id == 0)
             {
                 if (model.AllDay)
@@ -191,6 +209,12 @@ namespace Ticket.Presentation.Controllers
                 await HttpClientHelper.SendPostRequest(model, "Ticket/update-subTicket", CookieHelper.GetToken(Request, "oaut.Cookie"));
 
             }
+
+            if (model.CloseTicket)
+            {
+                await HttpClientHelper.SendPostRequest(new TicketMailModel() { TicketId = model.TicketId }, "Ticket/send-ticket-mail", CookieHelper.GetToken(Request, "oaut.Cookie"));
+            }
+
 
             return Ok("Ok");
         }
@@ -215,13 +239,15 @@ namespace Ticket.Presentation.Controllers
             retval.UserId = model.UserId;
             retval.CreateDate = model.CreateDate;
             retval.Attachment = model.Attachment;
+            retval.EstimatedEndDate = model.EstimatedEndDate;
+            retval.TicketLabel = model.TicketLabel;
 
             return Ok(retval);
         }
 
         public async Task<IActionResult> GetSubTicket(int id)
         {
-            var retval=await HttpClientHelper.SendGetRequest<SubTicketModel>("Ticket/get-subTicketsById?id="+id, CookieHelper.GetToken(Request, "oaut.Cookie"));
+            var retval = await HttpClientHelper.SendGetRequest<SubTicketModel>("Ticket/get-subTicketsById?id=" + id, CookieHelper.GetToken(Request, "oaut.Cookie"));
 
             return Ok(retval);
         }

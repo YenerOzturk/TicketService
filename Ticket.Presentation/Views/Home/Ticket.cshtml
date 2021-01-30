@@ -1,8 +1,6 @@
 ﻿@{ ViewData["Title"] = "Privacy Policy"; }
 
-    <script>
-
-    var ticketNo = 1;
+<script>var ticketNo = 1;
 
     function GetSubTickets(ticketId) {
 
@@ -60,7 +58,7 @@
 
         var myForm = document.getElementsByName('frmSubTicket');
 
-        var fileupload = $('[name="File"]').get(0);
+        var fileupload = $('[name="frmSubTicket"] [name="File"]').get(0);
         var files = fileupload.files;
 
         var fd = new FormData(myForm[0]);
@@ -78,7 +76,9 @@
         $.ajax({
             type: 'POST',
             url: '../../Ticket/SaveSubTicket',
-            data: data,
+            data: fd,
+            processData: false,
+            contentType: false,
             success: function () {
 
                 $("[name='Id']").val(0);
@@ -115,7 +115,7 @@
 
         var myForm = document.getElementsByName('frmSubTicket');
 
-        var fileupload = $('[name="File"]').get(0);
+        var fileupload = $('[name="frmSubTicket"] [name="File"]').get(0);
         var files = fileupload.files;
 
         var fd = new FormData(myForm[0]);
@@ -133,9 +133,11 @@
         $.ajax({
             type: 'POST',
             url: '../../Ticket/CompleteSubTicket',
-            data: data,
+            data: fd,
+            processData: false,
+            contentType: false,
             success: function () {
-               
+
                 GetSubTickets(ticketId);
 
 
@@ -145,17 +147,27 @@
 
     function TicketSaveChanges(showSubTicketModal) {
 
-        var myForm = document.getElementsByName('frmProject');
+        var myForm = document.getElementsByName('frmTicket');
 
-        var fileupload = $('[name="File"]').get(0);
+        var fileupload = $('[name="frmTicket"] [name="File"]').get(0);
         var files = fileupload.files;
 
         var fd = new FormData(myForm[0]);
         fd.append('File', files[0]);
 
+        var estimatedDate = GetFormatedDate($("#EstimatedEndDate").datepicker('getDate'));
+
+        fd.append("EstimatedEndDate", estimatedDate);
+
+        var tag = GetTagifyValue();
+
+        fd.append("TicketLabel", tag);
+
         $.ajax({
             type: 'POST',
             url: '../../Ticket/SaveTicket',
+            processData: false,
+            contentType: false,
             data: fd,
             success: function (result) {
                 $('[name="frmTicket"]').trigger("reset");
@@ -179,6 +191,8 @@
 
                     $('#modalSubTicket').modal();
                 }
+
+                GenerateTagify();
             }
         });
 
@@ -188,11 +202,11 @@
 
         $("[name='Id']").val(0);
         $('[name="frmTicket"]').trigger("reset");
-        RenderDateTimePicker('StartDate', '')
-        RenderDateTimePicker('EndDate', '')
+        RenderDatePicker('EstimatedDate', '');
+        ClearTags();
     }
 
-    function FillForm(id,event) {
+    function FillForm(id, event) {
         event.stopPropagation();
         $.ajax({
             type: 'GET',
@@ -206,21 +220,19 @@
                 for (var key in data) {
 
                     var dom = $('[name="frmTicket"]').find(':input').filter(function () {
+
+                        if ($(this).attr('name') == undefined) return undefined;
+                        
                         return $(this).attr('name').toLowerCase().indexOf(key.toLowerCase()) > -1;
                     });
 
-                   
 
                     var a = dom[0];
-                    if (a !== undefined && a.name.toLowerCase().indexOf('startdate') > -1) {
+                    if (a !== undefined && a.name.toLowerCase().indexOf('estimateddate') > -1) {
 
-                        RenderDateTimePicker('StartDate', data[key])
+                        RenderDatePicker('EstimatedDate', data[key]);
 
-                    } else if (a !== undefined && a.name.toLowerCase().indexOf('enddate') > -1) {
-
-                        RenderDateTimePicker('EndDate', data[key])
-
-                    } else if(!dom.is(':checkbox')){
+                    } else if (!dom.is(':checkbox')) {
                         dom.val(data[key]);
                     }
 
@@ -229,8 +241,27 @@
                         dom.prop('checked', data[key]);
                     }
 
+                    if (key == "ticketLabel") {
+
+                        AddTag(data[key]);
+                    }
+
                     if (key == "attachment") {
-                        $('#mailAttc').attr("href", "../" + data[key]);                    }
+
+
+                        $("[name='frmTicket'] input[name=Attachment]").val(data[key]);
+
+
+                        if (data[key] != "" && data[key] != null) {
+
+                            $("[name='frmTicket'] #attLink").css("display", "block");
+                            $("[name='frmTicket'] #attLink").attr("href", "../" + data[key]);
+                            $("[name='frmTicket'] #attLink").text(data[key]);
+                        }
+                        else {
+                            $("[name='frmTicket'] #attLink").css("display", "none");
+                        }
+                    }
 
                 }
 
@@ -240,7 +271,7 @@
         });
 
 
-        }
+    }
 
     function FillSubTicketForm(id) {
 
@@ -255,11 +286,11 @@
 
                     var dom = $('[name="frmSubTicket"]').find(':input:not(.datetimepicker-input)').filter(function () {
 
-                        if (key.indexOf("date")<0)
+                        if (key.indexOf("date") < 0)
                             return $(this).attr('name').toLowerCase().indexOf(key.toLowerCase()) > -1;
                     });
 
-                  
+
                     var a = dom[0];
                     if (a !== undefined && a.name.toLowerCase().indexOf('startdate') > -1) {
 
@@ -276,6 +307,23 @@
                     if (dom.is(':checkbox')) {
                         dom.prop('checked', data[key]);
                     }
+
+                    if (key == "attachment") {
+
+
+                        $("[name='frmTicket'] input[name=Attachment]").val(data[key]);
+
+
+                        if (data[key] != "" && data[key] != null) {
+
+                            $("[name='frmTicket'] #attLink").css("display", "block");
+                            $("[name='frmTicket'] #attLink").attr("href", "../" + data[key]);
+                            $("[name='frmTicket'] #attLink").text(data[key]);
+                        }
+                        else {
+                            $("[name='frmTicket'] #attLink").css("display", "none");
+                        }
+                    }
                 }
 
                 $("#modalSubTicket").modal();
@@ -289,9 +337,7 @@
         $("[name='Description']").val('');
         RenderDateTimePicker('StartDate', '')
         RenderDateTimePicker('EndDate', '')
-     }
-
-    </script>
+    }</script>
 <!--begin::Todo-->
 <div class="d-flex flex-row">
     <!--begin::List-->
@@ -608,13 +654,15 @@
                             </div>
                             <div class="form-group">
                                 <label>Dosya Eki:</label>
-                                <input type="file" name="File" value="@Model.Attachment" />
-                                <input type="hidden" name="Attachment" value="@Model.Attachment" />
-                                @if (!string.IsNullOrEmpty(Model.Attachment))
-                                {
-                                 <a href="@Model.Attachment">@Model.Attachment</a>
-                                }
+
+                                <input type="file" name="File" />
+
+                                <input type="hidden" name="Attachment" />
+
+                                <a id="attLink" style="display:none">Eklenti</a>
+
                             </div>
+
                         </div>
 
                     </form>
@@ -695,6 +743,18 @@
                                 </div>
                             </div>
                             <div class="form-group row">
+                                <label class="col-lg-2 col-form-label">Tahmini Bitiş Tarihi</label>
+                                <div class="col-lg-10">
+                                    <input type="text" class="form-control form-control-solid" id="EstimatedEndDate" />
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <div class="col-lg-2">Etiket</div>
+                                <div class="col-lg-10 col-md-10 col-sm-10">
+                                    <input id="kt_tagify_5" class="form-control tagify" name='tags3' placeholder="Etiket Ekle"/>
+                                </div>
+                            </div>
+                            <div class="form-group row">
                                 <div class="col-lg-2"></div>
                                 <label class="checkbox">
                                     <input type="checkbox" name="Billing" value="true" />
@@ -702,7 +762,6 @@
                                     Faturalandırma
                                 </label>
                             </div>
-
                             <div class="form-group row">
                                 <label class="col-lg-2 col-form-label">Açıklama</label>
                                 <div class="col-lg-10">
@@ -711,15 +770,15 @@
                             </div>
                             <div class="form-group">
                                 <label>Dosya Eki:</label>
-                                <input type="file" name="File" value="@Model.Attachment" />
-                                <input type="hidden" name="Attachment" value="@Model.Attachment" />
-                                @if (!string.IsNullOrEmpty(Model.Attachment))
-                                {
-                                     <a href="@Model.Attachment">@Model.Attachment</a>
-                                }
+
+                                <input type="file" name="File" />
+
+                                <input type="hidden" name="Attachment" />
+
+                                <a id="attLink" style="display:none">Eklenti</a>
+
                             </div>
 
-                            <a href="" id="mailAttc">Mail Eklenti</a>
                         </div>
                     </form>
                 </div>
@@ -746,9 +805,10 @@ var table;
             buttonWidth: '100%'
         });
 
-        RenderDateTimePicker('StartDate', '')
-        RenderDateTimePicker('EndDate','')
-       
+        RenderDateTimePicker('StartDate', '');
+        RenderDateTimePicker('EndDate', '');
+        RenderDatePicker('EstimatedEndDate','');
+
         $('[name="CardCode"]').change(function () {
             callback();
         });
@@ -770,8 +830,8 @@ var table;
             FillDropDown("/JsonObject/GetProjectsForDropDown", "ProjectId",null, data);
         }
 
-      //  FillMultiDropDown("/JsonObject/GetUsersForDropDown", "#UserId");
-       // FillMultiDropDown("/JsonObject/GetCustomersForDropDown", "#CardCode");
+        FillMultiDropDown("/JsonObject/GetUsersForDropDown", "UserId");
+        FillMultiDropDown("/JsonObject/GetCustomersForDropDown", "CardCode");
 
         FillDropDown("/JsonObject/GetCustomersForDropDown", "CardCode");
 
@@ -792,7 +852,7 @@ var table;
             table.ajax.reload();
         });
 
-
+        GenerateTagify();
 
         table = $('#ticketList').DataTable({
             dom: 'frtip',
@@ -811,11 +871,12 @@ var table;
             "ajax": {
                 "url": "../../Ticket/GetTickets",
                 "dataType": "JSON",
+                "traditional": true,
                 "data": function (d) {
                     d.id = $('#Id').val();
-                    d.cardCode = $('#CardCode').val();
-                    d.userId = $('#UserId').val();
-                    d.status = $('#Status').val();
+                    d.cardCodes = $('#CardCode').val();
+                    d.userIds = $('#UserId').val();
+                    d.statuList = $('#Status').val();
                     d.description = $('#Description').val();
                     d.supportType = $('#SupportType').val();
                 }
