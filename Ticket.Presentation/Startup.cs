@@ -49,7 +49,7 @@ namespace Ticket.Presentation
 
             services.AddRazorPages();
 
-
+            services.AddHttpContextAccessor();
             
         }
 

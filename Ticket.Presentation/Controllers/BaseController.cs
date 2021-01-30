@@ -21,6 +21,8 @@ namespace Ticket.Presentation.Controllers
             ViewData["UserName"] = User.Claims.First(x => x.Type == ClaimTypes.GivenName).Value;
             ViewData["Email"] = User.Claims.First(x => x.Type == ClaimTypes.Name).Value;
             ViewData["UserFirstLetter"] = User.Claims.First(x => x.Type == ClaimTypes.GivenName).Value.Substring(0,1);
+
+
             base.OnActionExecuting(context);
         }
     }

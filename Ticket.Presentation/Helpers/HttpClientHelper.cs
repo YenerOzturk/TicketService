@@ -13,11 +13,11 @@ namespace Ticket.Presentation.Helpers
     {
         private static readonly string _baseUrl = "http://localhost:5009/";
 
-
         public static async Task<T> SendGetRequest<T>(string url, string token)
         {
             try
             {
+
                 HttpClient client = new HttpClient();
 
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
@@ -26,7 +26,6 @@ namespace Ticket.Presentation.Helpers
                 client.DefaultRequestHeaders.Accept.Add(
                     new MediaTypeWithQualityHeaderValue("application/json"));
                 client.DefaultRequestHeaders.Add("User-Agent", ".NET Foundation Repository Reporter");
-
 
                 var response = await client.GetStringAsync(_baseUrl + url);
 
