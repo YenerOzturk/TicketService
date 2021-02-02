@@ -335,7 +335,20 @@
         $("[name='Description']").val('');
         RenderDateTimePicker('StartDate', '')
         RenderDateTimePicker('EndDate', '')
-    }</script>
+    }
+
+
+    function ShowMoreDesc() {
+
+        $('#descriptionParag').html($('[name="frmTicket"] [name="Description"]').val());
+
+        $('#modalDescription').modal();
+
+    }
+
+
+
+    </script>
 <!--begin::Todo-->
 <div class="d-flex flex-row">
     <!--begin::List-->
@@ -455,9 +468,9 @@
                                                     <label class="col-md-12">Durum:</label>
                                                     <select multiple="multiple" class="form-control datatable-input" id="Status" data-col-index="6">
                                                         <option value="0">Hepsi</option>
-                                                        <option value="1">Açık</option>
+                                                        <option value="1" selected="selected">Açık</option>
                                                         <option value="2">Kapalı</option>
-                                                        <option value="4">Yeni Talep</option>
+                                                        <option value="4" selected="selected">Yeni Talep</option>
                                                     </select>
                                                 </div>
                                             </div>
@@ -480,14 +493,14 @@
                                         </form>
 
                                         <!--begin: Datatable-->
-                                        <table class="table table-bordered table-hover table-checkable" id="ticketList">
+                                        <table class="table table-bordered table-hover table-checkable" id="ticketList" style="width:100%">
                                             <thead>
                                                 <tr>
                                                     <th>Id</th>
                                                     <th>Cari</th>
                                                     <th>Kullanıcı</th>
                                                     <th>Proje</th>
-                                                    <th>Oluşturma Tarihi</th>
+                                                    <th>Açıklama</th>
                                                     <th>Destek Tipi</th>
                                                     <th>Durum</th>
                                                     <th>#</th>
@@ -582,7 +595,7 @@
 
 
 <div class="modal fade" id="modalSubTicket" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="staticBackdrop" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+    <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalLabel">Alt İş</h5>
@@ -765,6 +778,7 @@
                                 <label class="col-lg-2 col-form-label">Açıklama</label>
                                 <div class="col-lg-10">
                                     <textarea class="form-control" name="Description" rows="4" cols="50"></textarea>
+                                    <a onclick="ShowMoreDesc()" class="btn btn-link-primary font-weight-bold">Daha Fazla Göster...</a>
                                 </div>
                             </div>
                             <div class="form-group">
@@ -786,6 +800,27 @@
                 <button type="button" class="btn btn-light-primary font-weight-bold" data-dismiss="modal">Kapat</button>
                 <button type="button" onclick="TicketSaveChanges(false)" class="btn btn-primary font-weight-bold">Kaydet</button>
                 <button type="button" onclick="TicketSaveChanges(true)" class="btn btn-success font-weight-bold">Kaydet Ve SubTicket Aç</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalDescription" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="staticBackdrop" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Ticket Açıklama</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <i aria-hidden="true" class="ki ki-close"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="card card-custom">
+                    <p id="descriptionParag"></p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light-primary font-weight-bold" data-dismiss="modal">Kapat</button>
             </div>
         </div>
     </div>
@@ -860,12 +895,18 @@ var table;
             "info": false,
             "paging": false,
             "serverSide": true,
-            "ordering":false,
+            "ordering": false,
+            "responsive":true,
             buttons: [
                 'copy',
                 'excel',
                 'csv',
                 'pdf'
+            ],
+            columnDefs: [
+                { responsivePriority: 1, targets: 1 },
+                { responsivePriority: 2, targets: 3 },
+                { responsivePriority: 3, targets: 2 }
             ],
             "ajax": {
                 "url": "../../Ticket/GetTickets",
@@ -898,8 +939,11 @@ var table;
                     "autoWidth": true,
                 },
                 {
-                    "data": "createDateAsString",
+                    "data": "description",
                     "autoWidth": true,
+                    "render": function (data, type, row) {
+                        return data.substr(0, 300)+"...";
+                    }
                 },
                 {
                     "data": "supportType",
@@ -929,8 +973,9 @@ var table;
                 },
                 {
                     "data": "id",
+                    "autoWidth": true,
                     "render": function (data, type, row) {
-                        return '<a href="#" class="btn btn-icon btn-sm btn-outline-success" onclick="FillForm(' + data + ',event)"> <i class="flaticon-edit"></i></a>'
+                        return '<a class="btn btn-icon btn-sm btn-outline-success" onclick="FillForm(' + data + ',event)"> <i class="flaticon-edit"></i></a>'
                     }
                 }
 
@@ -948,7 +993,6 @@ var table;
 
         table.button(3).trigger();
     });
-
 
 
     });</script>

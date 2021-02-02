@@ -11,7 +11,7 @@ namespace Ticket.Presentation.Models
         public string SupportType { get; set; }
         public bool Billing { get; set; }
         public string Status { get; set; }
-        public string TicketDescription { get; set; }
+        public string Description { get; set; }
         public string ProductName { get; set; }
         public bool AllDay { get; set; }
         public string CreateDateAsString { get; set; }
