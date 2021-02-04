@@ -1,6 +1,8 @@
 ﻿@{ ViewData["Title"] = "Privacy Policy"; }
 
-<script>var ticketNo = 1;
+<script>
+
+    var ticketNo = 0;
 
     function GetSubTickets(ticketId) {
 
@@ -24,13 +26,6 @@
 
             }
         });
-    }
-
-    var _ticketId = 1;
-    function ShowMailModal(ticketId) {
-
-        $("#modalSendMail").modal();
-        _ticketId = ticketId;
     }
 
     function SendMail() {
@@ -201,6 +196,7 @@
         $("[name='frmTicket'] [name='Id']").val(0);
         $('[name="frmTicket"]').trigger("reset");
         RenderDatePicker('EstimatedDate', '');
+        $("[name='frmTicket'] [name='Billing']").prop('checked', false);
         ClearTags();
     }
 
@@ -220,7 +216,7 @@
                     var dom = $('[name="frmTicket"]').find(':input').filter(function () {
 
                         if ($(this).attr('name') == undefined) return undefined;
-                        
+
                         return $(this).attr('name').toLowerCase().indexOf(key.toLowerCase()) > -1;
                     });
 
@@ -333,10 +329,12 @@
     function ClearSubTicketForm() {
         $('[name="frmSubTicket"][name="Id"]').val(0);
         $("[name='Description']").val('');
-        RenderDateTimePicker('StartDate', '')
-        RenderDateTimePicker('EndDate', '')
+        RenderDateTimePicker('StartDate', '');
+        RenderDateTimePicker('EndDate', '');
+        $("[name='frmSubTicket'] [name='UserId']").val(@ViewData["UserId"]);
+        $("[name='frmSubTicket'] [name='AllDay']").prop('checked', false);
+        $("[name='frmSubTicket'] [name='CloseTicket']").prop('checked', false);
     }
-
 
     function ShowMoreDesc() {
 
@@ -344,11 +342,7 @@
 
         $('#modalDescription').modal();
 
-    }
-
-
-
-    </script>
+    }</script>
 <!--begin::Todo-->
 <div class="d-flex flex-row">
     <!--begin::List-->
@@ -598,7 +592,7 @@
     <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Alt İş</h5>
+                <h5 class="modal-title" id="exampleModalLabel">Alt İş <label id="lblTicketId"></label></h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <i aria-hidden="true" class="ki ki-close"></i>
                 </button>
@@ -988,7 +982,7 @@ var table;
 
     $('#ticketList tbody').on('click', 'tr', function () {
         var data = table.row(this).data();
-
+        $("#lblTicketId").text(" - Ticket Id : "+data.id)
         GetSubTickets(data.id)
     });
 

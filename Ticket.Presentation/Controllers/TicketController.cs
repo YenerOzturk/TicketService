@@ -193,21 +193,19 @@ namespace Ticket.Presentation.Controllers
                 model.Attachment = "/attachments/" + model.File.FileName;
             }
 
+            if (model.AllDay)
+            {
+                model.StartDate = new DateTime(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day, 9, 0, 0);
+                model.EndDate = new DateTime(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day, 18, 0, 0);
+            }
+
             if (model.Id == 0)
             {
-                if (model.AllDay)
-                {
-                    model.StartDate = new DateTime(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day, 9, 0, 0);
-                    model.EndDate = new DateTime(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day, 18, 0, 0);
-                }
-
-
                 await HttpClientHelper.SendPostRequest(model, "Ticket/create-subTicket", CookieHelper.GetToken(Request, "oaut.Cookie"));
             }
             else
             {
                 await HttpClientHelper.SendPostRequest(model, "Ticket/update-subTicket", CookieHelper.GetToken(Request, "oaut.Cookie"));
-
             }
 
             if (model.CloseTicket)
