@@ -1,4 +1,6 @@
-﻿@model Ticket.Presentation.ViewModels.ProjectViewModel
+﻿
+@{ Layout = "~/Views/Shared/_Layout2.cshtml"; }
+@model Ticket.Presentation.ViewModels.ProjectViewModel
 @{ ViewData["Title"] = "Project"; }
 
 
@@ -12,13 +14,13 @@
         var fd = new FormData(myForm[0]);
         fd.append('File', files[0]);
 
-         var startDate = GetFormatedDate($("#StartDate").datepicker('getDate'));
+        var startDate = GetFormatedDate($("#StartDate").datepicker('getDate'));
 
-         var endDate = GetFormatedDate($("#EndDate").datepicker('getDate'));
+        var endDate = GetFormatedDate($("#EndDate").datepicker('getDate'));
 
-         fd.append("StartDate",startDate);
+        fd.append("StartDate", startDate);
 
-         fd.append("EndDate", endDate);
+        fd.append("EndDate", endDate);
 
         $.ajax({
             type: 'POST',
@@ -27,7 +29,7 @@
             processData: false,
             contentType: false,
             success: function () {
-               
+
 
                 window.history.back();
             }
@@ -86,7 +88,7 @@
                 </div>
                 <div class="form-group">
                     <label>Başlangıç Tarihi:</label>
-                    <input type="text" class="form-control form-control-solid" placeholder="Başlangıç Tarihi" id="StartDate"  />
+                    <input type="text" class="form-control form-control-solid" placeholder="Başlangıç Tarihi" id="StartDate" />
                 </div>
                 <div class="form-group">
                     <label>Bitiş Tarihi:</label>
@@ -98,7 +100,7 @@
                 </div>
                 <div class="form-group">
                     <label>Proje Yetkilileri:</label>
-                    <input type="text" class="form-control form-control-solid" placeholder="Yetkili Kişiler" name="ProjectOwners" value="@Model.ManHour" />
+                    <input type="text" class="form-control form-control-solid" placeholder="Yetkili Kişiler" name="ProjectOwners" value="@Model.ProjectOwners" />
                 </div>
                 <div class="form-group">
                     <label>Durum:</label>
@@ -121,8 +123,7 @@
                     <input type="hidden" name="Attachment" value="@Model.Attachment" />
                     @if (!string.IsNullOrEmpty(Model.Attachment))
                     {
-                        <a href="@Model.Attachment">@Model.Attachment</a>
-                    }
+        <a href="@Model.Attachment">@Model.Attachment</a>}
 
                 </div>
             </div>

@@ -15,5 +15,6 @@ namespace Ticket.Presentation.Models
         public string ProductName { get; set; }
         public bool AllDay { get; set; }
         public string CreateDateAsString { get; set; }
+        public string Subject { get; set; }
     }
 }

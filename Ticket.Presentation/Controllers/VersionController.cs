@@ -44,6 +44,7 @@ namespace Ticket.Presentation.Controllers
                 retval.ProductId = model.ProductId;
                 retval.StartDate = model.StartDate.ToString("yyyy-MM-dd");
                 retval.Attachment = model.Attachment;
+                retval.Note = model.Note;
             }
             else
             {

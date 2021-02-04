@@ -1,9 +1,7 @@
 ﻿
-<script>
+<script>function DeleteUser(id) {
 
-    function DeleteUser(id) {
-
-        var callback=function() {
+        var callback = function () {
 
             var data = [{ name: "Id", value: id }];
 
@@ -27,8 +25,7 @@
 
         ShowMessageBox("Emin misiniz?", "Kayıt Silinecektir", "question", callback)
 
-}
-    </script>
+    }</script>
 <div class="card card-custom">
     <div class="card-header flex-wrap border-0 pt-6 pb-0">
         <div class="card-title">
@@ -55,15 +52,15 @@
             <div class="row mb-6">
                 <div class="col-lg-3 mb-lg-0 mb-6">
                     <label>Cari Adı:</label>
-                    <input type="text" class="form-control datatable-input" id="CardName"  data-col-index="0" />
+                    <input type="text" class="form-control datatable-input" id="CardName" data-col-index="0" />
                 </div>
                 <div class="col-lg-3 mb-lg-0 mb-6">
                     <label>Ad/Soyad:</label>
-                    <input type="text" class="form-control datatable-input" id="NameSurname"  data-col-index="0" />
+                    <input type="text" class="form-control datatable-input" id="NameSurname" data-col-index="0" />
                 </div>
                 <div class="col-lg-3 mb-lg-0 mb-6">
                     <label>Email:</label>
-                    <input type="text" class="form-control datatable-input" id="Email"  data-col-index="0" />
+                    <input type="text" class="form-control datatable-input" id="Email" data-col-index="0" />
                 </div>
             </div>
             <div class="row mt-8">
@@ -160,6 +157,15 @@
                 }
             ]
         });
+
+
+        if ('@ViewData["UserRole"].ToString()' != "Admin")
+        {
+            var column = table.column(4);
+
+            column.visible(false);
+        }
+
     })</script>
 
 

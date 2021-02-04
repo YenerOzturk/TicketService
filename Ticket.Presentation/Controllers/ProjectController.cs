@@ -82,6 +82,7 @@ namespace Ticket.Presentation.Controllers
             retval.ManHour = result.ManHour;
             retval.ProductId = result.ProductId;
             retval.ProjectName = result.ProjectName;
+            retval.ProjectOwners = result.ProjectOwners;
 
             return Ok(retval);
         }

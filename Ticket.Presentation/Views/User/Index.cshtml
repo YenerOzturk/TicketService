@@ -77,7 +77,7 @@
     $(document).ready(function () {
 
 
-        function callback() {
+        var callback= function() {
 
             if (@Model.Id!= 0) {
                 $("[name=CardCode]").val('@Model.CardCode');
@@ -85,7 +85,7 @@
 
         }
 
-        FillDropDown("/JsonObject/GetCustomersForDropDown", "CardCode", null, callback);
+        FillDropDown("/JsonObject/GetCustomersForDropDown", "CardCode", '@Model.CardCode');
 
 
         $("#menuUser").removeClass("menu-item-open menu-item-here").addClass("menu-item-open menu-item-here");

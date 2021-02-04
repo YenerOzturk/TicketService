@@ -12,13 +12,13 @@
         var fd = new FormData(myForm[0]);
         fd.append('File', files[0]);
 
-    var startDate = GetFormatedDate($("#StartDate").datepicker('getDate'));
+        var startDate = GetFormatedDate($("#StartDate").datepicker('getDate'));
 
-    var endDate = GetFormatedDate($("#EndDate").datepicker('getDate'));
+        var endDate = GetFormatedDate($("#EndDate").datepicker('getDate'));
 
-         fd.append("StartDate", startDate );
+        fd.append("StartDate", startDate);
 
-         fd.append( "EndDate",endDate );
+        fd.append("EndDate", endDate);
 
         $.ajax({
             type: 'POST',
@@ -28,7 +28,7 @@
             data: fd,
             success: function () {
 
-               
+
 
                 Swal.fire({
                     icon: 'success',
@@ -59,7 +59,7 @@
                 </div>
                 <div class="form-group">
                     <label>Başlangıç Tarihi:</label>
-                    <input type="text" class="form-control form-control-solid" id="StartDate"  />
+                    <input type="text" class="form-control form-control-solid" id="StartDate" />
                 </div>
                 <div class="form-group">
                     <label>Bitiş Tarihi:</label>
@@ -80,6 +80,10 @@
                 <div class="form-group">
                     <label>Fiyat:</label>
                     <input type="number" class="form-control form-control-solid" name="Price" value="@Model.Price" />
+                </div>
+                <div class="form-group">
+                    <label>Not:</label>
+                    <input type="text" class="form-control form-control-solid" name="Note" value="@Model.Note" />
                 </div>
                 <div class="form-group">
                     <label>Dosya Eki:</label>
@@ -107,7 +111,7 @@
         RenderDatePicker('StartDate', '@Model.StartDate');
         RenderDatePicker('EndDate', '@Model.EndDate');
 
-        function callback() {
+        var callback=function() {
 
             if (@Model.Id!= 0) {
                 $("[name=CardCode]").val('@Model.CardCode');
@@ -117,8 +121,8 @@
 
         }
 
-        FillDropDown("/JsonObject/GetCustomersForDropDown", "CardCode", null, callback);
-        FillDropDown("/JsonObject/GetProductsForDropDown", "ProductId", null, callback);
+        FillDropDown("/JsonObject/GetCustomersForDropDown", "CardCode",'', null, callback);
+        FillDropDown("/JsonObject/GetProductsForDropDown", "ProductId",'',null, callback);
 
         $("#menuUser").removeClass("menu-item-open menu-item-here");
         $("#menuTicket").removeClass("menu-item-open menu-item-here");

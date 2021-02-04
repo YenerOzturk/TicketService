@@ -216,6 +216,8 @@ function ClearTags() {
 
 function AddTag(tags) {
 
+    ClearTags();
+
     if (tags == null) return;
 
     var tagList = tags.split(',');

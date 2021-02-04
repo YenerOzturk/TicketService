@@ -104,6 +104,7 @@ namespace Ticket.Presentation.Controllers
                 retval.Id = model.Id;
                 retval.ProjectName = model.ProjectName;
                 retval.Billing = model.Billing;
+                retval.ProjectOwners = model.ProjectOwners;
 
             }
             else
@@ -119,7 +120,6 @@ namespace Ticket.Presentation.Controllers
         {
             return View();
         }
-
         
     }
 }

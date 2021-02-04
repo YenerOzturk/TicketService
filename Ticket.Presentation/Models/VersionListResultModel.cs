@@ -13,5 +13,6 @@ namespace Ticket.Presentation.Models
 		public decimal Price { get; set; }
 		public string StartDateAsString { get; set; }
 		public string EndDateAsString { get; set; }
+		public string Note { get; set; }
 	}
 }

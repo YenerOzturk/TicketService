@@ -16,6 +16,7 @@ namespace Ticket.Presentation.Models
         public int ProductId { get; set; }
         public string Description { get; set; }
         public string ProjectName { get; set; }
+        public string ProjectOwners { get; set; }
         public bool Billing { get; set; }
         [JsonIgnore]
         public IFormFile File { get; set; }

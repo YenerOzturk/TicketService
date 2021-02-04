@@ -14,6 +14,7 @@ namespace Ticket.Presentation.ViewModels
 		public int Installment { get; set; }
 		public decimal Price { get; set; }
         public string Attachment { get; set; }
+		public string Note { get; set; }
 		public IFormFile File { get; set; }
 	}
 }

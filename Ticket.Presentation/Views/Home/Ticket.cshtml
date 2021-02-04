@@ -198,7 +198,7 @@
 
     function ClearForm() {
 
-        $("[name='Id']").val(0);
+        $("[name='frmTicket'] [name='Id']").val(0);
         $('[name="frmTicket"]').trigger("reset");
         RenderDatePicker('EstimatedDate', '');
         ClearTags();
@@ -331,7 +331,7 @@
     }
 
     function ClearSubTicketForm() {
-        $("[name='Id']").val(0);
+        $('[name="frmSubTicket"][name="Id"]').val(0);
         $("[name='Description']").val('');
         RenderDateTimePicker('StartDate', '')
         RenderDateTimePicker('EndDate', '')
@@ -500,7 +500,7 @@
                                                     <th>Cari</th>
                                                     <th>Kullanıcı</th>
                                                     <th>Proje</th>
-                                                    <th>Açıklama</th>
+                                                    <th>Konu</th>
                                                     <th>Destek Tipi</th>
                                                     <th>Durum</th>
                                                     <th>#</th>
@@ -610,7 +610,7 @@
 
                         <div class="card-body">
                             <div class="form-group mb-8">
-                                <input type="hidden" name="id" />
+                                <input type="hidden" name="Id" />
                             </div>
                             <div class="form-group row">
                                 <label class="col-lg-2 col-form-label">Açıklama</label>
@@ -763,7 +763,7 @@
                             <div class="form-group row">
                                 <div class="col-lg-2">Etiket</div>
                                 <div class="col-lg-10 col-md-10 col-sm-10">
-                                    <input id="kt_tagify_5" class="form-control tagify" name='tags3' placeholder="Etiket Ekle"/>
+                                    <input id="kt_tagify_5" class="form-control tagify" name='tags3' placeholder="Etiket Ekle" />
                                 </div>
                             </div>
                             <div class="form-group row">
@@ -773,6 +773,12 @@
                                     <span></span>
                                     Faturalandırma
                                 </label>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-lg-2 col-form-label">Konu</label>
+                                <div class="col-lg-10">
+                                    <input class="form-control" name="Subject" />
+                                </div>
                             </div>
                             <div class="form-group row">
                                 <label class="col-lg-2 col-form-label">Açıklama</label>
@@ -939,11 +945,8 @@ var table;
                     "autoWidth": true,
                 },
                 {
-                    "data": "description",
+                    "data": "subject",
                     "autoWidth": true,
-                    "render": function (data, type, row) {
-                        return data.substr(0, 300)+"...";
-                    }
                 },
                 {
                     "data": "supportType",
