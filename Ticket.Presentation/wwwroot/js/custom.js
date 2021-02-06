@@ -1,6 +1,5 @@
 ﻿
-
-function FillDropDown(url, name,selectedValue=null,data = null, callback = null) {
+function FillDropDown(url, name, selectedValue = null, data = null, callback = null) {
 
     $.ajax({
         type: 'GET',
@@ -13,8 +12,12 @@ function FillDropDown(url, name,selectedValue=null,data = null, callback = null)
                 $('[name="' + name + '"]').append($('<option>').text(value.desc).attr('value', value.val));
             });
 
-            if (selectedValue!=null)
-            $('[name="' + name + '"]').val(selectedValue);
+            if (selectedValue != null && selectedValue != "0" && selectedValue != "") {
+                $('[name="' + name + '"]').val(selectedValue);
+            }
+            else {
+                $('[name="' + name + '"]').selectedIndex = 0;
+            }
 
         }
     }).done(function () {
@@ -32,11 +35,31 @@ function FillMultiDropDown(url, id, selectedValue = null, data = null, callback 
         success: function (data) {
 
             $('#' + id).empty();
+
+
+            var selectedValues = [];
+            if (selectedValue != null) {
+                selectedValues = selectedValue.split(',');
+            }
+
+
             $.each(data, function (index, value) {
-                $('#' + id).append($('<option>').text(value.desc).attr('value', value.val));
+
+                var isExists = selectedValues.includes(value.val.toString());
+
+                if (isExists) {
+
+                    $('#' + id).append($('<option>').text(value.desc).attr('value', value.val).attr('selected', true));
+                }
+                else {
+
+                    $('#' + id).append($('<option>').text(value.desc).attr('value', value.val));
+                }
+
             });
 
-            $('#'+id).multiselect({
+
+            $('#' + id).multiselect({
                 enableFiltering: true,
                 includeSelectAllOption: true,
                 enableCaseInsensitiveFiltering: true,
@@ -51,7 +74,6 @@ function FillMultiDropDown(url, id, selectedValue = null, data = null, callback 
             callback();
     });;
 }
-
 
 function FillDropDownWithPrfx(url, name, data = null, callback = null) {
 
@@ -77,7 +99,6 @@ function FillDropDownWithPrfx(url, name, data = null, callback = null) {
     });;
 }
 
-
 function RenderDateTimePicker(selector, date) {
 
     var picker = $('#' + selector).datetimepicker({
@@ -90,7 +111,7 @@ function RenderDateTimePicker(selector, date) {
 
     $('[name="' + selector + '"]').val(date);
 
-    if (date==='') {
+    if (date === '') {
         picker.datetimepicker('setDate', new Date());
         $('[name="' + selector + '"]').val(moment(new Date()).format());
 
@@ -99,8 +120,6 @@ function RenderDateTimePicker(selector, date) {
         $('[name="' + selector + '"]').val(moment(new Date(date)).format());
     }
 }
-
-
 
 function RenderDatePicker(selector, date) {
 
@@ -119,8 +138,7 @@ function RenderDatePicker(selector, date) {
     }
 }
 
-
-function ShowMessageBox(title,text,icon,callback) {
+function ShowMessageBox(title, text, icon, callback) {
 
     Swal.fire({
         title: title,
@@ -141,12 +159,9 @@ function ShowMessageBox(title,text,icon,callback) {
 
 }
 
-
-
-
 function GetFormatedDate(date) {
 
-   var formatted = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate() + " " + date.getHours()+ ":" + date.getMinutes() + ":" + date.getSeconds();
+    var formatted = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate() + " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
 
     return formatted;
 }
@@ -165,7 +180,7 @@ function GenerateTagify() {
                 delimiters: ", ", // add new tags when a comma or a space character is entered
                 maxTags: 6,
                 keepInvalidTags: true, // do not remove invalid tags (but keep them marked as invalid)
-                whitelist:data,
+                whitelist: data,
                 transformTag: transformTag,
                 dropdown: {
                     enabled: 3,
@@ -175,7 +190,7 @@ function GenerateTagify() {
         }
     });
 
-    
+
 
     function transformTag(tagData) {
         var states = [
@@ -202,12 +217,11 @@ function GetTagifyValue() {
 
     for (var i = 0; i < tagify.value.length; i++) {
 
-        retval += tagify.value[i].value+",";
+        retval += tagify.value[i].value + ",";
     }
 
     return retval.slice(0, -1);
 }
-
 
 function ClearTags() {
 
@@ -224,6 +238,6 @@ function AddTag(tags) {
 
     for (var i = 0; i < tagList.length; i++) {
 
-        tagify.addTags(tagList[i],false,true);
+        tagify.addTags(tagList[i], false, true);
     }
 }

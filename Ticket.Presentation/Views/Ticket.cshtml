@@ -227,22 +227,18 @@
 
                     if (key == "attachment") {
 
+
                         $("[name='frmTicket'] input[name=Attachment]").val(data[key]);
 
-                        var attchs = data[key].split(';');
 
-                        $("[name='frmTicket'] #divLinks").empty();
-                        for (var atc = 0; atc < attchs.length; atc++)
-                        {
-                            if (attchs[atc] != "") {
+                        if (data[key] != "" && data[key] != null) {
 
-                                $("[name='frmTicket'] #divLinks").css("display", "block");
-                                $("[name='frmTicket'] #divLinks").append($('<a>').text(attchs[atc]).attr('href', "../" + attchs[atc]));
-                                $("[name='frmTicket'] #divLinks").append($('<br/>'));
-                            }
-                            else {
-                                $("[name='frmTicket'] #divLinks").css("display", "none");
-                            }
+                            $("[name='frmTicket'] #attLink").css("display", "block");
+                            $("[name='frmTicket'] #attLink").attr("href", "../" + data[key]);
+                            $("[name='frmTicket'] #attLink").text(data[key]);
+                        }
+                        else {
+                            $("[name='frmTicket'] #attLink").css("display", "none");
                         }
                     }
 
@@ -337,23 +333,6 @@
         $("[name='frmSubTicket'] [name='UserId']").val(@ViewData["UserId"]);
         $("[name='frmSubTicket'] [name='AllDay']").prop('checked', false);
         $("[name='frmSubTicket'] [name='CloseTicket']").prop('checked', false);
-    }
-
-    function CancelTicket(id, event) {
-        event.stopPropagation();
-
-        var data = [];
-
-        data.push({ name: "ticketId", value: id });
-
-        $.ajax({
-            type: 'POST',
-            url: '../../Ticket/CancelTicket',
-            data: data,
-            success: function () {
-                table.ajax.reload();
-            }
-        });
     }
 
 </script>
@@ -787,8 +766,8 @@
 
                                 <input type="hidden" name="Attachment" />
 
-                                <div id="divLinks" style="display:none">
-                                </div>
+                                <a id="attLink" style="display:none">Eklenti</a>
+
                             </div>
 
                         </div>
@@ -828,7 +807,7 @@ var table;
             callback();
         });
 
-        var callback = function () {
+        function callback() {
 
             var data = [];
 
@@ -838,18 +817,16 @@ var table;
             data.push({ name: "cardCode", value: cardCode });
             data.push({ name: "productId", value: productId });
 
-            FillDropDown("/JsonObject/GetProjectsForDropDown", "ProjectId", null, data);
-        };
-
-        var callback2 = function () {
-
-            FillDropDown("/JsonObject/GetProductsForDropDown", "ProductId", null, null, callback);
-        };
-
-        FillDropDown("/JsonObject/GetCustomersForDropDown", "CardCode", null, null, callback2);
+            FillDropDown("/JsonObject/GetProjectsForDropDown", "ProjectId",null, data);
+        }
 
         FillMultiDropDown("/JsonObject/GetUsersForDropDown", "UserId");
         FillMultiDropDown("/JsonObject/GetCustomersForDropDown", "CardCode");
+
+        FillDropDown("/JsonObject/GetCustomersForDropDown", "CardCode");
+
+        FillDropDown("/JsonObject/GetProductsForDropDown", "ProductId",null,null, callback);
+
 
         FillDropDown("/JsonObject/GetUsersForDropDown", "UserId","@ViewData["UserId"]");
 
@@ -952,16 +929,7 @@ var table;
                     "data": "id",
                     "autoWidth": true,
                     "render": function (data, type, row) {
-
-                        return '<div class="dropdown dropdown-inline mr-4">'+
-                        '<button type = "button" class="btn btn-light-primary btn-icon btn-sm" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">' +
-                            '<i class="ki ki-bold-more-hor"></i>' +
-                            '</button>' +
-                            '<div class="dropdown-menu">' +
-                            '<a class="dropdown-item" onclick="FillForm(' + data + ',event)">Düzenle</a>' +
-                            '<a class="dropdown-item" onclick="CancelTicket(' + data + ',event)">İptal Et</a>' +
-                            '</div>' +
-                            ' </div>';
+                        return '<a class="btn btn-icon btn-sm btn-outline-success" onclick="FillForm(' + data + ',event)"> <i class="flaticon-edit"></i></a>'
                     }
                 }
 
@@ -969,18 +937,10 @@ var table;
         });
 
 
-        $('#ticketList tbody').on('click', 'td', function () {
-
-            if ($(this).index() < 7) {
-                var data = table.row(this).data();
-                $("#lblTicketId").text(" - Ticket Id : " + data.id);
-                GetSubTickets(data.id);
-            }
-
-        });
-
     $('#ticketList tbody').on('click', 'tr', function () {
-       
+        var data = table.row(this).data();
+        $("#lblTicketId").text(" - Ticket Id : "+data.id)
+        GetSubTickets(data.id)
     });
 
     $('#btnPdf').on('click', function () {

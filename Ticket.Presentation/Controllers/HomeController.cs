@@ -84,37 +84,7 @@ namespace Ticket.Presentation.Controllers
         }
 
 
-        public async Task<IActionResult> PrivacyAsync(int? id)
-        {
-            ProjectViewModel retval = new ProjectViewModel();
-
-            ProjectModel model = new ProjectModel();
-
-            if (id != null)
-            {
-                model = await HttpClientHelper.SendGetRequest<ProjectModel>("Project/get-Project-by-Id?id=" + id, CookieHelper.GetToken(Request, "oaut.Cookie"));
-
-                retval.Attachment = model.Attachment;
-                retval.CardCode = model.CardCode;
-                retval.Description = model.Description;
-                retval.EndDate = model.EndDate.ToString("yyyy-MM-ddTHH:mm:00");
-                retval.StartDate = model.StartDate.ToString("yyyy-MM-ddTHH:mm:00");
-                retval.ManHour = model.ManHour;
-                retval.ProductId = model.ProductId;
-                retval.Id = model.Id;
-                retval.ProjectName = model.ProjectName;
-                retval.Billing = model.Billing;
-                retval.ProjectOwners = model.ProjectOwners;
-
-            }
-            else
-            {
-                retval.EndDate = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:00");
-                retval.StartDate = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:00");
-            }
-
-            return View(retval);
-        }
+        
 
         public IActionResult Ticket()
         {

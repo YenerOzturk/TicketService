@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Http;
@@ -13,7 +14,7 @@ namespace Ticket.Presentation.Models
         public DateTime EndDate { get; set; }
         public int ManHour { get; set; }
         public string Attachment { get; set; }
-        public int ProductId { get; set; }
+        public List<int> ProductIds { get; set; }
         public string Description { get; set; }
         public string ProjectName { get; set; }
         public string ProjectOwners { get; set; }

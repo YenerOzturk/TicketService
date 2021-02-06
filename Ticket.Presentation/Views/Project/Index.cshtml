@@ -1,5 +1,4 @@
 ﻿
-@{ Layout = "~/Views/Shared/_Layout2.cshtml"; }
 @model Ticket.Presentation.ViewModels.ProjectViewModel
 @{ ViewData["Title"] = "Project"; }
 
@@ -25,36 +24,17 @@
         $.ajax({
             type: 'POST',
             url: '../../Project/SaveProject',
+            traditional: true,
             data: fd,
             processData: false,
             contentType: false,
             success: function () {
 
-
                 window.history.back();
             }
         });
 
-    }
-
-
-
-    $(document).ready(function () {
-
-
-
-        FillDropDown("/JsonObject/GetCustomersForDropDown", "CardCode", null);
-        FillDropDown("/JsonObject/GetProductsForDropDown", "ProductId", null);
-
-        $("#menuUser").removeClass("menu-item-open menu-item-here");
-        $("#menuTicket").removeClass("menu-item-open menu-item-here");
-        $("#menuCalendar").removeClass("menu-item-open menu-item-here");
-        $("#menuProject").removeClass("menu-item-open menu-item-here").addClass("menu-item-open menu-item-here");
-        $("#menuVersion").removeClass("menu-item-open menu-item-here");
-        $("#menuCustomer").removeClass("menu-item-open menu-item-here");
-        $("#menuReport").removeClass("menu-item-open menu-item-here");
-
-    })</script>
+    }</script>
 
 
 <div class="col-lg-12">
@@ -72,18 +52,12 @@
                 </div>
                 <div class="form-group">
                     <label>Ürün:</label>
-                    <select class="form-control" name="ProductId">
-                        <option value="1">SmartWM</option>
-                        <option value="2">SAP</option>
-                        <option value="3">SCM</option>
+                    <select class="form-control" name="ProductIds" id="ProductId" multiple>
                     </select>
                 </div>
                 <div class="form-group">
                     <label>Müşteri:</label>
                     <select class="form-control" name="CardCode">
-                        <option value="1">Oto İsmail</option>
-                        <option value="2">Vepa</option>
-                        <option value="3">Sanmar</option>
                     </select>
                 </div>
                 <div class="form-group">
@@ -139,9 +113,16 @@
 <script>
     $(document).ready(function () {
 
+        $("#menuUser").removeClass("menu-item-open menu-item-here");
+        $("#menuTicket").removeClass("menu-item-open menu-item-here");
+        $("#menuCalendar").removeClass("menu-item-open menu-item-here");
+        $("#menuProject").removeClass("menu-item-open menu-item-here").addClass("menu-item-open menu-item-here");
+        $("#menuVersion").removeClass("menu-item-open menu-item-here");
+        $("#menuCustomer").removeClass("menu-item-open menu-item-here");
+        $("#menuReport").removeClass("menu-item-open menu-item-here");
 
         FillDropDown("/JsonObject/GetCustomersForDropDown","CardCode", '@Model.CardCode');
-        FillDropDown("/JsonObject/GetProductsForDropDown",'ProductId' ,'@Model.ProductId');
+        FillMultiDropDown("/JsonObject/GetProductsForDropDown",'ProductId' ,'@Model.ProductIds');
         RenderDatePicker('StartDate', '@Model.StartDate');
         RenderDatePicker('EndDate', '@Model.EndDate');
 

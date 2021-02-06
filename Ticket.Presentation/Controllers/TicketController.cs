@@ -94,9 +94,7 @@ namespace Ticket.Presentation.Controllers
 
         public async Task<IActionResult> GetSubTickets(int ticketId)
         {
-
             var repositories = await HttpClientHelper.SendGetRequest<IEnumerable<SubTicketViewModel>>($"Ticket/get-subTicketsByTicketId?TicketId={ticketId}", CookieHelper.GetToken(Request, "oaut.Cookie"));
-
 
             string html = SubTicketHtml.Html;
             string retval = string.Empty;
@@ -271,6 +269,17 @@ namespace Ticket.Presentation.Controllers
         public async Task<IActionResult> SendMail(TicketMailModel model)
         {
             await HttpClientHelper.SendPostRequest(model, "Ticket/send-ticket-mail", CookieHelper.GetToken(Request, "oaut.Cookie"));
+
+            return Ok("Ok");
+        }
+
+        public async Task<IActionResult> CancelTicket(int ticketId)
+        {
+            UpdateTicketStatusModel model = new UpdateTicketStatusModel();
+            model.Id = ticketId;
+            model.Status = 5;
+
+            await HttpClientHelper.SendPostRequest(model, "Ticket/update-ticket-status", CookieHelper.GetToken(Request, "oaut.Cookie"));
 
             return Ok("Ok");
         }
