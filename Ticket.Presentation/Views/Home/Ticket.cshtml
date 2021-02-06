@@ -1,5 +1,14 @@
 ﻿@{ ViewData["Title"] = "Privacy Policy"; }
 
+<style>
+    .not-allowed {
+        cursor: not-allowed;
+    }
+    .grabbing {
+        cursor: -webkit-grabbing;
+        cursor: grabbing;
+    }
+</style>
 <script>
 
     var ticketNo = 0;
@@ -900,6 +909,17 @@ var table;
                     d.description = $('#Description').val();
                     d.supportType = $('#SupportType').val();
                 }
+            },
+            "createdRow": function (row, data, index) {
+                $('td', row).eq(0).addClass('grabbing');
+                $('td', row).eq(1).addClass('grabbing');
+                $('td', row).eq(2).addClass('grabbing');
+                $('td', row).eq(3).addClass('grabbing');
+                $('td', row).eq(4).addClass('grabbing');
+                $('td', row).eq(5).addClass('grabbing');
+                $('td', row).eq(6).addClass('grabbing');
+                $('td', row).eq(7).addClass('not-allowed');
+                
             },
             "columns": [
                 {
