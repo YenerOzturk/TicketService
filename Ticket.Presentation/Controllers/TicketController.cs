@@ -195,23 +195,25 @@ namespace Ticket.Presentation.Controllers
 
             if (model.AllDay)
             {
-                model.StartDate = new DateTime(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day, 9, 0, 0);
-                model.EndDate = new DateTime(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day, 18, 0, 0);
+                model.StartDate = new DateTime(model.StartDate.Year, model.StartDate.Month, model.StartDate.Day, 9, 0, 0);
+                model.EndDate = new DateTime(model.EndDate.Year, model.EndDate.Month, model.EndDate.Day, 18, 0, 0);
             }
 
             if (model.Id == 0)
             {
                 await HttpClientHelper.SendPostRequest(model, "Ticket/create-subTicket", CookieHelper.GetToken(Request, "oaut.Cookie"));
+
+                if (model.CloseTicket)
+                {
+                    await HttpClientHelper.SendPostRequest(new TicketMailModel() { TicketId = model.TicketId }, "Ticket/send-ticket-mail", CookieHelper.GetToken(Request, "oaut.Cookie"));
+                }
             }
             else
             {
                 await HttpClientHelper.SendPostRequest(model, "Ticket/update-subTicket", CookieHelper.GetToken(Request, "oaut.Cookie"));
             }
 
-            if (model.CloseTicket)
-            {
-                await HttpClientHelper.SendPostRequest(new TicketMailModel() { TicketId = model.TicketId }, "Ticket/send-ticket-mail", CookieHelper.GetToken(Request, "oaut.Cookie"));
-            }
+            
 
 
             return Ok("Ok");
@@ -239,6 +241,7 @@ namespace Ticket.Presentation.Controllers
             retval.Attachment = model.Attachment;
             retval.EstimatedEndDate = model.EstimatedEndDate;
             retval.TicketLabel = model.TicketLabel;
+            retval.Subject = model.Subject;
 
             return Ok(retval);
         }

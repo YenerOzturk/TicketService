@@ -17,5 +17,6 @@ namespace Ticket.Presentation.ViewModels
         public string Attachment { get; set; }
         public DateTime EstimatedEndDate { get; set; }
         public string TicketLabel { get; set; }
+        public string Subject { get; set; }
     }
 }

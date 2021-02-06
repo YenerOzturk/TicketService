@@ -6,8 +6,6 @@
 
     function GetSubTickets(ticketId) {
 
-        ticketNo = ticketId;
-
         $.ajax({
             type: 'GET',
             url: '../../Ticket/GetSubTickets',
@@ -28,28 +26,15 @@
         });
     }
 
-    function SendMail() {
-
-        var data = [{ name: "TicketId", value: ticketNo }];
-
-        $.ajax({
-            type: 'GET',
-            url: '../../Ticket/SendMail',
-            data: data,
-            success: function (data) {
-
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Mail Gönderildi',
-                    showConfirmButton: true,
-                    timer: 1500
-                });
-
-            }
-        });
-    }
-
     function SubTicketAdd() {
+
+        var ticketId = ticketNo
+
+        var rowIndex = table.rows({ selected: true })[0];
+
+        if (rowIndex.length > 0) {
+            ticketId = table.row(rowIndex).data().id;
+        }
 
         var myForm = document.getElementsByName('frmSubTicket');
 
@@ -59,7 +44,7 @@
         var fd = new FormData(myForm[0]);
         fd.append('File', files[0]);
 
-        fd.append('TicketId', ticketNo);
+        fd.append('TicketId', ticketId);
 
         var startDate = GetFormatedDate($("#StartDate").data("datetimepicker").getDate());
 
@@ -78,7 +63,7 @@
 
                 $("[name='Id']").val(0);
                 $("[name='Description']").val('');
-                GetSubTickets(ticketNo);
+                GetSubTickets(ticketId);
             }
         });
     }
@@ -184,6 +169,8 @@
                         ticketNo = result;
                     }
 
+                    $("#lblTicketId").text(" - Ticket Id : " + ticketNo)
+
                     $('#modalSubTicket').modal();
                 }
             }
@@ -197,6 +184,7 @@
         $('[name="frmTicket"]').trigger("reset");
         RenderDatePicker('EstimatedDate', '');
         $("[name='frmTicket'] [name='Billing']").prop('checked', false);
+        $("[name='frmTicket'] [name='UserId']").val(@ViewData["UserId"]);
         ClearTags();
     }
 
@@ -207,9 +195,6 @@
             url: '../../Ticket/GetTicketById',
             data: { id: id },
             success: function (data) {
-
-
-                ticketNo = data["id"];
 
                 for (var key in data) {
 
@@ -278,28 +263,42 @@
 
                 for (var key in data) {
 
-                    var dom = $('[name="frmSubTicket"]').find(':input:not(.datetimepicker-input)').filter(function () {
+                    if (key.toLowerCase() === "startdate") {
 
-                        if (key.indexOf("date") < 0)
-                            return $(this).attr('name').toLowerCase().indexOf(key.toLowerCase()) > -1;
+                        RenderDateTimePicker('StartDate', data[key]);
+
+                        continue;
+
+                    } else if (key.toLowerCase() === "enddate") {
+
+                        RenderDateTimePicker('EndDate', data[key]);
+
+                        continue;
+
+                    }
+
+
+                    var dom = $('[name="frmSubTicket"]').find(':input').filter(function () {
+
+                        if ($(this).attr('name') == undefined) return undefined;
+
+                        return $(this).attr('name').toLowerCase().indexOf(key.toLowerCase()) > -1;
                     });
 
 
-                    var a = dom[0];
-                    if (a !== undefined && a.name.toLowerCase().indexOf('startdate') > -1) {
-
-                        RenderDateTimePicker('StartDate', data[key])
-
-                    } else if (a !== undefined && a.name.toLowerCase().indexOf('enddate') > -1) {
-
-                        RenderDateTimePicker('EndDate', data[key])
-
-                    } else if (!dom.is(':checkbox')) {
-                        dom.val(data[key]);
+                    if (dom[0] === undefined) {
+                        dom = $('[name="frmSubTicket"] [name="'+key+'"]');
                     }
 
-                    if (dom.is(':checkbox')) {
-                        dom.prop('checked', data[key]);
+                    if (dom[0] === undefined) continue;
+
+                    var domObject = dom[0];
+                    if (!$(domObject).is(':checkbox')) {
+                        $(domObject).val(data[key]);
+                    }
+
+                    if ($(domObject).is(':checkbox')) {
+                        $(domObject).prop('checked', data[key]);
                     }
 
                     if (key == "attachment") {
@@ -336,13 +335,7 @@
         $("[name='frmSubTicket'] [name='CloseTicket']").prop('checked', false);
     }
 
-    function ShowMoreDesc() {
-
-        $('#descriptionParag').html($('[name="frmTicket"] [name="Description"]').val());
-
-        $('#modalDescription').modal();
-
-    }</script>
+</script>
 <!--begin::Todo-->
 <div class="d-flex flex-row">
     <!--begin::List-->
@@ -367,22 +360,9 @@
                                         <div class="card-toolbar">
                                             <!--begin::Dropdown-->
                                             <div class="dropdown dropdown-inline mr-2">
-                                                <button type="button" class="btn btn-light-primary font-weight-bolder dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                    <span class="svg-icon svg-icon-md">
-                                                        <!--begin::Svg Icon | path:assets/media/svg/icons/Design/PenAndRuller.svg-->
-                                                        <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
-                                                            <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-                                                                <rect x="0" y="0" width="24" height="24" />
-                                                                <path d="M3,16 L5,16 C5.55228475,16 6,15.5522847 6,15 C6,14.4477153 5.55228475,14 5,14 L3,14 L3,12 L5,12 C5.55228475,12 6,11.5522847 6,11 C6,10.4477153 5.55228475,10 5,10 L3,10 L3,8 L5,8 C5.55228475,8 6,7.55228475 6,7 C6,6.44771525 5.55228475,6 5,6 L3,6 L3,4 C3,3.44771525 3.44771525,3 4,3 L10,3 C10.5522847,3 11,3.44771525 11,4 L11,19 C11,19.5522847 10.5522847,20 10,20 L4,20 C3.44771525,20 3,19.5522847 3,19 L3,16 Z" fill="#000000" opacity="0.3" />
-                                                                <path d="M16,3 L19,3 C20.1045695,3 21,3.8954305 21,5 L21,15.2485298 C21,15.7329761 20.8241635,16.200956 20.5051534,16.565539 L17.8762883,19.5699562 C17.6944473,19.7777745 17.378566,19.7988332 17.1707477,19.6169922 C17.1540423,19.602375 17.1383289,19.5866616 17.1237117,19.5699562 L14.4948466,16.565539 C14.1758365,16.200956 14,15.7329761 14,15.2485298 L14,5 C14,3.8954305 14.8954305,3 16,3 Z" fill="#000000" />
-                                                            </g>
-                                                        </svg>
-                                                        <!--end::Svg Icon-->
-                                                    </span>Dışa Aktar
-                                                </button>
-                                                <!--begin::Dropdown Menu-->
-                                                <div class="dropdown-menu dropdown-menu-sm dropdown-menu-right">
-                                                    <!--begin::Navigation-->
+
+                                                <!--<div class="dropdown-menu dropdown-menu-sm dropdown-menu-right">
+
                                                     <ul class="navi flex-column navi-hover py-2">
                                                         <li class="navi-header font-weight-bolder text-uppercase font-size-sm text-primary pb-2">Choose an option:</li>
                                                         <li class="navi-item">
@@ -402,8 +382,8 @@
                                                             </a>
                                                         </li>
                                                     </ul>
-                                                    <!--end::Navigation-->
-                                                </div>
+
+                                                </div>-->
                                                 <!--end::Dropdown Menu-->
                                             </div>
                                             <!--end::Dropdown-->
@@ -461,7 +441,6 @@
                                                 <div class="col-lg-3 mb-lg-0 mb-6">
                                                     <label class="col-md-12">Durum:</label>
                                                     <select multiple="multiple" class="form-control datatable-input" id="Status" data-col-index="6">
-                                                        <option value="0">Hepsi</option>
                                                         <option value="1" selected="selected">Açık</option>
                                                         <option value="2">Kapalı</option>
                                                         <option value="4" selected="selected">Yeni Talep</option>
@@ -609,7 +588,7 @@
                             <div class="form-group row">
                                 <label class="col-lg-2 col-form-label">Açıklama</label>
                                 <div class="col-lg-10">
-                                    <textarea class="form-control" name="Description" rows="4" cols="50"></textarea>
+                                    <textarea class="form-control" name="Description" data-provide="markdown" rows="10"></textarea>
                                 </div>
                             </div>
                             <div class="form-group row">
@@ -777,8 +756,7 @@
                             <div class="form-group row">
                                 <label class="col-lg-2 col-form-label">Açıklama</label>
                                 <div class="col-lg-10">
-                                    <textarea class="form-control" name="Description" rows="4" cols="50"></textarea>
-                                    <a onclick="ShowMoreDesc()" class="btn btn-link-primary font-weight-bold">Daha Fazla Göster...</a>
+                                    <textarea class="form-control" name="Description" data-provide="markdown" rows="10"></textarea>
                                 </div>
                             </div>
                             <div class="form-group">
@@ -804,28 +782,6 @@
         </div>
     </div>
 </div>
-
-<div class="modal fade" id="modalDescription" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="staticBackdrop" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Ticket Açıklama</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <i aria-hidden="true" class="ki ki-close"></i>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div class="card card-custom">
-                    <p id="descriptionParag"></p>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-light-primary font-weight-bold" data-dismiss="modal">Kapat</button>
-            </div>
-        </div>
-    </div>
-</div>
-
 
 
 <script>
@@ -889,7 +845,8 @@ var table;
         GenerateTagify();
 
         table = $('#ticketList').DataTable({
-            dom: 'frtip',
+            dom: 'Bfrtip', //Excel export için frtip olması gerekiyor.
+            "select": true,
             "processing": true,
             "searching": false,
             "info": false,
