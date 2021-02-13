@@ -3,6 +3,7 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Ticket.Presentation.Helpers;
 using Ticket.Presentation.Models;
@@ -59,8 +60,18 @@ namespace Ticket.Presentation.Controllers
                 var login = HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal, new AuthenticationProperties()
                 {
                     IsPersistent = true,
-                    ExpiresUtc= DateTime.Now.AddYears(1)
+                    ExpiresUtc = DateTime.Now.AddYears(1)
                 });
+
+                var cookieOptions = new CookieOptions
+                {
+                    Secure = true,
+                    HttpOnly = true,
+                    SameSite = SameSiteMode.None,
+                    Expires = DateTime.Now.AddMonths(1)
+                };
+
+                Response.Cookies.Append("RefreshToken", Guid.NewGuid().ToString(), cookieOptions);
 
                 return Ok("Ok");
             }

@@ -129,7 +129,7 @@ function RenderDatePicker(selector, date) {
         format: 'dd.mm.yyyy',
     });
 
-    $('#' + selector).on('changeDate', function (e) { $('[name="' + selector + '"]').val(moment(e.date).format()); })
+    $('[name="' + selector + '"]').val(moment(date).format());
 
     if (date === '') {
         picker.datepicker('setDate', new Date());

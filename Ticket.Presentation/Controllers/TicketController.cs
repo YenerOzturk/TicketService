@@ -42,7 +42,7 @@ namespace Ticket.Presentation.Controllers
 
             if (param.id > 0)
             {
-                urlParam += $"&Id={param.id}";
+                urlParam += $"&TicketId={param.id}";
             }
 
             if (param.userIds != null)
@@ -54,9 +54,9 @@ namespace Ticket.Presentation.Controllers
             }
 
 
-            if (!string.IsNullOrEmpty(param.description))
+            if (!string.IsNullOrEmpty(param.subject))
             {
-                urlParam += $"&Description={param.description}";
+                urlParam += $"&Subject={param.subject}";
             }
 
             if (param.statuList != null)

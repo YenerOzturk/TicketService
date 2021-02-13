@@ -9,7 +9,7 @@ namespace Ticket.Presentation.Models
                                             "<span class=\"label label-light-{StatusColor} font-weight-bold label-inline\">{Status}</span>" +
                                             "</div>" +
                                         "</div>" +
-                                        "<div class=\"flex-grow-1 mt-1 mr-2\" data-toggle=\"view\"  style=\"max-width: 400px;\">" +
+                                        "<div class=\"flex-grow-1 mt-1 mr-2\" data-toggle=\"view\"  style=\"max-width: 370px;\">" +
                                             "<div class=\"mr-2\">{Description}</div>" +
                                             "<div class=\"mt-2\">" +
                                                 "<b>Yetkili:</b> {UserName}" +

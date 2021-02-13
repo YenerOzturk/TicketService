@@ -31,6 +31,9 @@
                     $('#subTickets').append(data);
                 }
 
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                Swal.fire("Hata!", "Hata Oluştu.", "error");
             }
         });
     }
@@ -43,6 +46,23 @@
 
         if (rowIndex.length > 0) {
             ticketId = table.row(rowIndex).data().id;
+        }
+
+        if (ticketId == 0) {
+
+            Swal.fire("Hata!", "Önce Bir Ticket Seçiniz.", "error");
+            return;
+        }
+
+        if ($("#StartDate").data("datetimepicker").getDate() > $("#EndDate").data("datetimepicker").getDate()) {
+
+            Swal.fire("Hata!", "Başlangıç Tarihi Bitiş Tarihinden Büyük Olmalıdır.", "error");
+            return;
+        }
+
+        if ($("[name='frmSubTicket'] [name='Description']").val() === '') {
+            Swal.fire("Hata!", "Açıklama Alanı Boş Geçilemez.", "error");
+            return;
         }
 
         var myForm = document.getElementsByName('frmSubTicket');
@@ -73,6 +93,9 @@
                 $("[name='Id']").val(0);
                 $("[name='Description']").val('');
                 GetSubTickets(ticketId);
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                Swal.fire("Hata!", "Hata Oluştu.", "error");
             }
         });
     }
@@ -93,6 +116,9 @@
                 data: data,
                 success: function () {
                     GetSubTickets(ticketId);
+                },
+                error: function (xhr, ajaxOptions, thrownError) {
+                    Swal.fire("Hata!", "Hata Oluştu.", "error");
                 }
             });
         }
@@ -130,11 +156,25 @@
                 GetSubTickets(ticketId);
 
 
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                Swal.fire("Hata!", "Hata Oluştu.", "error");
             }
         });
     }
 
     function TicketSaveChanges(showSubTicketModal) {
+
+        if ($("[name='frmTicket'] [name='Description']").val() === '') {
+            Swal.fire("Hata!", "Açıklama Alanı Boş Geçilemez.", "error");
+            return;
+        }
+
+        if ($("[name='frmTicket'] [name='Subject']").val() === '') {
+            Swal.fire("Hata!", "Konu Alanı Boş Geçilemez.", "error");
+            return;
+        }
+
 
         var myForm = document.getElementsByName('frmTicket');
 
@@ -182,6 +222,9 @@
 
                     $('#modalSubTicket').modal();
                 }
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                Swal.fire("Hata!", "Hata Oluştu.", "error");
             }
         });
 
@@ -191,7 +234,7 @@
 
         $("[name='frmTicket'] [name='Id']").val(0);
         $('[name="frmTicket"]').trigger("reset");
-        RenderDatePicker('EstimatedDate', '');
+        RenderDatePicker('EstimatedEndDate', new Date());
         $("[name='frmTicket'] [name='Billing']").prop('checked', false);
         $("[name='frmTicket'] [name='UserId']").val(@ViewData["UserId"]);
         ClearTags();
@@ -238,19 +281,21 @@
 
                         $("[name='frmTicket'] input[name=Attachment]").val(data[key]);
 
-                        var attchs = data[key].split(';');
+                        if (data[key] !== null) {
 
-                        $("[name='frmTicket'] #divLinks").empty();
-                        for (var atc = 0; atc < attchs.length; atc++)
-                        {
-                            if (attchs[atc] != "") {
+                            var attchs = data[key].split(';');
 
-                                $("[name='frmTicket'] #divLinks").css("display", "block");
-                                $("[name='frmTicket'] #divLinks").append($('<a>').text(attchs[atc]).attr('href', "../" + attchs[atc]));
-                                $("[name='frmTicket'] #divLinks").append($('<br/>'));
-                            }
-                            else {
-                                $("[name='frmTicket'] #divLinks").css("display", "none");
+                            $("[name='frmTicket'] #divLinks").empty();
+                            for (var atc = 0; atc < attchs.length; atc++) {
+                                if (attchs[atc] != "") {
+
+                                    $("[name='frmTicket'] #divLinks").css("display", "block");
+                                    $("[name='frmTicket'] #divLinks").append($('<a>').text(attchs[atc]).attr('href', "../" + attchs[atc]));
+                                    $("[name='frmTicket'] #divLinks").append($('<br/>'));
+                                }
+                                else {
+                                    $("[name='frmTicket'] #divLinks").css("display", "none");
+                                }
                             }
                         }
                     }
@@ -361,6 +406,9 @@
             data: data,
             success: function () {
                 table.ajax.reload();
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                Swal.fire("Hata!", "Hata Oluştu.", "error");
             }
         });
     }
@@ -459,8 +507,8 @@
                                                     </select>
                                                 </div>
                                                 <div class="col-lg-3 mb-lg-0 mb-6">
-                                                    <label>Açıklama:</label>
-                                                    <input type="text" class="form-control datatable-input" id="Description" data-col-index="0" />
+                                                    <label>Konu:</label>
+                                                    <input type="text" class="form-control datatable-input" id="Subject" data-col-index="0" />
                                                 </div>
                                                 <div class="col-lg-3 mb-lg-0 mb-6">
                                                     <label class="col-md-12">Kullanıcı:</label>
@@ -827,7 +875,7 @@ var table;
 
         RenderDateTimePicker('StartDate', '');
         RenderDateTimePicker('EndDate', '');
-        RenderDatePicker('EstimatedEndDate','');
+       // RenderDatePicker('EstimatedEndDate','');
 
         $('[name="CardCode"]').change(function () {
             callback();
@@ -906,7 +954,7 @@ var table;
                     d.cardCodes = $('#CardCode').val();
                     d.userIds = $('#UserId').val();
                     d.statuList = $('#Status').val();
-                    d.description = $('#Description').val();
+                    d.subject = $('#Subject').val();
                     d.supportType = $('#SupportType').val();
                 }
             },
@@ -991,9 +1039,13 @@ var table;
 
         $('#ticketList tbody').on('click', 'td', function () {
 
+            var data = table.row(this).data();
+            ticketNo = data.id;
+
+            $("#lblTicketId").text(" - Ticket Id : " + data.id);
+
             if ($(this).index() < 7) {
-                var data = table.row(this).data();
-                $("#lblTicketId").text(" - Ticket Id : " + data.id);
+                
                 GetSubTickets(data.id);
             }
 
