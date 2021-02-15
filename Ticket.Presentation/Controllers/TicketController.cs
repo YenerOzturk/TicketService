@@ -129,7 +129,7 @@ namespace Ticket.Presentation.Controllers
                     attachment = $"<div class=\"mt-2\"><b>Eklenti:</b><a href=\"{repo.Attachment}\">{repo.Attachment}</a></div>";
                 }
 
-                retval += html.Replace("[Attachment]", attachment).Replace("{StartDate}", repo.StartDate.ToString("dd.MM.yyyy HH:mm")).Replace("{EndDate}", repo.EndDate.ToString("dd.MM.yyyy HH:mm")).Replace("{Description}", repo.Description).Replace("{UserName}", repo.UserName).Replace("{Status}", statusName).Replace("{StatusColor}", statusColor).Replace("{id}", repo.Id.ToString()).Replace("{ticketId}", ticketId.ToString());
+                retval += html.Replace("[Attachment]", attachment).Replace("{StartDate}", repo.StartDate.ToString("dd.MM.yyyy HH:mm")).Replace("{EndDate}", repo.EndDate.ToString("dd.MM.yyyy HH:mm")).Replace("{Description}", repo.Id + "-" +repo.Description).Replace("{UserName}", repo.UserName).Replace("{Status}", statusName).Replace("{StatusColor}", statusColor).Replace("{id}", repo.Id.ToString()).Replace("{ticketId}", ticketId.ToString());
 
             }
 
@@ -157,6 +157,7 @@ namespace Ticket.Presentation.Controllers
             {
                 model.Status = 1;
                 model.CreateDate = DateTime.Now;
+                model.CreatedBy = model.UserId;
 
                 if (model.UserId == 0)
                 {

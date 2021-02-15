@@ -17,6 +17,7 @@ namespace Ticket.Presentation.Models
         public string TicketDescription { get; set; }
         public string ProductId { get; set; }
         public string Subject { get; set; }
+        public int CreatedBy { get; set; }
 
         public string Description { get; set; }
         public string Attachment { get; set; }

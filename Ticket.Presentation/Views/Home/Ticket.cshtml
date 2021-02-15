@@ -176,6 +176,13 @@
         }
 
 
+        var a = $("[name='frmTicket'] [name='UserId']").val();
+        if ($("[name='frmTicket'] [name='UserId']").val() === null) {
+            Swal.fire("Hata!", "Kullanıcı Alanı Boş Geçilemez.", "error");
+            return;
+        }
+
+
         var myForm = document.getElementsByName('frmTicket');
 
         var fileupload = $('[name="frmTicket"] [name="File"]').get(0);
@@ -259,9 +266,9 @@
 
 
                     var a = dom[0];
-                    if (a !== undefined && a.name.toLowerCase().indexOf('estimateddate') > -1) {
+                    if (key=='estimatedEndDate') {
 
-                        RenderDatePicker('EstimatedDate', data[key]);
+                        RenderDatePicker('EstimatedEndDate', data[key]);
 
                     } else if (!dom.is(':checkbox')) {
                         dom.val(data[key]);
@@ -384,7 +391,7 @@
     }
 
     function ClearSubTicketForm() {
-        $('[name="frmSubTicket"][name="Id"]').val(0);
+        $('[name="frmSubTicket"] [name="Id"]').val(0);
         $("[name='Description']").val('');
         RenderDateTimePicker('StartDate', '');
         RenderDateTimePicker('EndDate', '');
@@ -550,6 +557,7 @@
                                                     <th>Id</th>
                                                     <th>Cari</th>
                                                     <th>Kullanıcı</th>
+                                                    <th>Oluşturma Tarihi</th>
                                                     <th>Proje</th>
                                                     <th>Konu</th>
                                                     <th>Destek Tipi</th>
@@ -979,7 +987,11 @@ var table;
                     "autoWidth": true,
                 },
                 {
-                    "data": "nameSurname",
+                    "data": "createdUser",
+                    "autoWidth": true,
+                },
+                {
+                    "data": "createDateAsString",
                     "autoWidth": true,
                 },
                 {
