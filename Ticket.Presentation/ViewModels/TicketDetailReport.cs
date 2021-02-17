@@ -7,7 +7,7 @@ namespace Ticket.Presentation.ViewModels
         public string SubTicketDetail { get; set; }
         public string CreatedBy { get; set; }
         public string WorkingBy { get; set; }
-        public int WorkDay { get; set; }
+        public decimal WorkDay { get; set; }
         public int WorkHour { get; set; }
         public string StartDate { get; set; }
     }

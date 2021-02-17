@@ -140,6 +140,10 @@ namespace Ticket.Presentation.Controllers
                 url += $"?CardCode={param.CardCode}";
             }
 
+            url += $"&StartDate={param.StartDate}";
+            url += $"&EndDate={param.EndDate}";
+
+
 
             var repositories = await HttpClientHelper.SendGetRequest<IEnumerable<TicketDetailReport>>(url, CookieHelper.GetToken(Request, "oaut.Cookie"));
 
@@ -259,6 +263,50 @@ namespace Ticket.Presentation.Controllers
                 recordsFiltered = 0,
                 error = string.Empty,
                 data = repositories.ToList()
+            });
+        }
+
+
+
+        public IActionResult TicketInDevelopmentReport()
+        {
+            return View();
+        }
+
+        public async Task<IActionResult> GetTicketInDevelopmentReport(JqueryDataTableParam param)
+        {
+            string url = $"Report/ticketInDevelopment";
+
+            var repositories = await HttpClientHelper.SendGetRequest<IEnumerable<TicketInDevelopmentReport>>(url, CookieHelper.GetToken(Request, "oaut.Cookie"));
+
+
+            var result = new List<TicketInDevelopmentReportViewModel>();
+            foreach (var item in repositories)
+            {
+
+
+                int length = item.Description.Length<150?item.Description.Length:150;
+
+                result.Add(new TicketInDevelopmentReportViewModel()
+                {
+
+                    Description=item.Description.Substring(0,length)+"...",
+                    EndDate=item.EndDate.ToString("dd.MM.yyyy HH:mm"),
+                    StartDate=item.StartDate.ToString("dd.MM.yyyy HH:mm"),
+                    Id=item.Id,
+                    NameSurname=item.NameSurname,
+                    TicketId=item.TicketId
+                });
+            }
+
+
+            return Json(new
+            {
+                draw = param.draw,
+                recordsTotal = result.Count(),
+                recordsFiltered = 0,
+                error = string.Empty,
+                data = result.ToList()
             });
         }
     }

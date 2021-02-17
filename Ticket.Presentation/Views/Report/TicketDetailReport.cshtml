@@ -13,6 +13,8 @@
 
         data.push({ name: "EndDate", value: endDate });
 
+        data.push({ name: "CardCode", value: $('#CardCode').val() });
+
         $.ajax({
             type: 'GET',
             url: '../Report/GetTicketDetailReport',
@@ -115,7 +117,9 @@
                 </div>
                 <div class="col-lg-3 mb-lg-0 mb-6">
                     <label>Cari Kodu:</label>
-                    <input type="text" class="form-control datatable-input" name="CardCode" data-col-index="0" />
+                    <select class="form-control datatable-input" id="CardCode" data-col-index="0">
+                        <option value="0">Hepsi</option>
+                    </select>
                 </div>
             </div>
             <div class="row mt-8">
@@ -153,6 +157,8 @@
 
         RenderDatePicker("StartDate", new Date(new Date().setMonth(new Date().getMonth() - 1)));
         RenderDatePicker("EndDate", new Date());
+
+        FillMultiDropDown("/JsonObject/GetCustomersForDropDown", "CardCode");
 
         RenderTable();
 
