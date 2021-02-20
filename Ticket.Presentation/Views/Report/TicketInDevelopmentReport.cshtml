@@ -41,12 +41,19 @@
 
 
         table = $('#report').DataTable({
+            dom: 'Bfrtip',
             "processing": true,
             "searching": false,
             "info": false,
             "paging": false,
             "serverSide": true,
             "ordering": false,
+            buttons: [
+                'copy',
+                'excel',
+                'csv',
+                'pdf'
+            ],
             "ajax": {
                 "url": "../../Report/GetTicketInDevelopmentReport",
                 "dataType": "JSON",

@@ -255,6 +255,9 @@
             data: { id: id },
             success: function (data) {
 
+               
+
+
                 for (var key in data) {
 
                     var dom = $('[name="frmTicket"]').find(':input').filter(function () {
@@ -272,6 +275,19 @@
 
                     } else if (!dom.is(':checkbox')) {
                         dom.val(data[key]);
+                    }
+
+                    if (key == 'projectId') {
+
+                        var params = [];
+
+                        var cardCode = data["cardCode"];
+                        var productId = data["productId"];
+
+                        params.push({ name: "cardCode", value: cardCode });
+                        params.push({ name: "productId", value: productId });
+
+                        FillDropDown("/JsonObject/GetProjectsForDropDown", "ProjectId", data["projectId"] ,params);
                     }
 
 
@@ -297,7 +313,7 @@
                                 if (attchs[atc] != "") {
 
                                     $("[name='frmTicket'] #divLinks").css("display", "block");
-                                    $("[name='frmTicket'] #divLinks").append($('<a>').text(attchs[atc]).attr('href', "../" + attchs[atc]));
+                                    $("[name='frmTicket'] #divLinks").append($('<a>').text(attchs[atc]).attr('href', "../" + attchs[atc]).attr('target','_blank'));
                                     $("[name='frmTicket'] #divLinks").append($('<br/>'));
                                 }
                                 else {

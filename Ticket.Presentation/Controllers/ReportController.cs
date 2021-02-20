@@ -12,7 +12,7 @@ using Ticket.Presentation.ViewModels;
 
 namespace Ticket.Presentation.Controllers
 {
-    [Authorize(Roles ="Admin")]
+   
     public class ReportController : BaseController
     {
         // GET: /<controller>/
@@ -21,6 +21,7 @@ namespace Ticket.Presentation.Controllers
             return View();
         }
 
+        [Authorize(Roles = "Admin")]
         public IActionResult TicketDetailReport()
         {
             return View();
@@ -49,16 +50,19 @@ namespace Ticket.Presentation.Controllers
             });
         }
 
+        [Authorize(Roles = "Admin")]
         public IActionResult ServiceReport()
         {
             return View();
         }
 
+        [Authorize(Roles = "Admin")]
         public IActionResult BillingReport()
         {
             return View();
         }
 
+        [Authorize(Roles = "Admin")]
         public IActionResult BillingReportWithProject()
         {
             return View();
@@ -140,8 +144,8 @@ namespace Ticket.Presentation.Controllers
                 url += $"?CardCode={param.CardCode}";
             }
 
-            url += $"&StartDate={param.StartDate}";
-            url += $"&EndDate={param.EndDate}";
+            url += $"&StartDate={param.StartDate.ToString("yyyy-MM-dd")}";
+            url += $"&EndDate={param.EndDate.ToString("yyyy-MM-dd")}";
 
 
 
@@ -266,8 +270,7 @@ namespace Ticket.Presentation.Controllers
             });
         }
 
-
-
+        [Authorize(Roles = "Admin")]
         public IActionResult TicketInDevelopmentReport()
         {
             return View();
