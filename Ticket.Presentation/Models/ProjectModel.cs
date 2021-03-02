@@ -13,6 +13,7 @@ namespace Ticket.Presentation.Models
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
         public int ManHour { get; set; }
+        public int Status { get; set; }
         public string Attachment { get; set; }
         public List<int> ProductIds { get; set; }
         public string Description { get; set; }

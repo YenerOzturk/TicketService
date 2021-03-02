@@ -176,6 +176,12 @@
         }
 
 
+        if ($("[name='frmTicket'] [name='ProjectId']").val() === 0) {
+            Swal.fire("Hata!", "Proje Seçmeniz Gerekmektedir.", "error");
+            return;
+        }
+
+
         var a = $("[name='frmTicket'] [name='UserId']").val();
         if ($("[name='frmTicket'] [name='UserId']").val() === null) {
             Swal.fire("Hata!", "Kullanıcı Alanı Boş Geçilemez.", "error");
@@ -255,7 +261,13 @@
             data: { id: id },
             success: function (data) {
 
-               
+                if (data.status == 2) {
+                    Swal.fire("Bilgilendirme!", "Projesi Kapanmış Ticketlarda İşlem Yapılamaz.", "info");
+                    return;
+                }
+                else {
+                    data = data.data;
+                }
 
 
                 for (var key in data) {
@@ -846,7 +858,7 @@
                                 <label class="checkbox">
                                     <input type="checkbox" name="Billing" value="true" />
                                     <span></span>
-                                    Faturalandırma
+                                    Faturalandırılmayacak
                                 </label>
                             </div>
                             <div class="form-group row">

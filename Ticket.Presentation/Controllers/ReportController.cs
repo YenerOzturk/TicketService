@@ -136,18 +136,31 @@ namespace Ticket.Presentation.Controllers
         public async Task<IActionResult> GetTicketDetailReport(ServiceReportParams param)
         {
 
-            string url = $"Report/get-ticketDetailReport";
+            string url = $"Report/get-ticketDetailReport?";
 
 
             if (!string.IsNullOrEmpty(param.CardCode))
             {
-                url += $"?CardCode={param.CardCode}";
+                url += $"CardCode={param.CardCode}";
             }
+            
 
             url += $"&StartDate={param.StartDate.ToString("yyyy-MM-dd")}";
             url += $"&EndDate={param.EndDate.ToString("yyyy-MM-dd")}";
 
+            if (param.Billing != null)
+            {
+                foreach (var item in param.Billing)
+                {
+                    url += $"&Billing={item}";
+                }
+            }
 
+
+            if (!string.IsNullOrEmpty(param.ProjectId))
+            {
+                url += $"&ProjectId={Convert.ToInt32(param.ProjectId)}";
+            }
 
             var repositories = await HttpClientHelper.SendGetRequest<IEnumerable<TicketDetailReport>>(url, CookieHelper.GetToken(Request, "oaut.Cookie"));
 
@@ -178,6 +191,17 @@ namespace Ticket.Presentation.Controllers
 
 
             var repositories = await HttpClientHelper.SendGetRequest<IEnumerable<EmployeePerformanceReport>>(url, CookieHelper.GetToken(Request, "oaut.Cookie"));
+
+
+            foreach (var item in repositories)
+            {
+                int lengthSubTicket = item.SubTicketDescription.Length < 60 ? item.SubTicketDescription.Length : 60;
+                int lengthTicket = item.TicketDescription.Length < 60 ? item.TicketDescription.Length : 60;
+
+                item.SubTicketDescription = item.SubTicketDescription?.Substring(0, lengthSubTicket)+" ...";
+                item.TicketDescription = item.TicketDescription?.Substring(0, lengthTicket)+" ...";
+            }
+
 
             return Json(repositories.ToList());
         }

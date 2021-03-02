@@ -16,7 +16,7 @@ namespace Ticket.Presentation.Controllers
     {
         public async Task<IActionResult> GetProjectsForDropDown(string cardCode, string productId)
         {
-            string url = $"Project/get-Projects?CardCode={cardCode}&ProductId={productId}";
+            string url = $"Project/get-Projects?CardCode={cardCode}&ProductId={productId}&Status=1";
 
             var repositories = await HttpClientHelper.SendGetRequest<IEnumerable<ProjectModel>>(url, CookieHelper.GetToken(Request, "oaut.Cookie"));
 

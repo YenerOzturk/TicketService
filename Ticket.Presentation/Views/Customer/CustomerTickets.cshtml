@@ -1,0 +1,217 @@
+﻿
+<div class="card card-custom">
+    <div class="card-header flex-wrap border-0 pt-6 pb-0">
+        <div class="card-title">
+            <h3 class="card-label">
+                Ticket Listesi
+            </h3>
+        </div>
+    </div>
+    <div class="card-body">
+
+        <form class="kt-form kt-form--fit mb-15">
+            <input type="hidden" id="CardCode" value="@ViewBag.CardCode"/>
+            <div class="row mb-6">
+                <div class="col-lg-3 mb-lg-0 mb-6">
+                    <label>Ticket Id:</label>
+                    <input type="text" class="form-control datatable-input" id="Id" data-col-index="0" />
+                </div>
+                <div class="col-lg-3 mb-lg-0 mb-6">
+                    <label>Destek Tipi:</label>
+                    <select class="form-control datatable-input" id="SupportType" data-col-index="6">
+                        <option value="-1">Hepsi</option>
+                        <option value="1">Yerinde Destek</option>
+                        <option value="2">Telefon</option>
+                        <option value="3">Mail</option>
+                        <option value="4">Uzaktan Destek</option>
+                    </select>
+                </div>
+                <div class="col-lg-3 mb-lg-0 mb-6">
+                    <label>Konu:</label>
+                    <input type="text" class="form-control datatable-input" id="Subject" data-col-index="0" />
+                </div>
+                <div class="col-lg-3 mb-lg-0 mb-6">
+                    <label class="col-md-12">Durum:</label>
+                    <select multiple="multiple" class="form-control datatable-input" id="Status" data-col-index="6">
+                        <option value="1" selected="selected">Açık</option>
+                        <option value="2">Kapalı</option>
+                        <option value="4" selected="selected">Yeni Talep</option>
+                    </select>
+                </div>
+            </div>
+            <div class="row mt-8">
+                <div class="col-lg-12">
+                    <button type="button" class="btn btn-primary btn-primary--icon" id="reload">
+                        <span>
+                            <i class="la la-search"></i>
+                            <span>Ara</span>
+                        </span>
+                    </button>&#160;&#160;
+                    <button class="btn btn-secondary btn-secondary--icon" id="kt_reset">
+                        <span>
+                            <i class="la la-close"></i>
+                            <span>Temizle</span>
+                        </span>
+                    </button>
+                </div>
+            </div>
+        </form>
+
+        <table class="table table-bordered table-hover table-checkable" id="ticketList" style="width:100%">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Cari</th>
+                    <th>Kullanıcı</th>
+                    <th>Oluşturma Tarihi</th>
+                    <th>Proje</th>
+                    <th>Konu</th>
+                    <th>Destek Tipi</th>
+                    <th>Durum</th>
+                    <th></th>
+                    <th></th>
+                </tr>
+            </thead>
+        </table>
+        <!--end: Datatable-->
+    </div>
+</div>
+
+<script>var table;
+    $(document).ready(function () {
+
+        $('#Status').multiselect({
+            enableFiltering: true,
+            includeSelectAllOption: true,
+            enableCaseInsensitiveFiltering: true,
+            buttonWidth: '100%'
+        });
+
+
+        $("#reload").click(function () {
+            table.ajax.reload();
+        });
+
+        $("#menuReport").removeClass("menu-item-open menu-item-here").addClass("menu-item-open menu-item-here");;
+        $("#menuUser").removeClass("menu-item-open menu-item-here");
+        $("#menuTicket").removeClass("menu-item-open menu-item-here");
+        $("#menuCalendar").removeClass("menu-item-open menu-item-here");
+        $("#menuProject").removeClass("menu-item-open menu-item-here");
+        $("#menuVersion").removeClass("menu-item-open menu-item-here");
+        $("#menuCustomer").removeClass("menu-item-open menu-item-here");
+
+        table = $('#ticketList').DataTable({
+            dom: 'Bfrtip', //Excel export için frtip olması gerekiyor.
+            "select": true,
+            "processing": true,
+            "searching": false,
+            "info": false,
+            "paging": false,
+            "serverSide": true,
+            "ordering": false,
+            "responsive": true,
+            buttons: [
+                'copy',
+                'excel',
+                'csv',
+                'pdf'
+            ],
+            columnDefs: [
+                { responsivePriority: 1, targets: 1 },
+                { responsivePriority: 2, targets: 3 },
+                { responsivePriority: 3, targets: 2 }
+            ],
+            "ajax": {
+                "url": "../../Ticket/GetTickets",
+                "dataType": "JSON",
+                "traditional": true,
+                "data": function (d) {
+                    d.id = $('#Id').val();
+                    d.statuList = $('#Status').val();
+                    d.subject = $('#Subject').val();
+                    d.supportType = $('#SupportType').val();
+                    d.cardCodes = $('#CardCode').val();
+
+                }
+            },
+            "createdRow": function (row, data, index) {
+                $('td', row).eq(0).addClass('grabbing');
+                $('td', row).eq(1).addClass('grabbing');
+                $('td', row).eq(2).addClass('grabbing');
+                $('td', row).eq(3).addClass('grabbing');
+                $('td', row).eq(4).addClass('grabbing');
+                $('td', row).eq(5).addClass('grabbing');
+                $('td', row).eq(6).addClass('grabbing');
+                $('td', row).eq(7).addClass('not-allowed');
+
+            },
+            "columns": [
+                {
+                    "data": "id",
+                    "autoWidth": true,
+                },
+                {
+                    "data": "cardName",
+                    "autoWidth": true,
+                },
+                {
+                    "data": "createdUser",
+                    "autoWidth": true,
+                },
+                {
+                    "data": "createDateAsString",
+                    "autoWidth": true,
+                },
+                {
+                    "data": "projectName",
+                    "autoWidth": true,
+                },
+                {
+                    "data": "subject",
+                    "autoWidth": true,
+                },
+                {
+                    "data": "supportType",
+                    "autoWidth": true,
+                    "render": function (data, type, row) {
+
+                        return '<span>' + data + '</span>';
+                    }
+                },
+                {
+                    "data": "status",
+                    "autoWidth": true,
+                    "render": function (data, type, row) {
+
+                        if (data === "YeniTalep") {
+                            return '<span class="label label-danger label-pill label-inline mr-2">Yeni</span>';
+                        }
+                        else if (data === "Development") {
+                            return '<span class="label label-warning label-pill label-inline mr-2">Yazılımda</span>'
+                        }
+                        else if (data === "Close") {
+                            return '<span class="label label-dark label-inline mr-2">Kapalı</span>'
+                        } else {
+                            return '<span class="label label-info label-inline mr-2">Açık</span>';
+                        }
+                    }
+                },
+                {
+                    "data": "id",
+                    "render": function (data, type, row) {
+                        return '<a href="/Customer/Index/' + data + '" class="btn btn-primary">Görüntüle</a>'
+                    }
+                },
+                {
+                    "data": "id",
+                    "render": function (data, type, row) {
+                        return '<a href="/Customer/Index/' + data + '" class="btn btn-info">Alt İşleri Listele</a>'
+                    }
+                }
+            ]
+        });
+        
+    })</script>
+
+
+

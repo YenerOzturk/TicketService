@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+
 namespace Ticket.Presentation.Models
 {
     public class ServiceReportParams
@@ -7,5 +9,7 @@ namespace Ticket.Presentation.Models
         public DateTime EndDate { get; set; }
         public string CardCode { get; set; }
         public int UserId { get; set; }
+        public List<string> Billing { get; set; }
+        public string ProjectId { get; set; }
     }
 }

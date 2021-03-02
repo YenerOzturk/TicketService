@@ -79,16 +79,15 @@
                 <div class="form-group">
                     <label>Durum:</label>
                     <select class="form-control" name="Status">
-                        <option value="1">Aktif</option>
-                        <option value="2">Pasif</option>
-                        <option value="3">Kapalı</option>
+                        <option value="1">Açık</option>
+                        <option value="2">Kapalı</option>
                     </select>
                 </div>
                 <div class="form-group row">
                     <label class="checkbox">
                         @Html.CheckBoxFor(x => x.Billing, new { @class = "form-control form-control-solid" })
                         <span></span>
-                        Faturalandırma
+                        Faturalandırıldı
                     </label>
                 </div>
                 <div class="form-group">
@@ -121,6 +120,7 @@
         $("#menuCustomer").removeClass("menu-item-open menu-item-here");
         $("#menuReport").removeClass("menu-item-open menu-item-here");
 
+        $('[name="Status"]').val(@Model.Status);
         FillDropDown("/JsonObject/GetCustomersForDropDown","CardCode", '@Model.CardCode');
         FillMultiDropDown("/JsonObject/GetProductsForDropDown",'ProductId' ,'@Model.ProductIds');
         RenderDatePicker('StartDate', '@Model.StartDate');

@@ -15,9 +15,12 @@
 
         data.push({ name: "CardCode", value: $('#CardCode').val() });
 
+        data.push({ name: "ProjectId", value: $('#ProjectId').val() });
+
         $.ajax({
-            type: 'GET',
+            type: 'POST',
             url: '../Report/GetTicketDetailReport',
+            traditional: true,
             data: data,
             success: function (result) {
 
@@ -36,7 +39,7 @@
                         formats: [
                             {
                                 "name": "",
-                                "decimalPlaces": 2,
+                                "decimalPlaces": 3,
                             }
                         ],
                         slice: {
@@ -90,6 +93,9 @@
 
             }
         });
+
+
+        
     }
 
 </script>
@@ -107,18 +113,31 @@
             <div class="row mb-6">
                 <div class="col-lg-3 mb-lg-0 mb-6">
                     <label>Başlangıç Tarihi:</label>
-                    <input type="text" class="form-control datetimepicker-input"  placeholder="Tarih Seç" id="StartDate" />
-                   
+                    <input type="text" class="form-control datetimepicker-input" placeholder="Tarih Seç" id="StartDate" />
+
                 </div>
                 <div class="col-lg-3 mb-lg-0 mb-6">
                     <label>Bitiş Tarihi:</label>
-                    <input type="text" class="form-control datetimepicker-input"  placeholder="Tarih Seç" id="EndDate" />
-                  
+                    <input type="text" class="form-control datetimepicker-input" placeholder="Tarih Seç" id="EndDate" />
+
                 </div>
                 <div class="col-lg-3 mb-lg-0 mb-6">
                     <label>Cari Kodu:</label>
                     <select class="form-control datatable-input" id="CardCode" data-col-index="0">
-                        <option value="0">Hepsi</option>
+                        <option value="">Hepsi</option>
+                    </select>
+                </div>
+                <div class="col-lg-3 mb-lg-0 mb-6">
+                    <label>Faturalandırıldı:</label>
+                    <select multiple class="form-control datatable-input" name="Billing" id="Billing" data-col-index="0">
+                        <option value="0">Evet</option>
+                        <option value="1">Hayır</option>
+                    </select>
+                </div>
+                <div class="col-lg-3 mb-lg-0 mb-6">
+                    <label>Proje:</label>
+                    <select class="form-control datatable-input" name="ProjectId" id="ProjectId" data-col-index="0">
+                        
                     </select>
                 </div>
             </div>
@@ -158,7 +177,32 @@
         RenderDatePicker("StartDate", new Date(new Date().setMonth(new Date().getMonth() - 1)));
         RenderDatePicker("EndDate", new Date());
 
-        FillMultiDropDown("/JsonObject/GetCustomersForDropDown", "CardCode");
+
+        $('#CardCode').change(function () {
+            callback();
+        });
+
+        var callback = function () {
+
+            var data = [];
+
+            var cardCode = $('#CardCode').val();
+
+            data.push({ name: "cardCode", value: cardCode });
+
+            FillDropDown("/JsonObject/GetProjectsForDropDown", "ProjectId", null, data);
+        };
+
+
+        FillMultiDropDown("/JsonObject/GetCustomersForDropDown", "CardCode", null,null, callback);
+
+        $('#Billing').multiselect({
+            enableFiltering: true,
+            includeSelectAllOption: true,
+            enableCaseInsensitiveFiltering: true,
+            buttonWidth: '100%'
+        });
+
 
         RenderTable();
 

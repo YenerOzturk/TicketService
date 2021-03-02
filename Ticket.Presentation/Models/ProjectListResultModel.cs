@@ -14,5 +14,6 @@ namespace Ticket.Presentation.Models
         public string TotalWorkingTime { get; set; }
         public string StartDateAsString { get; set; }
         public string EndDateAsString { get; set; }
+        public int Status { get; set; }
     }
 }

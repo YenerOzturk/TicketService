@@ -69,12 +69,12 @@ namespace Ticket.Presentation.Controllers
             });
         }
 
-
-
         public async Task<IActionResult> SaveUser(UserModel model)
         {
             if (model.Id == 0)
             {
+                model.Password = PasswordGenerator.GenerateRandomPassword();
+
                 await HttpClientHelper.SendPostRequest(model, "User/add-new-user", CookieHelper.GetToken(Request, "oaut.Cookie"));
             }
             else

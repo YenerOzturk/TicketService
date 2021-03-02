@@ -45,12 +45,14 @@ namespace Ticket.Presentation.Controllers
                 retval.ProjectName = model.ProjectName;
                 retval.Billing = model.Billing;
                 retval.ProjectOwners = model.ProjectOwners;
+                retval.Status = model.Status;
 
             }
             else
             {
                 retval.EndDate = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:00");
                 retval.StartDate = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:00");
+                retval.Status = 1;
             }
 
             return View(retval);
@@ -75,6 +77,14 @@ namespace Ticket.Presentation.Controllers
             }
 
             urlParam += $"&StartDate={param.startDate}&EndDate={param.endDate}";*/
+
+            if (param.statuList != null)
+            {
+                foreach (var item in param.statuList)
+                {
+                    urlParam += $"&Status={item}";
+                }
+            }
 
 
             if (!string.IsNullOrEmpty(urlParam))
@@ -113,6 +123,7 @@ namespace Ticket.Presentation.Controllers
             retval.ProductIds = string.Join(',', result.ProductIds);
             retval.ProjectName = result.ProjectName;
             retval.ProjectOwners = result.ProjectOwners;
+            retval.Status = result.Status;
 
             return Ok(retval);
         }

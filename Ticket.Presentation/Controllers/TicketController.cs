@@ -129,7 +129,7 @@ namespace Ticket.Presentation.Controllers
                     attachment = $"<div class=\"mt-2\"><b>Eklenti:</b><a href=\"{repo.Attachment}\">{repo.Attachment}</a></div>";
                 }
 
-                retval += html.Replace("[Attachment]", attachment).Replace("{StartDate}", repo.StartDate.ToString("dd.MM.yyyy HH:mm")).Replace("{EndDate}", repo.EndDate.ToString("dd.MM.yyyy HH:mm")).Replace("{Description}", repo.Id + "-" +repo.Description).Replace("{UserName}", repo.UserName).Replace("{Status}", statusName).Replace("{StatusColor}", statusColor).Replace("{id}", repo.Id.ToString()).Replace("{ticketId}", ticketId.ToString());
+                retval += html.Replace("[Attachment]", attachment).Replace("{StartDate}", repo.StartDate.ToString("dd.MM.yyyy HH:mm")).Replace("{EndDate}", repo.EndDate.ToString("dd.MM.yyyy HH:mm")).Replace("{Description}", repo.Id + "-" + repo.Description).Replace("{UserName}", repo.UserName).Replace("{Status}", statusName).Replace("{StatusColor}", statusColor).Replace("{id}", repo.Id.ToString()).Replace("{ticketId}", ticketId.ToString());
 
             }
 
@@ -212,7 +212,7 @@ namespace Ticket.Presentation.Controllers
                 await HttpClientHelper.SendPostRequest(model, "Ticket/update-subTicket", CookieHelper.GetToken(Request, "oaut.Cookie"));
             }
 
-            
+
 
 
             return Ok("Ok");
@@ -242,7 +242,16 @@ namespace Ticket.Presentation.Controllers
             retval.TicketLabel = model.TicketLabel;
             retval.Subject = model.Subject;
 
-            return Ok(retval);
+            var result = new { Status = 1, Data = retval };
+
+            var project = await HttpClientHelper.SendGetRequest<ProjectModel>("Project/get-Project-by-Id?id=" + retval.ProjectId, CookieHelper.GetToken(Request, "oaut.Cookie"));
+
+            if (project.Status == 2)
+            {
+                result = new { Status = 2, Data = retval };
+            }
+
+            return Ok(result);
         }
 
         public async Task<IActionResult> GetSubTicket(int id)
