@@ -101,7 +101,7 @@ namespace Ticket.Presentation.Controllers
         [HttpPost]
         public async Task<IActionResult> ChangePassword(string password, string newPassword)
         {
-            string userId = User.Claims.First().Value;
+            string userId = User.Claims.First(x => x.Type == ClaimTypes.Sid).Value;
 
             UserModel model = await HttpClientHelper.SendGetRequest<UserModel>("User/get-users-by-email?email=" + userId, CookieHelper.GetToken(Request, "oaut.Cookie"));
 

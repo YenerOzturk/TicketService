@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -12,7 +13,7 @@ using Ticket.Presentation.ViewModels;
 
 namespace Ticket.Presentation.Controllers
 {
-   
+
     public class ReportController : BaseController
     {
         // GET: /<controller>/
@@ -83,6 +84,11 @@ namespace Ticket.Presentation.Controllers
             return View();
         }
 
+        public IActionResult DailyBasedReport()
+        {
+            return View();
+        }
+
         public async Task<IActionResult> GetNotAnsweredTicketReport(JqueryDataTableParam param)
         {
 
@@ -143,7 +149,7 @@ namespace Ticket.Presentation.Controllers
             {
                 url += $"CardCode={param.CardCode}";
             }
-            
+
 
             url += $"&StartDate={param.StartDate.ToString("yyyy-MM-dd")}";
             url += $"&EndDate={param.EndDate.ToString("yyyy-MM-dd")}";
@@ -198,8 +204,8 @@ namespace Ticket.Presentation.Controllers
                 int lengthSubTicket = item.SubTicketDescription.Length < 60 ? item.SubTicketDescription.Length : 60;
                 int lengthTicket = item.TicketDescription.Length < 60 ? item.TicketDescription.Length : 60;
 
-                item.SubTicketDescription = item.SubTicketDescription?.Substring(0, lengthSubTicket)+" ...";
-                item.TicketDescription = item.TicketDescription?.Substring(0, lengthTicket)+" ...";
+                item.SubTicketDescription = item.SubTicketDescription?.Substring(0, lengthSubTicket) + " ...";
+                item.TicketDescription = item.TicketDescription?.Substring(0, lengthTicket) + " ...";
             }
 
 
@@ -294,6 +300,25 @@ namespace Ticket.Presentation.Controllers
             });
         }
 
+        public async Task<IActionResult> GetDailyReport(JqueryDataTableParam param)
+        {
+            var userId = User.Claims.First(x => x.Type == ClaimTypes.Sid).Value;
+
+            string url = $"Report/dailyReport?UserId={userId}";
+
+
+            var repositories = await HttpClientHelper.SendGetRequest<IEnumerable<DailyBasedReportModel>>(url, CookieHelper.GetToken(Request, "oaut.Cookie"));
+
+            return Json(new
+            {
+                draw = param.draw,
+                recordsTotal = repositories.Count(),
+                recordsFiltered = 0,
+                error = string.Empty,
+                data = repositories.ToList()
+            });
+        }
+
         [Authorize(Roles = "Admin")]
         public IActionResult TicketInDevelopmentReport()
         {
@@ -312,17 +337,17 @@ namespace Ticket.Presentation.Controllers
             {
 
 
-                int length = item.Description.Length<150?item.Description.Length:150;
+                int length = item.Description.Length < 150 ? item.Description.Length : 150;
 
                 result.Add(new TicketInDevelopmentReportViewModel()
                 {
 
-                    Description=item.Description.Substring(0,length)+"...",
-                    EndDate=item.EndDate.ToString("dd.MM.yyyy HH:mm"),
-                    StartDate=item.StartDate.ToString("dd.MM.yyyy HH:mm"),
-                    Id=item.Id,
-                    NameSurname=item.NameSurname,
-                    TicketId=item.TicketId
+                    Description = item.Description.Substring(0, length) + "...",
+                    EndDate = item.EndDate.ToString("dd.MM.yyyy HH:mm"),
+                    StartDate = item.StartDate.ToString("dd.MM.yyyy HH:mm"),
+                    Id = item.Id,
+                    NameSurname = item.NameSurname,
+                    TicketId = item.TicketId
                 });
             }
 

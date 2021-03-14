@@ -102,16 +102,8 @@ namespace Ticket.Presentation.Controllers
 
         public async Task<IActionResult> CustomerTickets()
         {
-
-            ViewBag.CardCode = "M0004";
-
             return View();
         }
-
-
-        public async Task<IActionResult> CustomerSubTickets(string id)
-        {
-            return View();
-        }
+       
     }
 }

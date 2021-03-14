@@ -4,6 +4,7 @@
     .not-allowed {
         cursor: not-allowed;
     }
+
     .grabbing {
         cursor: -webkit-grabbing;
         cursor: grabbing;
@@ -576,22 +577,24 @@
                                             </div>
                                         </form>
 
-                                        <!--begin: Datatable-->
-                                        <table class="table table-bordered table-hover table-checkable" id="ticketList" style="width:100%">
-                                            <thead>
-                                                <tr>
-                                                    <th>Id</th>
-                                                    <th>Cari</th>
-                                                    <th>Kullanıcı</th>
-                                                    <th>Oluşturma Tarihi</th>
-                                                    <th>Proje</th>
-                                                    <th>Konu</th>
-                                                    <th>Destek Tipi</th>
-                                                    <th>Durum</th>
-                                                    <th>#</th>
-                                                </tr>
-                                            </thead>
-                                        </table>
+                                     
+                                            <!--begin: Datatable-->
+                                            <table class="table table-bordered table-hover table-checkable" id="ticketList" style="width:100%">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Id</th>
+                                                        <th>Cari</th>
+                                                        <th>Kullanıcı</th>
+                                                        <th>Oluşturma Tarihi</th>
+                                                        <th>Proje</th>
+                                                        <th>Konu</th>
+                                                        <th>Destek Tipi</th>
+                                                        <th>Durum</th>
+                                                        <th>#</th>
+                                                    </tr>
+                                                </thead>
+                                            </table>
+                                       
                                         <!--end: Datatable-->
                                     </div>
                                 </div>
@@ -967,6 +970,7 @@ var table;
             "paging": false,
             "serverSide": true,
             "ordering": false,
+            "scrollY": "400px",
             "responsive":true,
             buttons: [
                 'copy',
@@ -1001,7 +1005,7 @@ var table;
                 $('td', row).eq(5).addClass('grabbing');
                 $('td', row).eq(6).addClass('grabbing');
                 $('td', row).eq(7).addClass('not-allowed');
-                
+
             },
             "columns": [
                 {
@@ -1083,14 +1087,14 @@ var table;
             $("#lblTicketId").text(" - Ticket Id : " + data.id);
 
             if ($(this).index() < 7) {
-                
+
                 GetSubTickets(data.id);
             }
 
         });
 
     $('#ticketList tbody').on('click', 'tr', function () {
-       
+
     });
 
     $('#btnPdf').on('click', function () {

@@ -16,11 +16,12 @@ namespace Ticket.Presentation.Controllers
         public override void OnActionExecuting(ActionExecutingContext context)
         {
 
-            ViewData["UserId"] = User.Claims.First(x => x.Type == ClaimTypes.UserData).Value;
+            ViewData["UserId"] = User.Claims.First(x => x.Type == ClaimTypes.Sid).Value;
             ViewData["UserRole"] = User.Claims.First(x => x.Type == ClaimTypes.Role).Value;
             ViewData["UserName"] = User.Claims.First(x => x.Type == ClaimTypes.GivenName).Value;
             ViewData["Email"] = User.Claims.First(x => x.Type == ClaimTypes.Name).Value;
             ViewData["UserFirstLetter"] = User.Claims.First(x => x.Type == ClaimTypes.GivenName).Value.Substring(0,1);
+            ViewData["CardCode"] = User.Claims.First(x => x.Type == ClaimTypes.UserData).Value;
 
 
             base.OnActionExecuting(context);

@@ -136,6 +136,50 @@ namespace Ticket.Presentation.Controllers
             return Ok(retval);
         }
 
+        public async Task<IActionResult> GetSubTicketsForCustomers(int ticketId)
+        {
+            var repositories = await HttpClientHelper.SendGetRequest<IEnumerable<SubTicketViewModel>>($"Ticket/get-subTicketsByTicketId?TicketId={ticketId}", CookieHelper.GetToken(Request, "oaut.Cookie"));
+
+            string html = SubTicketHtml.HtmlForCustomer;
+            string retval = string.Empty;
+
+            string statusName = string.Empty;
+            string statusColor = string.Empty;
+
+            foreach (var repo in repositories.ToList())
+            {
+
+                if (repo.Status == 1)
+                {
+                    statusName = "Açık";
+                    statusColor = "success";
+                }
+                else if (repo.Status == 3)
+                {
+                    statusName = "Yazılımda";
+                    statusColor = "info";
+                }
+                else
+                {
+                    statusName = "Kapalı";
+                    statusColor = "danger";
+                }
+
+
+                string attachment = string.Empty;
+
+                if (!string.IsNullOrEmpty(repo.Attachment))
+                {
+                    attachment = $"<div class=\"mt-2\"><b>Eklenti:</b><a href=\"{repo.Attachment}\">{repo.Attachment}</a></div>";
+                }
+
+                retval += html.Replace("[Attachment]", attachment).Replace("{StartDate}", repo.StartDate.ToString("dd.MM.yyyy HH:mm")).Replace("{EndDate}", repo.EndDate.ToString("dd.MM.yyyy HH:mm")).Replace("{Description}", repo.Id + "-" + repo.Description).Replace("{UserName}", repo.UserName).Replace("{Status}", statusName).Replace("{StatusColor}", statusColor).Replace("{id}", repo.Id.ToString()).Replace("{ticketId}", ticketId.ToString());
+
+            }
+
+            return Ok(retval);
+        }
+
         public async Task<IActionResult> SaveTicket(TicketModel model)
         {
             int result = 0;
@@ -290,6 +334,14 @@ namespace Ticket.Presentation.Controllers
             model.Status = 5;
 
             await HttpClientHelper.SendPostRequest(model, "Ticket/update-ticket-status", CookieHelper.GetToken(Request, "oaut.Cookie"));
+
+            return Ok("Ok");
+        }
+
+
+        public async Task<IActionResult> UpdatePriority(UpdateTicketPriorityModel model)
+        {
+            await HttpClientHelper.SendPostRequest(model, "Ticket/update-ticket-priority", CookieHelper.GetToken(Request, "oaut.Cookie"));
 
             return Ok("Ok");
         }

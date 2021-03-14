@@ -46,8 +46,8 @@ License: You must have a valid license purchased only from themeforest(the above
                 type: 'POST',
                 url: '../../Login/Login',
                 data: data,
-                success: function () {
-                    document.location.href = "../../Home/Ticket";
+                success: function (returnUrl) {
+                    document.location.href = returnUrl;
                 }
             });
         }</script>

@@ -17,5 +17,6 @@ namespace Ticket.Presentation.Models
         public string CreateDateAsString { get; set; }
         public string Subject { get; set; }
         public string CreatedUser { get; set; }
+        public int Priority { get; set; }
     }
 }

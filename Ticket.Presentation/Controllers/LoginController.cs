@@ -34,6 +34,8 @@ namespace Ticket.Presentation.Controllers
                 return RedirectToAction("Login");
             }
 
+            string returnUrl = "../../Home/Ticket";
+
             string url = $"Token/new?email={model.Email}&password={model.Password}";
 
             var token = await HttpClientHelper.SendGetRequest<string>(url, "");
@@ -52,7 +54,8 @@ namespace Ticket.Presentation.Controllers
                     new Claim(ClaimTypes.Name, model.Email),
                     new Claim(ClaimTypes.GivenName,model.NameSurname),
                     new Claim(ClaimTypes.Role,role),
-                    new Claim(ClaimTypes.UserData,model.Id.ToString())
+                    new Claim(ClaimTypes.Sid,model.Id.ToString()),
+                    new Claim(ClaimTypes.UserData,model.CardCode)
                 }, CookieAuthenticationDefaults.AuthenticationScheme);
 
                 var principal = new ClaimsPrincipal(identity);
@@ -63,10 +66,13 @@ namespace Ticket.Presentation.Controllers
                     ExpiresUtc = DateTime.Now.AddDays(7)
                 });
 
-                return Ok("Ok");
+                if (model.CardCode != "C0001")
+                {
+                    returnUrl = "../../Customer/CustomerTickets";
+                }
             }
 
-            return Ok("Ok");
+            return Ok(returnUrl);
         }
 
 

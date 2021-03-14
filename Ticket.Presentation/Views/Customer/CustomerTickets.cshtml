@@ -1,4 +1,52 @@
 ﻿
+<script>function GetSubTickets(ticketId) {
+
+        $.ajax({
+            type: 'GET',
+            url: '../../Ticket/GetSubTicketsForCustomers',
+            data: { ticketId: ticketId },
+            success: function (data) {
+
+                $('#subTickets').empty();
+
+                if (data == "") {
+
+                    Swal.fire("Bilgilendirme!", "Alt İş Kaydı Bulunamadı.", "info");
+
+                } else {
+                    $('#subTickets').append(data);
+
+                    $('#modalSubTicket').modal();
+                }
+
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                Swal.fire("Hata!", "Hata Oluştu.", "error");
+            }
+        });
+    }
+
+    function GetTicket(id) {
+
+        $.ajax({
+            type: 'GET',
+            url: '../../Ticket/GetTicketById',
+            data: { id: id },
+            success: function (data) {
+
+                var dsc = data.data.description;
+
+                $("[name='Description']").val(dsc);
+
+                $('#modalTicket').modal();
+            }
+        });
+    }</script>
+
+
+
+
+
 <div class="card card-custom">
     <div class="card-header flex-wrap border-0 pt-6 pb-0">
         <div class="card-title">
@@ -10,7 +58,7 @@
     <div class="card-body">
 
         <form class="kt-form kt-form--fit mb-15">
-            <input type="hidden" id="CardCode" value="@ViewBag.CardCode"/>
+            <input type="hidden" id="CardCode" value="@ViewData["CardCode"]" />
             <div class="row mb-6">
                 <div class="col-lg-3 mb-lg-0 mb-6">
                     <label>Ticket Id:</label>
@@ -61,21 +109,79 @@
             <thead>
                 <tr>
                     <th>Id</th>
-                    <th>Cari</th>
-                    <th>Kullanıcı</th>
+                    <th>Atanan Kişi</th>
                     <th>Oluşturma Tarihi</th>
                     <th>Proje</th>
                     <th>Konu</th>
                     <th>Destek Tipi</th>
+                    <th>Öncelik</th>
                     <th>Durum</th>
-                    <th></th>
-                    <th></th>
+                    <th>#</th>
+                    <th>#</th>
                 </tr>
             </thead>
         </table>
         <!--end: Datatable-->
     </div>
 </div>
+
+<div class="modal fade" id="modalTicket" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="staticBackdrop" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Ticket Detay</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <i aria-hidden="true" class="ki ki-close"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="card card-custom">
+
+                    <!--begin::Form-->
+                    <form name="frmTicket" class="form">
+
+                        <div class="card-body">
+
+                            <div class="form-group row">
+                                <label class="col-lg-2 col-form-label">Açıklama</label>
+                                <div class="col-lg-10">
+                                    <textarea class="form-control" name="Description" data-provide="markdown" rows="30"></textarea>
+                                </div>
+                            </div>
+
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalSubTicket" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="staticBackdrop" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Alt İşler</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <i aria-hidden="true" class="ki ki-close"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="card card-custom">
+                    <div class="card-body" id="subTickets" style="overflow: scroll;max-height:500px">
+
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
 
 <script>var table;
     $(document).ready(function () {
@@ -131,27 +237,11 @@
                     d.subject = $('#Subject').val();
                     d.supportType = $('#SupportType').val();
                     d.cardCodes = $('#CardCode').val();
-
                 }
-            },
-            "createdRow": function (row, data, index) {
-                $('td', row).eq(0).addClass('grabbing');
-                $('td', row).eq(1).addClass('grabbing');
-                $('td', row).eq(2).addClass('grabbing');
-                $('td', row).eq(3).addClass('grabbing');
-                $('td', row).eq(4).addClass('grabbing');
-                $('td', row).eq(5).addClass('grabbing');
-                $('td', row).eq(6).addClass('grabbing');
-                $('td', row).eq(7).addClass('not-allowed');
-
             },
             "columns": [
                 {
                     "data": "id",
-                    "autoWidth": true,
-                },
-                {
-                    "data": "cardName",
                     "autoWidth": true,
                 },
                 {
@@ -168,7 +258,7 @@
                 },
                 {
                     "data": "subject",
-                    "autoWidth": true,
+                    "width": '30%',
                 },
                 {
                     "data": "supportType",
@@ -176,6 +266,45 @@
                     "render": function (data, type, row) {
 
                         return '<span>' + data + '</span>';
+                    }
+                },
+                {
+                    "data": "priority",
+                    "autoWidth": true,
+                    "render": function (data, type, row) {
+
+                        var cls = "btn-primary btn-sm";
+                        var opts = "";
+
+                        if (data == 1) {
+
+                            cls = "btn-primary btn-sm";
+                            opts = '<option value="1" selected>Düşük</option>' +
+                                '<option value="2">Orta</option>' +
+                                '<option value="3">Yüksek</option>';
+
+                        }
+                        else if (data == 2) {
+
+                            cls = "btn-warning btn-sm";
+                            opts = '<option value="1">Düşük</option>' +
+                                '<option value="2" selected>Orta</option>' +
+                                '<option value="3">Yüksek</option>';
+                        }
+                        else {
+
+                            cls = "btn-danger btn-sm";
+                            opts = '<option value="1">Düşük</option>' +
+                                '<option value="2">Orta</option>' +
+                                '<option value="3" selected>Yüksek</option>';
+
+                        }
+
+
+                        return '<select class="form-control selectpicker" title="Primary" data-key="' + row["id"] + '" id="priority" data-style="' + cls + '">' +
+                            opts +
+                            '</select>';
+
                     }
                 },
                 {
@@ -199,18 +328,72 @@
                 {
                     "data": "id",
                     "render": function (data, type, row) {
-                        return '<a href="/Customer/Index/' + data + '" class="btn btn-primary">Görüntüle</a>'
+                        return '<a onclick="GetTicket(' + data + ')" class="btn btn-dark">Detay</a>'
                     }
                 },
                 {
                     "data": "id",
                     "render": function (data, type, row) {
-                        return '<a href="/Customer/Index/' + data + '" class="btn btn-info">Alt İşleri Listele</a>'
+                        return '<a onclick="GetSubTickets(' + data + ')" class="btn btn-light">Alt İşler</a>'
                     }
                 }
-            ]
+            ],
+            "initComplete": function (settings, json) {
+                $('.selectpicker').selectpicker();
+
+
+
+                $('.selectpicker').on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
+
+                    var ticketId = e.currentTarget.attributes[2].nodeValue;
+
+                    var data = { Id: ticketId, Priority: clickedIndex };
+
+                    $.ajax({
+                        type: 'POST',
+                        url: '../../Ticket/UpdatePriority',
+                        data: data,
+                        success: function () {
+                            table.ajax.reload();
+                        },
+                        error: function (xhr, ajaxOptions, thrownError) {
+                            Swal.fire("Hata!", "Hata Oluştu.", "error");
+                        }
+                    });
+
+
+                });
+            },
+            "drawCallback": function (settings) {
+                $('.selectpicker').selectpicker();
+
+                $('.selectpicker').on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
+
+                    var ticketId = e.currentTarget.attributes[2].nodeValue;
+
+                    var data = { Id: ticketId, Priority: clickedIndex };
+
+                    $.ajax({
+                        type: 'POST',
+                        url: '../../Ticket/UpdatePriority',
+                        data: data,
+                        success: function () {
+                            table.ajax.reload();
+                        },
+                        error: function (xhr, ajaxOptions, thrownError) {
+                            Swal.fire("Hata!", "Hata Oluştu.", "error");
+                        }
+                    });
+
+
+                });
+            }
+
         });
-        
+
+
+
+
     })</script>
 
 
