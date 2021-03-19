@@ -10,6 +10,6 @@ namespace Ticket.Presentation.Models
         public string CardCode { get; set; }
         public int UserId { get; set; }
         public List<string> Billing { get; set; }
-        public string ProjectId { get; set; }
+        public List<string> ProjectIds { get; set; }
     }
 }

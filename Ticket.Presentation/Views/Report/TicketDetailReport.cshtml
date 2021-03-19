@@ -15,8 +15,6 @@
 
         data.push({ name: "CardCode", value: $('#CardCode').val() });
 
-        data.push({ name: "ProjectId", value: $('#ProjectId').val() });
-
         $.ajax({
             type: 'POST',
             url: '../Report/GetTicketDetailReport',
@@ -136,7 +134,7 @@
                 </div>
                 <div class="col-lg-3 mb-lg-0 mb-6">
                     <label>Proje:</label>
-                    <select class="form-control datatable-input" name="ProjectId" id="ProjectId" data-col-index="0">
+                    <select multiple class="form-control datatable-input" name="ProjectIds" id="ProjectId" data-col-index="0">
                         
                     </select>
                 </div>
@@ -190,7 +188,7 @@
 
             data.push({ name: "cardCode", value: cardCode });
 
-            FillDropDown("/JsonObject/GetProjectsForDropDown", "ProjectId", null, data);
+            FillMultiDropDown("/JsonObject/GetProjectsForDropDown", "ProjectId");
         };
 
 

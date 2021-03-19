@@ -162,10 +162,12 @@ namespace Ticket.Presentation.Controllers
                 }
             }
 
-
-            if (!string.IsNullOrEmpty(param.ProjectId))
+            if (param.ProjectIds != null)
             {
-                url += $"&ProjectId={Convert.ToInt32(param.ProjectId)}";
+                foreach (var item in param.ProjectIds)
+                {
+                    url += $"&ProjectId={item}";
+                }
             }
 
             var repositories = await HttpClientHelper.SendGetRequest<IEnumerable<TicketDetailReport>>(url, CookieHelper.GetToken(Request, "oaut.Cookie"));
@@ -306,6 +308,23 @@ namespace Ticket.Presentation.Controllers
 
             string url = $"Report/dailyReport?UserId={userId}";
 
+            string urlParam = string.Empty;
+            if (!string.IsNullOrEmpty(param.cardCode))
+            {
+                urlParam += $"&CardCode={param.cardCode}";
+            }
+
+            if (param.startDate != DateTime.MinValue)
+            {
+                urlParam += $"&StartDate={param.startDate.ToString("yyyy-MM-dd")}";
+            }
+
+            if (param.endDate != DateTime.MinValue)
+            {
+                urlParam += $"&EndDate={param.endDate.ToString("yyyy-MM-dd")}";
+            }
+
+            url += urlParam;
 
             var repositories = await HttpClientHelper.SendGetRequest<IEnumerable<DailyBasedReportModel>>(url, CookieHelper.GetToken(Request, "oaut.Cookie"));
 

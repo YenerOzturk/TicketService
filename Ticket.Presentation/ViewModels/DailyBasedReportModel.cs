@@ -8,5 +8,6 @@ namespace Ticket.Presentation.ViewModels
         public string StartDate { get; set; }
         public string EndDate { get; set; }
         public string Description { get; set; }
+        public double TotalWorkHour { get; set; }
     }
 }

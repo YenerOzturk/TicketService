@@ -3,12 +3,46 @@
     <div class="card-header flex-wrap border-0 pt-6 pb-0">
         <div class="card-title">
             <h3 class="card-label">
-               Günlük Çalışma Raporu
+                Günlük Çalışma Raporu
             </h3>
         </div>
     </div>
     <div class="card-body">
+        <form class="kt-form kt-form--fit mb-15">
+            <div class="row mb-6">
+                <div class="col-lg-3 mb-lg-0 mb-6">
+                    <label>Başlangıç Tarihi:</label>
+                    <input type="text" class="form-control datetimepicker-input" placeholder="Tarih Seç" id="StartDate" />
 
+                </div>
+                <div class="col-lg-3 mb-lg-0 mb-6">
+                    <label>Bitiş Tarihi:</label>
+                    <input type="text" class="form-control datetimepicker-input" placeholder="Tarih Seç" id="EndDate" />
+
+                </div>
+                <div class="col-lg-3 mb-lg-0 mb-6">
+                    <label>Cari Kodu:</label>
+                    <select class="form-control datatable-input" id="CardCode" data-col-index="0">
+                    </select>
+                </div>
+            </div>
+            <div class="row mt-8">
+                <div class="col-lg-12">
+                    <button type="button" class="btn btn-primary btn-primary--icon" id="reload">
+                        <span>
+                            <i class="la la-search"></i>
+                            <span>Ara</span>
+                        </span>
+                    </button>&#160;&#160;
+                    <button class="btn btn-secondary btn-secondary--icon" id="kt_reset">
+                        <span>
+                            <i class="la la-close"></i>
+                            <span>Temizle</span>
+                        </span>
+                    </button>
+                </div>
+            </div>
+        </form>
         <!--begin: Datatable-->
         <table class="table table-separate table-head-custom table-checkable" id="report">
             <thead>
@@ -17,6 +51,7 @@
                     <th>Konu</th>
                     <th>Başlangıç Tarihi</th>
                     <th>Bitiş Tarihi</th>
+                    <th>Toplam Saat</th>
                     <th>Yapılan İş</th>
                 </tr>
             </thead>
@@ -27,6 +62,16 @@
 
 <script>var table;
     $(document).ready(function () {
+
+        RenderDatePicker("StartDate", new Date(new Date().setMonth(new Date().getMonth() - 1)));
+        RenderDatePicker("EndDate", new Date());
+
+        var callback = function () {
+            table.ajax.reload();
+        }
+
+
+        FillMultiDropDown("/JsonObject/GetCustomersForDropDown", "CardCode", null, callback);
 
         $("#reload").click(function () {
             table.ajax.reload();
@@ -42,22 +87,32 @@
 
 
         table = $('#report').DataTable({
+            dom: 'Bfrtip', //Excel export için frtip olması gerekiyor.
             "processing": true,
             "searching": false,
             "info": false,
             "paging": false,
             "serverSide": true,
             "ordering": false,
+            buttons: [
+                'copy',
+                'excel',
+                'csv',
+                'pdf'
+            ],
             "ajax": {
                 "url": "../../Report/GetDailyReport",
                 "dataType": "JSON",
                 "data": function (d) {
+                    d.cardCode = $('#CardCode').val();
+                    d.startDate = GetFormatedDate($("#StartDate").datepicker('getDate'));
+                    d.endDate = GetFormatedDate($("#EndDate").datepicker('getDate'));
                 }
             },
             "columns": [
                 {
                     "data": "cardName",
-                    "autoWidth": true,
+                    "width": '20%',
                 },
                 {
                     "data": "subject",
@@ -72,11 +127,16 @@
                     "autoWidth": true,
                 },
                 {
-                    "data": "description",
+                    "data": "totalWorkHour",
                     "autoWidth": true,
+                },
+                {
+                    "data": "description",
+                    "width": '30%',
                 }
             ]
         });
+
     })</script>
 
 
