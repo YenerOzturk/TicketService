@@ -22,7 +22,7 @@
                 </div>
                 <div class="col-lg-3 mb-lg-0 mb-6">
                     <label>Cari Kodu:</label>
-                    <select class="form-control datatable-input" id="CardCode" data-col-index="0">
+                    <select multiple class="form-control datatable-input" id="CardCode" data-col-index="0">
                     </select>
                 </div>
             </div>
@@ -103,8 +103,9 @@
             "ajax": {
                 "url": "../../Report/GetDailyReport",
                 "dataType": "JSON",
+                "traditional": true,
                 "data": function (d) {
-                    d.cardCode = $('#CardCode').val();
+                    d.cardCodes = $('#CardCode').val();
                     d.startDate = GetFormatedDate($("#StartDate").datepicker('getDate'));
                     d.endDate = GetFormatedDate($("#EndDate").datepicker('getDate'));
                 }

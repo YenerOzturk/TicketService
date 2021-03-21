@@ -309,9 +309,12 @@ namespace Ticket.Presentation.Controllers
             string url = $"Report/dailyReport?UserId={userId}";
 
             string urlParam = string.Empty;
-            if (!string.IsNullOrEmpty(param.cardCode))
+            if (param.cardCodes != null)
             {
-                urlParam += $"&CardCode={param.cardCode}";
+                foreach (var item in param.cardCodes)
+                {
+                    urlParam += $"&CardCodes={item}";
+                }
             }
 
             if (param.startDate != DateTime.MinValue)
