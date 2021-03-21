@@ -306,30 +306,16 @@ namespace Ticket.Presentation.Controllers
         {
             var userId = User.Claims.First(x => x.Type == ClaimTypes.Sid).Value;
 
-            string url = $"Report/dailyReport?UserId={userId}";
+            string url = $"Report/dailyReport";
 
-            string urlParam = string.Empty;
-            if (param.cardCodes != null)
-            {
-                foreach (var item in param.cardCodes)
-                {
-                    urlParam += $"&CardCodes={item}";
-                }
+            var repositories = await HttpClientHelper.SendPostRequest<DailyBasedReportRequestModel,List<DailyBasedReportModel>>(
+            new DailyBasedReportRequestModel() {
+                CardCodes=param.cardCodes,
+                EndDate=param.endDate,
+                StartDate=param.startDate,
+                UserId=int.Parse(userId)
             }
-
-            if (param.startDate != DateTime.MinValue)
-            {
-                urlParam += $"&StartDate={param.startDate.ToString("yyyy-MM-dd")}";
-            }
-
-            if (param.endDate != DateTime.MinValue)
-            {
-                urlParam += $"&EndDate={param.endDate.ToString("yyyy-MM-dd")}";
-            }
-
-            url += urlParam;
-
-            var repositories = await HttpClientHelper.SendGetRequest<IEnumerable<DailyBasedReportModel>>(url, CookieHelper.GetToken(Request, "oaut.Cookie"));
+            ,url,CookieHelper.GetToken(Request, "oaut.Cookie"));
 
             return Json(new
             {

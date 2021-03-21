@@ -35,7 +35,7 @@ namespace Ticket.Presentation.Helpers
             }
             catch (Exception ex)
             {
-                throw new Exception("Url: "+url+" Ex:"+ex.Message);
+                throw new Exception("Url: " + url + " Ex:" + ex.Message);
             }
 
         }
@@ -57,18 +57,45 @@ namespace Ticket.Presentation.Helpers
                 HttpContent httpContent = new StringContent(JsonSerializer.Serialize<T>(model), Encoding.UTF8);
                 httpContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
 
-                var response= await client.PostAsync(_baseUrl + url, httpContent);
+                var response = await client.PostAsync(_baseUrl + url, httpContent);
                 var result = await response.Content.ReadAsStringAsync();
 
                 int id = 0;
                 if (int.TryParse(result, out id))
                     return id;
 
-                return 0; 
+                return 0;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw ex;
+            }
+        }
+
+        public static async Task<TResult> SendPostRequest<TModel, TResult>(TModel model, string url, string token)
+        {
+            try
+            {
+                HttpClient client = new HttpClient();
+
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+                client.DefaultRequestHeaders.Accept.Clear();
+                client.DefaultRequestHeaders.Accept.Add(
+                    new MediaTypeWithQualityHeaderValue("application/json"));
+                client.DefaultRequestHeaders.Add("User-Agent", ".NET Foundation Repository Reporter");
+
+                HttpContent httpContent = new StringContent(JsonSerializer.Serialize<TModel>(model), Encoding.UTF8);
+                httpContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+
+                var response = await client.PostAsync(_baseUrl + url, httpContent);
+                var result = await response.Content.ReadAsStringAsync();
+
+                return JsonSerializer.Deserialize<TResult>(result);
+            }
+            catch
+            {
+                throw;
             }
         }
 
