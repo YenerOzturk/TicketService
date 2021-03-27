@@ -27,5 +27,6 @@
     <Folder Include="Middlewares\" />
     <Folder Include="wwwroot\css2\" />
     <Folder Include="wwwroot\css2\fonts\" />
+    <Folder Include="Views\Ticket\" />
   </ItemGroup>
 </Project>

@@ -42,6 +42,20 @@
             }
         });
     }</script>
+<style>
+    .customCell{
+        font-size:13px!important;
+        padding:2px 2px 2px 2px!important;
+    }
+    .customButtonCell {
+        font-size: 13px !important;
+        padding: 2px 2px 2px 2px !important;
+        text-align:center;
+    }
+    .modal-open {
+        overflow-y: hidden!important;
+    }
+</style>
 
 
 
@@ -121,7 +135,7 @@
                 </tr>
             </thead>
         </table>
-        <!--end: Datatable-->
+       
     </div>
 </div>
 
@@ -194,6 +208,13 @@
         });
 
 
+        $("#modalSubTicket").on("show.bs.modal", function () {
+            $("body").addClass("modal-open");
+        }).on("hide.bs.modal", function () {
+            $("body").removeClass("modal-open")
+        });
+
+
         $("#reload").click(function () {
             table.ajax.reload();
         });
@@ -223,9 +244,19 @@
                 'pdf'
             ],
             columnDefs: [
-                { responsivePriority: 1, targets: 1 },
-                { responsivePriority: 2, targets: 3 },
-                { responsivePriority: 3, targets: 2 }
+                {
+                    className: 'customButtonCell', targets: 7
+                },
+                {
+                    className: 'customButtonCell', targets: 8
+                },
+                {
+                    className: 'customButtonCell', targets: 9
+                },
+                {
+                    className: 'customCell', targets: "_all"
+                }
+               
             ],
             "ajax": {
                 "url": "../../Ticket/GetTickets",
@@ -243,6 +274,7 @@
                 {
                     "data": "id",
                     "autoWidth": true,
+                    
                 },
                 {
                     "data": "createdUser",
@@ -328,20 +360,28 @@
                 {
                     "data": "id",
                     "render": function (data, type, row) {
-                        return '<a onclick="GetTicket(' + data + ')" class="btn btn-dark">Detay</a>'
+                        return '<a onclick="GetTicket(' + data + ')" class="btn btn-dark btn-sm">Detay</a>'
                     }
                 },
                 {
                     "data": "id",
                     "render": function (data, type, row) {
-                        return '<a onclick="GetSubTickets(' + data + ')" class="btn btn-light">Alt İşler</a>'
+
+                        var subTicketCount = row["subTicketCount"];
+
+                        var retval = '<a onclick="GetSubTickets(' + data + ')" class="btn btn-light btn-sm">Alt İşler</a>';
+                        if (subTicketCount > 0) {
+                            retval = '<a onclick="GetSubTickets(' + data + ')" class="btn btn-success btn-sm">Alt İşler</a>';
+                        }
+
+                        return retval; 
                     }
                 }
             ],
             "initComplete": function (settings, json) {
                 $('.selectpicker').selectpicker();
 
-
+                $('#ticketList thead th').removeClass('customCell');
 
                 $('.selectpicker').on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
 

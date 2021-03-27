@@ -338,12 +338,16 @@ namespace Ticket.Presentation.Controllers
             return Ok("Ok");
         }
 
-
         public async Task<IActionResult> UpdatePriority(UpdateTicketPriorityModel model)
         {
             await HttpClientHelper.SendPostRequest(model, "Ticket/update-ticket-priority", CookieHelper.GetToken(Request, "oaut.Cookie"));
 
             return Ok("Ok");
+        }
+
+        public async Task<IActionResult> TicketList()
+        {
+            return View();
         }
     }
 }
