@@ -29,7 +29,7 @@
 
     var ticketNo = 0;
 
-    function GetSubTickets(ticketId,subject) {
+    function GetSubTickets(ticketId,rowIndex) {
 
         $.ajax({
             type: 'GET',
@@ -44,7 +44,11 @@
                     Swal.fire("Bilgilendirme!", "Alt İş Kaydı Bulunamadı.", "info");
 
                 } else {
-                    $('#subTicketTitle').text("#" + ticketId + " " + subject);
+
+                    var rowData = table.row(rowIndex).data();
+
+                    $('#subTicketTitle').text("Cari:" + rowData["cardName"]);
+                    $('#subTicketSubTitle').text("#" + ticketId + " " + rowData["subject"]);
                     $('#subTickets').append(data);
                     $('#modalSubTicketList').modal();
                 }
@@ -151,6 +155,8 @@
         var fileupload = $('[name="frmSubTicket"] [name="File"]').get(0);
         var files = fileupload.files;
 
+        var content = $('[name="frmSubTicket"] [name="Description"]').markdown().parseContent();
+
         var fd = new FormData(myForm[0]);
         fd.append('File', files[0]);
 
@@ -239,7 +245,7 @@
                     timer: 1500
                 });
 
-                table.ajax.reload();
+                RenderData();
 
                 $('#modalTicket').modal('hide');
 
@@ -446,24 +452,238 @@
         $("[name='frmSubTicket'] [name='CloseTicket']").prop('checked', false);
     }
 
-    function CancelTicket(id, event) {
-        event.stopPropagation();
+    function CancelTicket() {
+
+        var fd = $('[name="frmTicket"]').serializeArray();
 
         var data = [];
-
-        data.push({ name: "ticketId", value: id });
+        data.push({ name: "ticketId", value: fd[0].value });
 
         $.ajax({
             type: 'POST',
             url: '../../Ticket/CancelTicket',
             data: data,
             success: function () {
-                table.ajax.reload();
+                RenderData();
             },
             error: function (xhr, ajaxOptions, thrownError) {
                 Swal.fire("Hata!", "Hata Oluştu.", "error");
             }
         });
+    }
+
+    var table;
+    function RenderData() {
+
+        var data = $('#frmFilter').serializeArray();
+
+
+
+        $.ajax({
+            type: 'POST',
+            url: "../../Ticket/GetTicketsForClient",
+            traditional: true,
+            data: data,
+            success: function (result) {
+
+                if ($.fn.dataTable.isDataTable('#ticketList')) {
+                    table.destroy();
+                }
+
+              table=  $('#ticketList').DataTable({
+                    dom: 'Bfrtip',
+                    data: result,
+                    "searching": false,
+                    "info": false,
+                    "paging": false,
+                    "responsive": true,
+                    buttons: [
+                        'copy',
+                        'excel',
+                        'csv',
+                        'pdf'
+                    ],
+                    columnDefs: [
+                        {
+                            className: 'customButtonCell', targets: 7
+                        },
+                        {
+                            className: 'customButtonCell', targets: 8
+                        },
+                        {
+                            className: 'customButtonCell', targets: 9
+                        },
+                        {
+                            className: 'customButtonCell', targets: 10
+                        },
+                        {
+                            className: 'customCell', targets: "_all"
+                        }
+
+                    ],
+                    "createdRow": function (row, data, index) {
+                        $('td', row).eq(0).addClass('grabbing');
+                        $('td', row).eq(1).addClass('grabbing');
+                        $('td', row).eq(2).addClass('grabbing');
+                        $('td', row).eq(3).addClass('grabbing');
+                        $('td', row).eq(4).addClass('grabbing');
+                        $('td', row).eq(5).addClass('grabbing');
+                        $('td', row).eq(6).addClass('grabbing');
+                        $('td', row).eq(7).addClass('not-allowed');
+
+                    },
+                    "columns": [
+                        {
+                            "data": "id",
+                            "width": "3%",
+                        },
+                        {
+                            "data": "cardName",
+                            "width": "20%",
+                        },
+                        {
+                            "data": "createdUser",
+                            "width": "10%",
+                        },
+                        {
+                            "data": "createDateAsString",
+                            "width": "10%",
+                        },
+                        {
+                            "data": "projectName",
+                            "width": "10%",
+                        },
+                        {
+                            "data": "subject",
+                            "width": "20%",
+                        },
+                        {
+                            "data": "supportType",
+                            "width": "7%",
+                            "render": function (data, type, row) {
+
+                                return '<span>' + data + '</span>';
+                            }
+                        },
+                        {
+                            "data": "priority",
+                            "width": "5%",
+                            "render": function (data, type, row) {
+
+                                var cls = "btn-primary btn-sm";
+                                var opts = "";
+
+                                if (data == 1) {
+
+                                    cls = "btn-primary btn-sm";
+                                    opts = '<option value="1" selected>Düşük</option>' +
+                                        '<option value="2">Orta</option>' +
+                                        '<option value="3">Yüksek</option>';
+
+                                }
+                                else if (data == 2) {
+
+                                    cls = "btn-warning btn-sm";
+                                    opts = '<option value="1">Düşük</option>' +
+                                        '<option value="2" selected>Orta</option>' +
+                                        '<option value="3">Yüksek</option>';
+                                }
+                                else {
+
+                                    cls = "btn-danger btn-sm";
+                                    opts = '<option value="1">Düşük</option>' +
+                                        '<option value="2">Orta</option>' +
+                                        '<option value="3" selected>Yüksek</option>';
+
+                                }
+
+
+                                return '<select class="form-control selectpicker" title="Primary" data-key="' + row["id"] + '" id="priority" data-style="' + cls + '">' +
+                                    opts +
+                                    '</select>';
+
+                            }
+                        },
+                        {
+                            "data": "status",
+                            "width": "5%",
+                            "render": function (data, type, row) {
+
+                                if (data === "YeniTalep") {
+                                    return '<span class="label label-danger label-pill label-inline mr-2">Yeni</span>';
+                                }
+                                else if (data === "Development") {
+                                    return '<span class="label label-warning label-pill label-inline mr-2">Yazılımda</span>'
+                                }
+                                else if (data === "Close") {
+                                    return '<span class="label label-dark label-inline mr-2">Kapalı</span>'
+                                } else {
+                                    return '<span class="label label-info label-inline mr-2">Açık</span>';
+                                }
+                            }
+                        },
+                        {
+                            "data": "id",
+                            "width": "5%",
+                            "render": function (data, type, row) {
+                                return '<a onclick="FillForm(' + data + ',event)" class="btn btn-dark btn-sm">Düzenle</a>'
+                            }
+                        },
+                        {
+                            "data": "id",
+                            "width": "5%",
+                            "render": function (data, type,row ,rowIndex) {
+
+                                var subTicketCount = row["subTicketCount"];
+
+
+
+                                var retval = '<a onclick="GetSubTickets(' + data + ',' + rowIndex.row + ')" class="btn btn-light btn-sm">Alt İşler</a>';
+                                if (subTicketCount > 0) {
+                                    retval = '<a onclick="GetSubTickets(' + data + ',' + rowIndex.row + ')" class="btn btn-success btn-sm">Alt İşler</a>';
+                                }
+
+                                return retval;
+                            }
+                        }
+
+                    ],
+                    "initComplete": function (settings, json) {
+                        $('.selectpicker').selectpicker();
+
+                        $('#ticketList thead th').removeClass('customCell');
+
+
+                    },
+                    "drawCallback": function (settings) {
+                        $('.selectpicker').selectpicker();
+
+                        $('.selectpicker').on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
+
+                            var ticketId = e.currentTarget.attributes[2].nodeValue;
+
+                            var data = { Id: ticketId, Priority: clickedIndex };
+
+                            $.ajax({
+                                type: 'POST',
+                                url: '../../Ticket/UpdatePriority',
+                                data: data,
+                                success: function () {
+                                    RenderData();
+                                },
+                                error: function (xhr, ajaxOptions, thrownError) {
+                                    Swal.fire("Hata!", "Hata Oluştu.", "error");
+                                }
+                            });
+
+
+                        });
+                    }
+                });
+
+            }
+        });
+
     }
 
 </script>
@@ -495,7 +715,7 @@
     </div>
     <div class="card-body">
 
-        <form class="kt-form kt-form--fit mb-4">
+        <form class="kt-form kt-form--fit mb-4" id="frmFilter">
             <div class="row mb-6">
                 <div class="col-lg-1 mb-lg-0 mb-6">
                     <label>Ticket Id:</label>
@@ -513,21 +733,21 @@
                 </div>
                 <div class="col-lg-2 mb-lg-0 mb-6">
                     <label class="col-md-12">Cari Adı:</label>
-                    <select multiple="multiple" class="form-control datatable-input" id="CardCode" data-col-index="0">
+                    <select multiple="multiple" class="form-control datatable-input" id="CardCode" name="cardCodes" data-col-index="0">
                     </select>
                 </div>
                 <div class="col-lg-2 mb-lg-0 mb-6">
                     <label>Konu:</label>
-                    <input type="text" class="form-control datatable-input" id="Subject" data-col-index="0" />
+                    <input type="text" class="form-control datatable-input" id="Subject" name="Subject" data-col-index="0" />
                 </div>
                 <div class="col-lg-2 mb-lg-0 mb-6">
                     <label class="col-md-12">Kullanıcı:</label>
-                    <select multiple="multiple" class="form-control datatable-input" id="UserId" data-col-index="0">
+                    <select multiple="multiple" class="form-control datatable-input" id="UserId" name="userIds" data-col-index="0">
                     </select>
                 </div>
                 <div class="col-lg-2 mb-lg-0 mb-6">
                     <label class="col-md-12">Durum:</label>
-                    <select multiple="multiple" class="form-control datatable-input" id="Status" data-col-index="6">
+                    <select multiple="multiple" class="form-control datatable-input" id="Status" name="statuList" data-col-index="6">
                         <option value="1" selected="selected">Açık</option>
                         <option value="2">Kapalı</option>
                         <option value="4" selected="selected">Yeni Talep</option>
@@ -535,10 +755,10 @@
                 </div>
                 <div class="col-lg-1 mb-lg-0 mb-6">
                     <label class="col-md-12">Öncelik:</label>
-                    <select multiple="multiple" class="form-control datatable-input" id="Priority" data-col-index="6">
+                    <select multiple="multiple" class="form-control datatable-input" id="Priority" name="Priority" data-col-index="6">
                         <option value="1" selected="selected">Düşük</option>
                         <option value="2" selected>Orta</option>
-                        <option value="2" selected="selected">Yüksek</option>
+                        <option value="3" selected="selected">Yüksek</option>
                     </select>
                 </div>
             </div>
@@ -603,6 +823,7 @@
             <div class="modal-body">
                 <div class="card card-custom">
                     <div class="col-sm-12">
+                        <h6 id="subTicketSubTitle"></h6>
                         <span class="btn btn-light-success btn-sm text-uppercase font-weight-bolder" style="float:right;margin-top:2px" onclick="ClearSubTicketForm()" data-toggle="modal" data-target="#modalSubTicket" title="Previose page">Yeni İş</span>
                         <span class="btn btn-light-danger btn-sm text-uppercase font-weight-bolder" style="margin-right:2px;float:right;margin-top:2px" onclick="SendMail()" title="Previose page">Mail Gönder</span>
                     </div>
@@ -709,7 +930,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-light-primary font-weight-bold" data-dismiss="modal">Kapat</button>
-                <button type="button" onclick="SubTicketAdd()" class="btn btn-primary font-weight-bold">Kaydet</button>
+                <button type="button" onclick="SubTicketAdd()" data-dismiss="modal" class="btn btn-primary font-weight-bold">Kaydet</button>
             </div>
         </div>
     </div>
@@ -827,7 +1048,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-light-primary font-weight-bold" data-dismiss="modal">Kapat</button>
+                <button type="button" class="btn btn-light-dark font-weight-bold" onclick="CancelTicket()" data-dismiss="modal">Ticket İptal</button>
                 <button type="button" onclick="TicketSaveChanges(false)" class="btn btn-primary font-weight-bold">Kaydet</button>
                 <button type="button" onclick="TicketSaveChanges(true)" class="btn btn-success font-weight-bold">Kaydet Ve SubTicket Aç</button>
             </div>
@@ -900,234 +1121,13 @@ var table;
         $("#menuReport").removeClass("menu-item-open menu-item-here");
 
         $("#reload").click(function () {
-            table.ajax.reload();
+            RenderData();
         });
 
         GenerateTagify();
 
-        table = $('#ticketList').DataTable({
-            dom: 'Bfrtip', //Excel export için frtip olması gerekiyor.
-            "select": true,
-            "processing": true,
-            "searching": false,
-            "info": false,
-            "paging": false,
-            "serverSide": true,
-            "ordering": false,
-            "responsive":true,
-            buttons: [
-                'copy',
-                'excel',
-                'csv',
-                'pdf'
-            ],
-            columnDefs: [
-                {
-                    className: 'customButtonCell', targets: 7
-                },
-                {
-                    className: 'customButtonCell', targets: 8
-                },
-                {
-                    className: 'customButtonCell', targets: 9
-                },
-                {
-                    className: 'customButtonCell', targets: 10
-                },
-                {
-                    className: 'customCell', targets: "_all"
-                }
 
-            ],
-            "ajax": {
-                "url": "../../Ticket/GetTickets",
-                "dataType": "JSON",
-                "traditional": true,
-                "data": function (d) {
-                    d.id = $('#Id').val();
-                    d.cardCodes = $('#CardCode').val();
-                    d.userIds = $('#UserId').val();
-                    d.statuList = $('#Status').val();
-                    d.subject = $('#Subject').val();
-                    d.supportType = $('#SupportType').val();
-                }
-            },
-            "createdRow": function (row, data, index) {
-                $('td', row).eq(0).addClass('grabbing');
-                $('td', row).eq(1).addClass('grabbing');
-                $('td', row).eq(2).addClass('grabbing');
-                $('td', row).eq(3).addClass('grabbing');
-                $('td', row).eq(4).addClass('grabbing');
-                $('td', row).eq(5).addClass('grabbing');
-                $('td', row).eq(6).addClass('grabbing');
-                $('td', row).eq(7).addClass('not-allowed');
-
-            },
-            "columns": [
-                {
-                    "data": "id",
-                    "width": "3%",
-                },
-                {
-                    "data": "cardName",
-                    "width": "20%",
-                },
-                {
-                    "data": "createdUser",
-                    "width": "10%",
-                },
-                {
-                    "data": "createDateAsString",
-                    "width": "10%",
-                },
-                {
-                    "data": "projectName",
-                    "width": "10%",
-                },
-                {
-                    "data": "subject",
-                    "width": "20%",
-                },
-                {
-                    "data": "supportType",
-                    "width": "7%",
-                    "render": function (data, type, row) {
-
-                       return '<span>' + data + '</span>';
-                    }
-                },
-                {
-                    "data": "priority",
-                    "width": "5%",
-                    "render": function (data, type, row) {
-
-                        var cls = "btn-primary btn-sm";
-                        var opts = "";
-
-                        if (data == 1) {
-
-                            cls = "btn-primary btn-sm";
-                            opts = '<option value="1" selected>Düşük</option>' +
-                                '<option value="2">Orta</option>' +
-                                '<option value="3">Yüksek</option>';
-
-                        }
-                        else if (data == 2) {
-
-                            cls = "btn-warning btn-sm";
-                            opts = '<option value="1">Düşük</option>' +
-                                '<option value="2" selected>Orta</option>' +
-                                '<option value="3">Yüksek</option>';
-                        }
-                        else {
-
-                            cls = "btn-danger btn-sm";
-                            opts = '<option value="1">Düşük</option>' +
-                                '<option value="2">Orta</option>' +
-                                '<option value="3" selected>Yüksek</option>';
-
-                        }
-
-
-                        return '<select class="form-control selectpicker" title="Primary" data-key="' + row["id"] + '" id="priority" data-style="' + cls + '">' +
-                            opts +
-                            '</select>';
-
-                    }
-                },
-                {
-                    "data": "status",
-                    "width": "5%",
-                    "render": function (data, type, row) {
-
-                        if (data === "YeniTalep") {
-                            return '<span class="label label-danger label-pill label-inline mr-2">Yeni</span>';
-                        }
-                        else if (data === "Development") {
-                            return '<span class="label label-warning label-pill label-inline mr-2">Yazılımda</span>'
-                        }
-                        else if (data === "Close") {
-                            return '<span class="label label-dark label-inline mr-2">Kapalı</span>'
-                        } else {
-                            return '<span class="label label-info label-inline mr-2">Açık</span>';
-                        }
-                    }
-                },
-                {
-                    "data": "id",
-                    "width": "5%",
-                    "render": function (data, type, row) {
-                        return '<a onclick="FillForm(' + data + ',event)" class="btn btn-dark btn-sm">Düzenle</a>'
-                    }
-                },
-                {
-                    "data": "id",
-                    "width": "5%",
-                    "render": function (data, type, row) {
-
-                        var subTicketCount = row["subTicketCount"];
-
-                        var retval = '<a onclick="GetSubTickets(' + data + ',\''+row["subject"]+'\')" class="btn btn-light btn-sm">Alt İşler</a>';
-                        if (subTicketCount > 0) {
-                            retval = '<a onclick="GetSubTickets(' + data + ',\'' + row["subject"]+'\')" class="btn btn-success btn-sm">Alt İşler</a>';
-                        }
-
-                        return retval;
-                    }
-                }
-
-            ],
-            "initComplete": function (settings, json) {
-                $('.selectpicker').selectpicker();
-
-                $('#ticketList thead th').removeClass('customCell');
-
-                $('.selectpicker').on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
-
-                    var ticketId = e.currentTarget.attributes[2].nodeValue;
-
-                    var data = { Id: ticketId, Priority: clickedIndex };
-
-                    $.ajax({
-                        type: 'POST',
-                        url: '../../Ticket/UpdatePriority',
-                        data: data,
-                        success: function () {
-                            table.ajax.reload();
-                        },
-                        error: function (xhr, ajaxOptions, thrownError) {
-                            Swal.fire("Hata!", "Hata Oluştu.", "error");
-                        }
-                    });
-
-
-                });
-            },
-            "drawCallback": function (settings) {
-                $('.selectpicker').selectpicker();
-
-                $('.selectpicker').on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
-
-                    var ticketId = e.currentTarget.attributes[2].nodeValue;
-
-                    var data = { Id: ticketId, Priority: clickedIndex };
-
-                    $.ajax({
-                        type: 'POST',
-                        url: '../../Ticket/UpdatePriority',
-                        data: data,
-                        success: function () {
-                            table.ajax.reload();
-                        },
-                        error: function (xhr, ajaxOptions, thrownError) {
-                            Swal.fire("Hata!", "Hata Oluştu.", "error");
-                        }
-                    });
-
-
-                });
-            }
-        });
+        RenderData();
 
 
 

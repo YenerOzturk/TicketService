@@ -34,7 +34,7 @@ namespace Ticket.Presentation.Controllers
                 return RedirectToAction("Login");
             }
 
-            string returnUrl = "../../Home/Ticket";
+            string returnUrl = "../../Ticket/TicketList";
 
             string url = $"Token/new?email={model.Email}&password={model.Password}";
 

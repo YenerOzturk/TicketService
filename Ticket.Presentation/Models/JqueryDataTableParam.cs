@@ -10,6 +10,7 @@ namespace Ticket.Presentation.Models
         public string start { get; set; }
         public int length { get; set; }
         public int columns { get; set; }
+        public List<Order> order { get; set; }
         public string userId { get; set; }
         public int id { get; set; }
         public string cardCode { get; set; }
@@ -29,5 +30,12 @@ namespace Ticket.Presentation.Models
         public List<string> cardCodes { get; set; }
         public List<string> userIds { get; set; }
         public List<string> statuList { get; set; }
+        public List<string> priority { get; set; }
+    }
+
+    public class Order
+    {
+        public int column { get; set; }
+        public string dir { get; set; }
     }
 }

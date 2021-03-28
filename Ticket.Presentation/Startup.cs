@@ -99,7 +99,7 @@ namespace Ticket.Presentation
             {
                 endpoints.MapControllers();
                 endpoints.MapRazorPages();
-                endpoints.MapControllerRoute("default", "{controller=Home}/{action=Ticket}/{id?}");
+                endpoints.MapControllerRoute("default", "{controller=Ticket}/{action=TicketList}/{id?}");
             });
         }
     }
