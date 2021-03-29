@@ -31,6 +31,8 @@
 
     function GetSubTickets(ticketId,rowIndex) {
 
+        ticketNo = ticketId;
+
         $.ajax({
             type: 'GET',
             url: '../../Ticket/GetSubTickets',
@@ -39,19 +41,13 @@
 
                 $('#subTickets').empty();
 
-                if (data == "") {
-
-                    Swal.fire("Bilgilendirme!", "Alt İş Kaydı Bulunamadı.", "info");
-
-                } else {
-
                     var rowData = table.row(rowIndex).data();
 
                     $('#subTicketTitle').text("Cari:" + rowData["cardName"]);
                     $('#subTicketSubTitle').text("#" + ticketId + " " + rowData["subject"]);
                     $('#subTickets').append(data);
                     $('#modalSubTicketList').modal();
-                }
+
 
             },
             error: function (xhr, ajaxOptions, thrownError) {
@@ -64,10 +60,15 @@
 
         var ticketId = ticketNo
 
-        var rowIndex = table.rows({ selected: true })[0];
+        var row = table.rows({ selected: true })[0];
+        var rowIndex = 0;
 
-        if (rowIndex.length > 0) {
+        if (row.length > 0) {
+            rowIndex = row[0];
             ticketId = table.row(rowIndex).data().id;
+
+        } else {
+            ticketId = table.row(0).data().id;
         }
 
         if (ticketId == 0) {
@@ -114,7 +115,7 @@
 
                 $("[name='Id']").val(0);
                 $("[name='Description']").val('');
-                GetSubTickets(ticketId);
+                GetSubTickets(ticketId, rowIndex);
             },
             error: function (xhr, ajaxOptions, thrownError) {
                 Swal.fire("Hata!", "Hata Oluştu.", "error");
@@ -125,6 +126,8 @@
     function DeleteSubTicket(id, ticketId) {
 
         var callback = function () {
+
+            var rowIndex = table.rows({ selected: true })[0];
 
             var data = $('[name="frmSubTicket"]').serializeArray();
 
@@ -137,7 +140,7 @@
                 url: '../../Ticket/DeleteSubTicket',
                 data: data,
                 success: function () {
-                    GetSubTickets(ticketId);
+                    GetSubTickets(ticketId, rowIndex[0]);
                 },
                 error: function (xhr, ajaxOptions, thrownError) {
                     Swal.fire("Hata!", "Hata Oluştu.", "error");
@@ -177,7 +180,9 @@
             contentType: false,
             success: function () {
 
-                GetSubTickets(ticketId);
+                var rowIndex = table.rows({ selected: true })[0];
+
+                GetSubTickets(ticketId, rowIndex[0]);
 
 
             },
@@ -187,7 +192,7 @@
         });
     }
 
-    function TicketSaveChanges(showSubTicketModal) {
+    function TicketSaveChanges() {
 
         if ($("[name='frmTicket'] [name='Description']").val() === '') {
             Swal.fire("Hata!", "Açıklama Alanı Boş Geçilemez.", "error");
@@ -245,20 +250,10 @@
                     timer: 1500
                 });
 
-                RenderData();
-
                 $('#modalTicket').modal('hide');
 
-                if (showSubTicketModal) {
+                RenderData();
 
-                    if (result > 0) {
-                        ticketNo = result;
-                    }
-
-                    $("#lblTicketId").text(" - Ticket Id : " + ticketNo)
-
-                    $('#modalSubTicket').modal();
-                }
             },
             error: function (xhr, ajaxOptions, thrownError) {
                 Swal.fire("Hata!", "Hata Oluştu.", "error");
@@ -275,10 +270,10 @@
         $("[name='frmTicket'] [name='Billing']").prop('checked', false);
         $("[name='frmTicket'] [name='UserId']").val(@ViewData["UserId"]);
         ClearTags();
+        $("[name='frmTicket'] #divLinks").empty();
     }
 
     function FillForm(id, event) {
-        event.stopPropagation();
         $.ajax({
             type: 'GET',
             url: '../../Ticket/GetTicketById',
@@ -394,7 +389,6 @@
 
                     }
 
-
                     var dom = $('[name="frmSubTicket"]').find(':input').filter(function () {
 
                         if ($(this).attr('name') == undefined) return undefined;
@@ -477,8 +471,6 @@
 
         var data = $('#frmFilter').serializeArray();
 
-
-
         $.ajax({
             type: 'POST',
             url: "../../Ticket/GetTicketsForClient",
@@ -495,8 +487,12 @@
                     data: result,
                     "searching": false,
                     "info": false,
-                    "paging": false,
-                    "responsive": true,
+                  "paging": false,
+                  select: {
+                      toggleable: false
+                  },
+                  "responsive": true,
+                  "order": [[0, "desc"]],
                     buttons: [
                         'copy',
                         'excel',
@@ -505,9 +501,6 @@
                     ],
                     columnDefs: [
                         {
-                            className: 'customButtonCell', targets: 7
-                        },
-                        {
                             className: 'customButtonCell', targets: 8
                         },
                         {
@@ -515,6 +508,9 @@
                         },
                         {
                             className: 'customButtonCell', targets: 10
+                        },
+                        {
+                            className: 'customButtonCell', targets: 11
                         },
                         {
                             className: 'customCell', targets: "_all"
@@ -539,10 +535,14 @@
                         },
                         {
                             "data": "cardName",
-                            "width": "20%",
+                            "width": "15%",
                         },
                         {
                             "data": "createdUser",
+                            "width": "10%",
+                        },
+                        {
+                            "data": "nameSurname",
                             "width": "10%",
                         },
                         {
@@ -555,7 +555,7 @@
                         },
                         {
                             "data": "subject",
-                            "width": "20%",
+                            "width": "16%",
                         },
                         {
                             "data": "supportType",
@@ -606,7 +606,7 @@
                         },
                         {
                             "data": "status",
-                            "width": "5%",
+                            "width": "3%",
                             "render": function (data, type, row) {
 
                                 if (data === "YeniTalep") {
@@ -631,7 +631,7 @@
                         },
                         {
                             "data": "id",
-                            "width": "5%",
+                            "width": "6%",
                             "render": function (data, type,row ,rowIndex) {
 
                                 var subTicketCount = row["subTicketCount"];
@@ -681,14 +681,59 @@
                     }
                 });
 
+                $('#ticketList tbody').on('click', 'td', function () {
+
+                    var data = table.row(this).data();
+                    ticketNo = data.id;
+
+                });
+
             }
         });
 
     }
 
+    function SendMail() {
+
+        var ticketId = ticketNo
+
+        var row = table.rows({ selected: true })[0];
+        var rowIndex = 0;
+
+        if (row.length > 0) {
+            rowIndex = row[0];
+            ticketId = table.row(rowIndex).data().id;
+
+        } else {
+            ticketId = table.row(0).data().id;
+        }
+
+        var data = [];
+        data.push({ name: "ticketId", value: ticketId });
+
+
+        $.ajax({
+            type: 'POST',
+            url: '../../Ticket/SendMail',
+            data: data,
+            success: function () {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Mail Gönderme Başarılı',
+                    showConfirmButton: true,
+                    timer: 1500
+                });
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                Swal.fire("Hata!", "Hata Oluştu.", "error");
+            }
+        });
+
+    }
+
+
 </script>
 <div class="card card-custom">
-
     <div class="card-header flex-wrap border-0 pt-6 pb-0">
         <div class="card-title">
             <h3 class="card-label">
@@ -710,20 +755,20 @@
                     <!--end::Svg Icon-->
                 </span>Yeni Kayıt
             </a>
-            <!--end::Button-->
         </div>
     </div>
     <div class="card-body">
 
         <form class="kt-form kt-form--fit mb-4" id="frmFilter">
+
             <div class="row mb-6">
                 <div class="col-lg-1 mb-lg-0 mb-6">
                     <label>Ticket Id:</label>
-                    <input type="text" class="form-control datatable-input" id="Id" data-col-index="0" />
+                    <input type="text" class="form-control datatable-input" id="Id" name="id" data-col-index="0" />
                 </div>
                 <div class="col-lg-2 mb-lg-0 mb-6">
                     <label>Destek Tipi:</label>
-                    <select class="form-control datatable-input" id="SupportType" data-col-index="6">
+                    <select class="form-control datatable-input" id="SupportType" name="supportType" data-col-index="6">
                         <option value="-1">Hepsi</option>
                         <option value="1">Yerinde Destek</option>
                         <option value="2">Telefon</option>
@@ -741,7 +786,7 @@
                     <input type="text" class="form-control datatable-input" id="Subject" name="Subject" data-col-index="0" />
                 </div>
                 <div class="col-lg-2 mb-lg-0 mb-6">
-                    <label class="col-md-12">Kullanıcı:</label>
+                    <label class="col-md-12">Atanan:</label>
                     <select multiple="multiple" class="form-control datatable-input" id="UserId" name="userIds" data-col-index="0">
                     </select>
                 </div>
@@ -780,14 +825,13 @@
             </div>
         </form>
 
-
-        <!--begin: Datatable-->
         <table class="table table-bordered table-hover table-checkable" id="ticketList" style="width:100%">
             <thead>
                 <tr>
                     <th>Id</th>
                     <th>Cari</th>
-                    <th>Kullanıcı</th>
+                    <th>Ticketı Açan</th>
+                    <th>Atanan</th>
                     <th>Oluşturma Tarihi</th>
                     <th>Proje</th>
                     <th>Konu</th>
@@ -799,17 +843,8 @@
                 </tr>
             </thead>
         </table>
-
-        <!--end: Datatable-->
     </div>
-
 </div>
-
-
-
-
-
-
 
 <div class="modal fade" id="modalSubTicketList" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="staticBackdrop" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
@@ -829,17 +864,12 @@
                     </div>
                     <div class="card-body" id="subTickets" style="overflow: scroll;max-height:700px">
 
-
-
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
-
-
-
 
 <div class="modal fade" id="modalSubTicket" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="staticBackdrop" aria-hidden="true">
     <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
@@ -948,50 +978,27 @@
             <div class="modal-body">
                 <div class="card card-custom">
 
-                    <!--begin::Form-->
                     <form name="frmTicket" class="form">
                         <input type="hidden" name="Id" />
                         <input type="hidden" name="Status" />
-
-                        <div class="card-body">
-                            <div class="form-group mb-8">
-
-                            </div>
-                            <div class="form-group row">
-                                <label class="col-lg-2 col-form-label">Cari</label>
-                                <div class="col-lg-10">
-                                    <select name="CardCode" class="form-control">
-                                    </select>
+                        <div class="card-body" style="padding:0.25rem">
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <label class="col-form-label text-lg-right">Cari:</label>
+                                    <select name="CardCode" class="form-control"></select>
+                                </div>
+                                <div class="col-lg-6">
+                                    <label class="col-form-label text-lg-right">Kullanıcı:</label>
+                                    <select name="UserId" class="form-control"></select>
                                 </div>
                             </div>
-
-
-                            <div class="form-group row">
-                                <label class="col-lg-2 col-form-label">Ürün</label>
-                                <div class="col-lg-10">
-                                    <select class="form-control" name="ProductId">
-                                    </select>
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <label class="col-form-label text-lg-right">Ürün:</label>
+                                    <select class="form-control" name="ProductId"></select>
                                 </div>
-                            </div>
-                            <div class="form-group row">
-                                <label class="col-lg-2 col-form-label">Kullanıcı</label>
-                                <div class="col-lg-10">
-                                    <select name="UserId" class="form-control">
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="form-group row">
-                                <label class="col-lg-2 col-form-label">Proje</label>
-                                <div class="col-lg-10">
-                                    <select name="ProjectId" class="form-control">
-                                        <option value="-1">Proje Bağımsız</option>
-                                        <option value="21">A Proje</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="form-group row">
-                                <label class="col-lg-2 col-form-label">Destek Tipi</label>
-                                <div class="col-lg-10">
+                                <div class="col-lg-6">
+                                    <label class="col-form-label text-lg-right">Destek Tipi:</label>
                                     <select name="SupportType" class="form-control">
                                         <option value="1">Yerinde Destek</option>
                                         <option value="2">Telefon</option>
@@ -1000,25 +1007,32 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="form-group row">
-                                <label class="col-lg-2 col-form-label">Tahmini Bitiş Tarihi</label>
-                                <div class="col-lg-10">
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <label class="col-form-label text-lg-right">Proje:</label>
+                                    <select name="ProjectId" class="form-control">
+                                        <option value="-1">Proje Bağımsız</option>
+                                        <option value="21">A Proje</option>
+                                    </select>
+                                </div>
+                                <div class="col-lg-6">
+                                    <label class="col-form-label text-lg-right">Tahmini Bitiş:</label>
                                     <input type="text" class="form-control form-control-solid" id="EstimatedEndDate" />
                                 </div>
                             </div>
                             <div class="form-group row">
-                                <div class="col-lg-2">Etiket</div>
-                                <div class="col-lg-10 col-md-10 col-sm-10">
+                                <div class="col-lg-6">
+                                    <label class="col-form-label text-lg-right">Etiket:</label>
                                     <input id="kt_tagify_5" class="form-control tagify" name='tags3' placeholder="Etiket Ekle" />
                                 </div>
-                            </div>
-                            <div class="form-group row">
-                                <div class="col-lg-2"></div>
-                                <label class="checkbox">
-                                    <input type="checkbox" name="Billing" value="true" />
-                                    <span></span>
-                                    Faturalandırılmayacak
-                                </label>
+                                <div class="col-lg-6" style="padding-top:43px;">
+                                    <label class="col-form-label text-lg-right"></label>
+                                    <label class="checkbox">
+                                        <input type="checkbox" name="Billing" value="true" />
+                                        <span></span>
+                                        Faturalandırılmayacak
+                                    </label>
+                                </div>
                             </div>
                             <div class="form-group row">
                                 <label class="col-lg-2 col-form-label">Konu</label>
@@ -1032,7 +1046,7 @@
                                     <textarea class="form-control" name="Description" data-provide="markdown" rows="10"></textarea>
                                 </div>
                             </div>
-                            <div class="form-group">
+                            <div class="row">
                                 <label>Dosya Eki:</label>
 
                                 <input type="file" name="File" />
@@ -1050,7 +1064,6 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-light-dark font-weight-bold" onclick="CancelTicket()" data-dismiss="modal">Ticket İptal</button>
                 <button type="button" onclick="TicketSaveChanges(false)" class="btn btn-primary font-weight-bold">Kaydet</button>
-                <button type="button" onclick="TicketSaveChanges(true)" class="btn btn-success font-weight-bold">Kaydet Ve SubTicket Aç</button>
             </div>
         </div>
     </div>
@@ -1129,7 +1142,11 @@ var table;
 
         RenderData();
 
-
+        $("#modalSubTicketList").on("show.bs.modal", function () {
+            $("body").addClass("modal-open");
+        }).on("hide.bs.modal", function () {
+            $("body").removeClass("modal-open")
+        });
 
 
     $('#btnPdf').on('click', function () {

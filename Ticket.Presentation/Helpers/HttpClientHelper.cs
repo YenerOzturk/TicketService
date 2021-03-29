@@ -91,7 +91,7 @@ namespace Ticket.Presentation.Helpers
                 var response = await client.PostAsync(_baseUrl + url, httpContent);
                 var result = await response.Content.ReadAsStringAsync();
 
-                return JsonSerializer.Deserialize<TResult>(result);
+                return JsonSerializer.Deserialize<TResult>(result,new JsonSerializerOptions() { PropertyNameCaseInsensitive=true });
             }
             catch
             {

@@ -28,9 +28,9 @@ namespace Ticket.Presentation.Models
         public string subject { get; set; }
 
         public List<string> cardCodes { get; set; }
-        public List<string> userIds { get; set; }
-        public List<string> statuList { get; set; }
-        public List<string> priority { get; set; }
+        public List<int> userIds { get; set; }
+        public List<int> statuList { get; set; }
+        public List<int> priority { get; set; }
     }
 
     public class Order

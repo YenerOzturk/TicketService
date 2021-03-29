@@ -103,74 +103,22 @@ namespace Ticket.Presentation.Controllers
 
         public async Task<IActionResult> GetTicketsForClient(JqueryDataTableParam param)
         {
-            string url = $"Ticket/get-Tickets";
+            string url = $"Ticket/post-Tickets";
 
-            string urlParam = string.Empty;
+            var repositories = await HttpClientHelper.SendPostRequest<GetTicketRequestModel,IEnumerable<TicketListResultModel>>(
 
-
-            if (param.cardCodes != null)
-            {
-                foreach (var item in param.cardCodes)
+                new GetTicketRequestModel()
                 {
-                    urlParam += $"&CardCodes={item}";
-                }
-            }
-
-
-            if (param.id > 0)
-            {
-                urlParam += $"&TicketId={param.id}";
-            }
-
-            if (param.userIds != null)
-            {
-                foreach (var item in param.userIds)
-                {
-                    if (string.IsNullOrEmpty(item)) continue;
-
-                    urlParam += $"&UserIds={item}";
-                }
-            }
-
-            if (param.priority != null)
-            {
-                foreach (var item in param.priority)
-                {
-                    if (string.IsNullOrEmpty(item)) continue;
-                    urlParam += $"&Priority={item}";
-                }
-            }
-
-
-            if (!string.IsNullOrEmpty(param.subject))
-            {
-
-                urlParam += $"&Subject={param.subject}";
-            }
-
-            if (param.statuList != null)
-            {
-                foreach (var item in param.statuList)
-                {
-                    if (string.IsNullOrEmpty(item)) continue;
-                    urlParam += $"&Status={item}";
-                }
-            }
-
-
-            if (param.supportType > 0)
-            {
-                urlParam += $"&SupportType={param.supportType}";
-            }
-
-
-            if (!string.IsNullOrEmpty(urlParam))
-            {
-                url += "?" + urlParam.Remove(0, 1);
-            }
-
-
-            var repositories = await HttpClientHelper.SendGetRequest<IEnumerable<TicketListResultModel>>(url, CookieHelper.GetToken(Request, "oaut.Cookie"));
+                    TicketId=param.id,
+                    CardCodes=param.cardCodes,
+                    Priority=param.priority,
+                    Subject=param.subject,
+                    Status=param.statuList,
+                    SupportType=param.supportType,
+                    UserIds=param.userIds
+                },
+                url
+                , CookieHelper.GetToken(Request, "oaut.Cookie"));
 
             return Json(repositories);
         }
