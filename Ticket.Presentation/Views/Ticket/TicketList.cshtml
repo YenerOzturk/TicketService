@@ -499,7 +499,16 @@
                         'csv',
                         'pdf'
                     ],
-                    columnDefs: [
+                  columnDefs: [
+                        {
+                            responsivePriority: 1, targets: 1
+                        },
+                        {
+                            responsivePriority: 2, targets: 3
+                        },
+                        {
+                            responsivePriority: 3, targets: 2
+                        },
                         {
                             className: 'customButtonCell', targets: 8
                         },
@@ -507,10 +516,10 @@
                             className: 'customButtonCell', targets: 9
                         },
                         {
-                            className: 'customButtonCell', targets: 10
+                            className: 'customButtonCell', responsivePriority: 4, targets: 10
                         },
                         {
-                            className: 'customButtonCell', targets: 11
+                            className: 'customButtonCell', responsivePriority: 5, targets: 11
                         },
                         {
                             className: 'customCell', targets: "_all"
