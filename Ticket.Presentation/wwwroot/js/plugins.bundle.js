@@ -75027,6 +75027,7 @@ function merge_text_nodes( jsonml ) {
     language: 'en',
     initialstate: 'editor',
     parser: null,
+    preview: false,
 
     /* Buttons Properties */
     buttons: [

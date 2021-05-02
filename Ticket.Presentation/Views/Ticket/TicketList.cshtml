@@ -105,22 +105,48 @@
         fd.append('StartDate', startDate);
         fd.append('EndDate', endDate);
 
-        $.ajax({
-            type: 'POST',
-            url: '../../Ticket/SaveSubTicket',
-            data: fd,
-            processData: false,
-            contentType: false,
-            success: function () {
+        var callback = function () {
+            $.ajax({
+                type: 'POST',
+                url: '../../Ticket/SaveSubTicket',
+                data: fd,
+                processData: false,
+                contentType: false,
+                success: function () {
 
-                $("[name='Id']").val(0);
-                $("[name='Description']").val('');
-                GetSubTickets(ticketId, rowIndex);
-            },
-            error: function (xhr, ajaxOptions, thrownError) {
-                Swal.fire("Hata!", "Hata Oluştu.", "error");
-            }
-        });
+                    $("[name='Id']").val(0);
+                    $("[name='Description']").val('');
+                    GetSubTickets(ticketId, rowIndex);
+                },
+                error: function (xhr, ajaxOptions, thrownError) {
+                    Swal.fire("Hata!", "Hata Oluştu.", "error");
+                }
+            });
+        };
+
+        var id = $('[name="Id"]').val();
+
+        var closeTicket = $('[name="CloseTicket"]').prop("checked")
+
+        if (closeTicket && id==0) {
+            Swal.fire({
+                title: 'Mail Gönderilsin mi?',
+                text: "Kapanan Ticket için yetkililere mail gönderilsin mi?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: "Evet",
+                cancelButtonText: "Hayır",
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    fd.append('SendMail', true);
+                }
+
+                callback();
+
+            });
+        } else {
+            callback();
+        }
     }
 
     function DeleteSubTicket(id, ticketId) {
@@ -168,6 +194,9 @@
         var startDate = GetFormatedDate($("#StartDate").data("datetimepicker").getDate());
 
         var endDate = GetFormatedDate($("#EndDate").data("datetimepicker").getDate());
+
+        var closeTicket = $("#CloseTicket").val();
+
 
         fd.append('StartDate', startDate);
         fd.append('EndDate', endDate);
@@ -308,6 +337,15 @@
                         dom.val(data[key]);
                     }
 
+                    if (key == "description") {
+                        $('[name="Description"]').markdown({
+                            preview: false
+                        });
+
+                        $('.md-preview').empty();
+                        $('.md-preview').append('<p>'+data[key]+'</p>');
+                    }
+
                     if (key == 'projectId') {
 
                         var params = [];
@@ -412,6 +450,11 @@
                         $(domObject).prop('checked', data[key]);
                     }
 
+                    if (key == "description") {
+                        $(".md-preview").empty();
+                        $(".md-preview").html("<p>" + data[key] + "<p>")
+                    }
+
                     if (key == "attachment") {
 
 
@@ -444,6 +487,7 @@
         $("[name='frmSubTicket'] [name='UserId']").val(@ViewData["UserId"]);
         $("[name='frmSubTicket'] [name='AllDay']").prop('checked', false);
         $("[name='frmSubTicket'] [name='CloseTicket']").prop('checked', false);
+        $("[name='Description']").html('');
     }
 
     function CancelTicket() {
@@ -1052,7 +1096,7 @@
                             <div class="form-group row">
                                 <label class="col-lg-2 col-form-label">Açıklama</label>
                                 <div class="col-lg-10">
-                                    <textarea class="form-control" name="Description" data-provide="markdown" rows="10"></textarea>
+                                    <textarea class="form-control" name="Description" rows="10"></textarea>
                                 </div>
                             </div>
                             <div class="row">

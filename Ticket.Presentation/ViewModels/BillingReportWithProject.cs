@@ -13,5 +13,6 @@ namespace Ticket.Presentation.ViewModels
         public double ManHour { get; set; }
         public double TotalPrice { get; set; }
         public string ProjectName { get; set; }
+        public string Currency { get; set; }
     }
 }

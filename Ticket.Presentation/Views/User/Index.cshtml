@@ -6,6 +6,14 @@
 
         var data = $('[name="frmUser"]').serializeArray();
 
+        if (data[3].value == "-1") {
+
+            Swal.fire("Hata!", "Cari Seçiniz", "error");
+
+            return;
+
+        }
+
         $.ajax({
             type: 'POST',
             url: '../../User/SaveUser',
@@ -46,7 +54,7 @@
                 </div>
                 <div class="form-group">
                     <label>Şifre:</label>
-                    <input type="password" class="form-control form-control-solid" placeholder="Şifre" name="Password" value="@Model.Password" />
+                    <input type="text" class="form-control form-control-solid" placeholder="Şifre" name="Password" value="@Model.Password" />
                 </div>
                 <div class="form-group row">
                     <label class="checkbox">
@@ -85,7 +93,7 @@
 
         }
 
-        FillDropDown("/JsonObject/GetCustomersForDropDown", "CardCode", '@Model.CardCode');
+        FillDropDown("/JsonObject/GetCustomersForDropDown", "CardCode", '@Model.CardCode',null,null,true);
 
 
         $("#menuUser").removeClass("menu-item-open menu-item-here").addClass("menu-item-open menu-item-here");

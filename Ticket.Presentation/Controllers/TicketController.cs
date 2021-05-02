@@ -277,7 +277,7 @@ namespace Ticket.Presentation.Controllers
             {
                 await HttpClientHelper.SendPostRequest(model, "Ticket/create-subTicket", CookieHelper.GetToken(Request, "oaut.Cookie"));
 
-                if (model.CloseTicket)
+                if (model.CloseTicket && model.SendMail)
                 {
                     await HttpClientHelper.SendPostRequest(new TicketMailModel() { TicketId = model.TicketId }, "Ticket/send-ticket-mail", CookieHelper.GetToken(Request, "oaut.Cookie"));
                 }

@@ -11,5 +11,6 @@ namespace Ticket.Presentation.Models
         public int UserId { get; set; }
         public List<string> Billing { get; set; }
         public List<string> ProjectIds { get; set; }
+        public bool ShowOnlyProjectUnRelatedTicket { get; set; }
     }
 }

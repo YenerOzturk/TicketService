@@ -9,5 +9,6 @@ namespace Ticket.Presentation.Models
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
         public string NameSurname { get; set; }
+        public string CardName { get; set; }
     }
 }

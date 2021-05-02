@@ -1,9 +1,6 @@
 ﻿
-<script>
+<script>function RenderTable() {
 
-
-    function RenderTable() {
-        
 
         var data = $('#frmFilter').serializeArray();
 
@@ -11,9 +8,13 @@
 
         var endDate = GetFormatedDate($("#EndDate").datepicker('getDate'));
 
+        var showAll = $('[name="ShowAll"]').prop("checked");
+
         data.push({ name: "StartDate", value: startDate });
 
         data.push({ name: "EndDate", value: endDate });
+
+        data.push({ name: "ShowOnlyProjectUnRelatedTicket", value: showAll });
 
         $.ajax({
             type: 'GET',
@@ -48,10 +49,13 @@
                                     uniqueName: "description",
                                     caption: "Ticket Açıklama"
                                 }
+
                             ],
                             columns: [
-                                
-                               
+                                {
+                                    uniqueName: "currency",
+                                    caption: "Para Birimi",
+                                },
                             ],
                             measures: [
                                 {
@@ -66,9 +70,10 @@
                                 },
                                 {
                                     "uniqueName": "totalWorkHour",
-                                    caption:"Toplam Çalışma (Saat)",
+                                    caption: "Toplam Çalışma (Saat)",
                                     "aggregation": "sum"
                                 },
+
                                 {
                                     uniqueName: "manHourPrice",
                                     caption: "Adam/Gün",
@@ -85,9 +90,7 @@
                 });
             }
         });
-    }
-
-</script>
+    }</script>
 
 <div class="card card-custom">
     <div class="card-header flex-wrap border-0 pt-6 pb-0">
@@ -107,6 +110,13 @@
                 <div class="col-lg-3 mb-lg-0 mb-6">
                     <label>Bitiş Tarihi:</label>
                     <input type="text" class="form-control datetimepicker-input" placeholder="Tarih Seç" id="EndDate" />
+                </div>
+                <div class="col-lg-3 mb-lg-0 mb-6" style="padding-top:30px">
+                    <label class="checkbox">
+                        <input type="checkbox" name="ShowOnlyProjectUnRelatedTicket" value="true" checked />
+                        <span></span>
+                        Sadece Proje Bağımsızları Göster
+                    </label>
                 </div>
             </div>
             <div class="row mt-8">
@@ -142,10 +152,10 @@
         $("#menuVersion").removeClass("menu-item-open menu-item-here");
         $("#menuCustomer").removeClass("menu-item-open menu-item-here");
 
-        RenderDatePicker("StartDate", new Date(new Date().setMonth(new Date().getMonth()-1)));
-        RenderDatePicker("EndDate",new Date());
+        RenderDatePicker("StartDate", new Date(new Date().setMonth(new Date().getMonth() - 1)));
+        RenderDatePicker("EndDate", new Date());
 
-        
+
 
         RenderTable();
 
@@ -154,8 +164,8 @@
 
             RenderTable();
         });
-       
-        
+
+
     })</script>
 
 

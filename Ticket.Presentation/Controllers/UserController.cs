@@ -73,8 +73,6 @@ namespace Ticket.Presentation.Controllers
         {
             if (model.Id == 0)
             {
-                model.Password = PasswordGenerator.GenerateRandomPassword();
-
                 await HttpClientHelper.SendPostRequest(model, "User/add-new-user", CookieHelper.GetToken(Request, "oaut.Cookie"));
             }
             else
@@ -97,22 +95,35 @@ namespace Ticket.Presentation.Controllers
             return View();
         }
 
+        public IActionResult ChangePassword()
+        {
+            return View();
+        }
+
 
         [HttpPost]
-        public async Task<IActionResult> ChangePassword(string password, string newPassword)
+        public async Task<IActionResult> ChangePassword(ChangePasswordModel model)
         {
-            string userId = User.Claims.First(x => x.Type == ClaimTypes.Sid).Value;
 
-            UserModel model = await HttpClientHelper.SendGetRequest<UserModel>("User/get-users-by-email?email=" + userId, CookieHelper.GetToken(Request, "oaut.Cookie"));
+            string userId = User.Claims.First(x => x.Type == ClaimTypes.Name).Value;
 
-            if (model.Id == 0 || model.Password!=password)
-                return Ok(2);
+            UserModel user = await HttpClientHelper.SendGetRequest<UserModel>("User/get-users-by-email?email=" + userId, CookieHelper.GetToken(Request, "oaut.Cookie"));
 
-            model.Password = newPassword;
+            if (user.Id == 0 || user.Password != model.OldPassword)
+            {
+                return Ok(new { Status=2, Message="Eski Şifre Hatalı" });
+            }
+
+            if (model.NewPassword != model.NewPasswordRepeat)
+            {
+                return Ok(new { Status = 2, Message = "Yeni Şifre ve Tekrarı Birbiriyle Uyuşmuyor." });
+            }
+
+            user.Password = model.NewPassword;
 
             await HttpClientHelper.SendPostRequest(model, "User/update-user", CookieHelper.GetToken(Request, "oaut.Cookie"));
 
-            return Ok(1);
+           return Ok(new { Status = 1 });
         }
     }
 }

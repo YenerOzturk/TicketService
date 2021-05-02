@@ -11,12 +11,13 @@
 
 
         <!--begin: Datatable-->
-        <table class="table table-separate table-head-custom table-checkable" id="report">
+        <table class="table table-bordered table-hover table-checkable" id="report">
             <thead>
                 <tr>
                     <th>Id</th>
                     <th>TicketId</th>
                     <th>Açıklama</th>
+                    <th>Cari Adı</th>
                     <th>Kullanıcı</th>
                     <th>Başlangıç Tarihi</th>
                     <th>Bitiş Tarihi</th>
@@ -71,6 +72,10 @@
                 },
                 {
                     "data": "description",
+                    "autoWidth": true,
+                },
+                {
+                    "data": "cardName",
                     "autoWidth": true,
                 },
                 {

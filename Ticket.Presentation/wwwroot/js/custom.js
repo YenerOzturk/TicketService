@@ -1,5 +1,5 @@
 ﻿
-function FillDropDown(url, name, selectedValue = null, data = null, callback = null) {
+function FillDropDown(url, name, selectedValue = null, data = null, callback = null, addChooseOption = false) {
 
     $.ajax({
         type: 'GET',
@@ -8,6 +8,11 @@ function FillDropDown(url, name, selectedValue = null, data = null, callback = n
         success: function (data) {
 
             $('[name="' + name + '"]').empty();
+
+            if (addChooseOption) {
+                $('[name="' + name + '"]').append($('<option>').text("Seçiniz").attr('value', '-1'));
+            }
+
             $.each(data, function (index, value) {
                 $('[name="' + name + '"]').append($('<option>').text(value.desc).attr('value', value.val));
             });

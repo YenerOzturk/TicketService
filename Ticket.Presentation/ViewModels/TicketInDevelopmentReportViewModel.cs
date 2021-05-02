@@ -9,5 +9,6 @@ namespace Ticket.Presentation.ViewModels
         public string StartDate { get; set; }
         public string EndDate { get; set; }
         public string NameSurname { get; set; }
+        public string CardName { get; internal set; }
     }
 }

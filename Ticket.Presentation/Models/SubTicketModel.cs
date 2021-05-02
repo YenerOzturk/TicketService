@@ -15,6 +15,7 @@ namespace Ticket.Presentation.Models
         public DateTime EndDate { get; set; }
         public bool CloseTicket { get; set; }
         public bool AllDay { get; set; }
+        public bool SendMail { get; set; }
 
         [JsonIgnore]
         public IFormFile File { get; set; }

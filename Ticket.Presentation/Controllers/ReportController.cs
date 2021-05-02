@@ -268,6 +268,7 @@ namespace Ticket.Presentation.Controllers
                 urlParam += $"&EndDate={param.EndDate.ToString("yyyy-MM-dd")}";
             }
 
+            urlParam+= $"&ShowOnlyProjectUnRelatedTicket={param.ShowOnlyProjectUnRelatedTicket}";
 
             if (!string.IsNullOrEmpty(urlParam))
             {
@@ -344,7 +345,6 @@ namespace Ticket.Presentation.Controllers
             foreach (var item in repositories)
             {
 
-
                 int length = item.Description.Length < 150 ? item.Description.Length : 150;
 
                 result.Add(new TicketInDevelopmentReportViewModel()
@@ -355,7 +355,8 @@ namespace Ticket.Presentation.Controllers
                     StartDate = item.StartDate.ToString("dd.MM.yyyy HH:mm"),
                     Id = item.Id,
                     NameSurname = item.NameSurname,
-                    TicketId = item.TicketId
+                    TicketId = item.TicketId,
+                    CardName=item.CardName
                 });
             }
 
