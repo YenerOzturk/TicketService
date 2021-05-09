@@ -53,10 +53,7 @@
                 <tr>
                     <th>Cari Kodu</th>
                     <th>Cari İsim</th>
-                    <th>Telefon</th>
-                    <th>Email</th>
                     <th>Vergi No</th>
-                    <th>Vergi Dairesi</th>
                     <th>Adam/Gün Ücret</th>
                     <th>Para Birimi</th>
                     <th>Aktif</th>
@@ -103,19 +100,7 @@
                     "autoWidth": true,
                 },
                 {
-                    "data": "telephone",
-                    "autoWidth": true,
-                },
-                {
-                    "data": "email",
-                    "autoWidth": true,
-                },
-                {
                     "data": "taxNumber",
-                    "autoWidth": true,
-                },
-                {
-                    "data": "taxOffice",
                     "autoWidth": true,
                 },
                 {
@@ -148,11 +133,13 @@
 
 
     if ('@ViewData["UserRole"].ToString()' != "Admin") {
-        
-            var column = table.column(4);
 
-            column.visible(!column.visible());
-        }
+        table.column(3).visible(false);
+        table.column(4).visible(false);
+        table.column(5).visible(false);
+        table.column(6).visible(false);
+
+    }
 
     })</script>
 

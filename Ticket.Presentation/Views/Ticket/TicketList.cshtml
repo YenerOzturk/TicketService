@@ -263,32 +263,59 @@
 
         fd.append("TicketLabel", tag);
 
-        $.ajax({
-            type: 'POST',
-            url: '../../Ticket/SaveTicket',
-            processData: false,
-            contentType: false,
-            data: fd,
-            success: function (result) {
-                $('[name="frmTicket"]').trigger("reset");
+        var projectCount = $("[name='ProjectId'] option").length;
+        var selectedProje = $("[name='ProjectId']").val();
 
-                Swal.fire({
-                    icon: 'success',
-                    title: 'İşlem Başarılı',
-                    showConfirmButton: true,
-                    timer: 1500
-                });
+        var callback = function () {
 
-                $('#modalTicket').modal('hide');
 
-                RenderData();
+            $.ajax({
+                type: 'POST',
+                url: '../../Ticket/SaveTicket',
+                processData: false,
+                contentType: false,
+                data: fd,
+                success: function (result) {
+                    $('[name="frmTicket"]').trigger("reset");
 
-            },
-            error: function (xhr, ajaxOptions, thrownError) {
-                Swal.fire("Hata!", "Hata Oluştu.", "error");
-            }
-        });
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'İşlem Başarılı',
+                        showConfirmButton: true,
+                        timer: 1500
+                    });
 
+                    $('#modalTicket').modal('hide');
+
+                    RenderData();
+
+                },
+                error: function (xhr, ajaxOptions, thrownError) {
+                    Swal.fire("Hata!", "Hata Oluştu.", "error");
+                }
+            });
+
+        };
+
+
+        if (projectCount > 1 && selectedProje == "-1") {
+
+            Swal.fire({
+                title: 'Proje Seçimi',
+                text: "Bu cari için tanımlı proje tanımlı seçmeden devam edilsin mi?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: "Evet",
+                cancelButtonText: "Hayır",
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    callback();
+                }
+            });
+        }else {
+
+            callback();
+        }
     }
 
     function ClearForm() {
@@ -300,6 +327,15 @@
         $("[name='frmTicket'] [name='UserId']").val(@ViewData["UserId"]);
         ClearTags();
         $("[name='frmTicket'] #divLinks").empty();
+        var cardCode = $('[name="CardCode"]').val();
+        var productId = $('[name="ProductId"]').val();
+
+        var data = [];
+
+        data.push({ name: "cardCode", value: cardCode });
+        data.push({ name: "productId", value: productId });
+
+        FillDropDown("/JsonObject/GetProjectsForDropDown", "ProjectId", null, data);
     }
 
     function FillForm(id, event) {
@@ -1065,7 +1101,6 @@
                                     <label class="col-form-label text-lg-right">Proje:</label>
                                     <select name="ProjectId" class="form-control">
                                         <option value="-1">Proje Bağımsız</option>
-                                        <option value="21">A Proje</option>
                                     </select>
                                 </div>
                                 <div class="col-lg-6">

@@ -208,6 +208,7 @@ License: You must have a valid license purchased only from themeforest(the above
                                                             <i class="menu-arrow"></i>
                                                         </a>
                                                     </li>
+
                                                     @if (ViewData["UserRole"].ToString() == "Admin")
                                                     {
                                                         <li id="menuProject" class="menu-item menu-item-submenu menu-item-rel">
@@ -216,12 +217,7 @@ License: You must have a valid license purchased only from themeforest(the above
                                                                 <i class="menu-arrow"></i>
                                                             </a>
                                                         </li>
-                                                        <li id="menuCustomer" class="menu-item menu-item-submenu menu-item-rel">
-                                                            <a href="../../Customer/CustomerList" class="menu-link">
-                                                                <span class="menu-text">Müşterİ</span>
-                                                                <i class="menu-arrow"></i>
-                                                            </a>
-                                                        </li>
+
 
                                                         <li id="menuVersion" class="menu-item menu-item-submenu menu-item-rel">
                                                             <a href="../../Version/VersionList" class="menu-link">
@@ -310,6 +306,12 @@ License: You must have a valid license purchased only from themeforest(the above
                                                             </a>
                                                         </li>
                                                     }
+                                                    <li id="menuCustomer" class="menu-item menu-item-submenu menu-item-rel">
+                                                        <a href="../../Customer/CustomerList" class="menu-link">
+                                                            <span class="menu-text">Müşterİ</span>
+                                                            <i class="menu-arrow"></i>
+                                                        </a>
+                                                    </li>
                                                 }
                                                 else
                                                 {
