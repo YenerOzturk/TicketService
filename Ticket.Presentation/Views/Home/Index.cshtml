@@ -11,7 +11,7 @@
         </div>
         <div class="card-toolbar">
             <a href="#" class="btn btn-light-primary font-weight-bold" data-toggle="modal" data-target="#exampleModalScrollable">
-                <i class="ki ki-plus "></i> Add Event
+                <i class="ki ki-plus "></i> Yeni Kayıt
             </a>
         </div>
     </div>
@@ -27,12 +27,12 @@
     <div class="modal-dialog modal-dialog-scrollable" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Yeni Event</h5>
+                <h5 class="modal-title" id="exampleModalLabel">Yeni Kayıt</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <i aria-hidden="true" class="ki ki-close"></i>
                 </button>
             </div>
-            <div class="modal-body" style="height: 500px;">
+            <div class="modal-body" style="height: 700px;">
                 <div class="col-lg-12">
                     <div class="card card-custom gutter-b example example-compact">
                         <form class="form" name="frmAppointment">
@@ -40,9 +40,6 @@
                                 <div class="form-group">
                                     <label>Müşteri:</label>
                                     <select class="form-control" name="CardCode">
-                                        <option>Oto İsmail</option>
-                                        <option>Vepa</option>
-                                        <option>Sanmar</option>
                                     </select>
                                 </div>
                                 <div class="form-group">
@@ -55,11 +52,11 @@
                                 </div>
                                 <div class="form-group">
                                     <label>Başlangıç Tarihi:</label>
-                                    <input type="date" name="StartDate" value="@DateTime.Now.ToString("yyyy-MM-ddTHH:mm:00")" class="form-control form-control-solid" placeholder="Başlangıç Tarihi" />
+                                    <input type="text" id="StartDate" class="form-control form-control-solid" placeholder="Başlangıç Tarihi" />
                                 </div>
                                 <div class="form-group">
                                     <label>Bitiş Tarihi:</label>
-                                    <input type="date" name="EndDate" value="@DateTime.Now.ToString("yyyy-MM-ddTHH:mm:00")" class="form-control form-control-solid" placeholder="Başlangıç Tarihi" />
+                                    <input type="text" id="EndDate" class="form-control form-control-solid" placeholder="Başlangıç Tarihi" />
                                 </div>
                                 <div class="form-group">
                                     <label>Event Type:</label>
@@ -77,8 +74,8 @@
 
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-light-primary font-weight-bold" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary font-weight-bold" onclick="Save()">Save changes</button>
+                <button type="button" class="btn btn-light-primary font-weight-bold" data-dismiss="modal">İptal</button>
+                <button type="button" class="btn btn-primary font-weight-bold" onclick="Save()">Kaydet</button>
             </div>
         </div>
     </div>
@@ -91,14 +88,39 @@
 
 <script>
 
+    var calendarElm;
+
     function Save() {
 
         var data = $('[name="frmAppointment"]').serializeArray();
+
+        var startDate = GetFormatedDate($("#StartDate").data("datetimepicker").getDate());
+
+        var endDate = GetFormatedDate($("#EndDate").data("datetimepicker").getDate());
+
+        data.push({ name:"StartDate", value:startDate })
+        data.push({ name:'EndDate', value:endDate });
 
         $.ajax({
             type: 'POST',
             url: 'Home/AddNewApp',
             data: data,
+            success: function (result) {
+                events = result;
+                calendarElm.addEvent({
+                    title: result.title,
+                    description: result.description,
+                    start: result.start,
+                    end: result.end,
+                    className: result.className
+                });
+
+                $("[name='Description']").val('');
+                RenderDateTimePicker('StartDate', '');
+                RenderDateTimePicker('EndDate', '');
+                $("[name='Title']").val('');
+                
+            }
         });
 
     }
@@ -138,9 +160,9 @@
                     now: TODAY + 'T09:25:00', // just for demo
 
                     views: {
-                        dayGridMonth: { buttonText: 'month' },
-                        timeGridWeek: { buttonText: 'week' },
-                        timeGridDay: { buttonText: 'day' }
+                        dayGridMonth: { buttonText: 'Ay' },
+                        timeGridWeek: { buttonText: 'Hafya' },
+                        timeGridDay: { buttonText: 'Gün' }
                     },
 
                     defaultView: 'dayGridMonth',
@@ -150,7 +172,7 @@
                     eventLimit: true, // allow "more" link when too many events
                     navLinks: true,
                     events: events,
-
+                    locale:'tr',
                     eventDrop: function (info) {
 
                         var data = { Id: info.event.id, StartDate: info.event.start.toISOString(), EndDate: info.event.end.toISOString() };
@@ -165,9 +187,7 @@
 
                     eventClick: function (info) {
                         alert('Event: ' + info.event.title);
-                        alert('Coordinates: ' + info.jsEvent.pageX + ',' + info.jsEvent.pageY);
-                        alert('View: ' + info.view.type);
-
+                        
                         // change the border color just for fun
                         info.el.style.borderColor = 'red';
                     },
@@ -202,6 +222,8 @@
                 });
 
                 calendar.render();
+
+                calendarElm = calendar;
             }
         };
     }();
@@ -209,6 +231,9 @@
         KTCalendarBasic.init();
 
         FillDropDown("/JsonObject/GetCustomersForDropDown", "CardCode");
+
+        RenderDateTimePicker('StartDate', '');
+        RenderDateTimePicker('EndDate', '');
 
         $("#menuUser").removeClass("menu-item-open menu-item-here");
         $("#menuTicket").removeClass("menu-item-open menu-item-here");

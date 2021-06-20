@@ -115,7 +115,8 @@ namespace Ticket.Presentation.Controllers
                     Subject=param.subject,
                     Status=param.statuList,
                     SupportType=param.supportType,
-                    UserIds=param.userIds
+                    UserIds=param.userIds,
+                    PageLength=param.pageLength
                 },
                 url
                 , CookieHelper.GetToken(Request, "oaut.Cookie"));

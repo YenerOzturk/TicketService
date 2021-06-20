@@ -26,6 +26,7 @@ namespace Ticket.Presentation.Models
         public string reportParam1 { get; set; }
         public string reportParam2 { get; set; }
         public string subject { get; set; }
+        public int pageLength { get; set; }
 
         public List<string> cardCodes { get; set; }
         public List<int> userIds { get; set; }

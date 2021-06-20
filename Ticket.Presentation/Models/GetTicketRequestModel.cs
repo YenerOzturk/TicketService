@@ -12,5 +12,6 @@ namespace Ticket.Presentation.Models
         public int SupportType { get; set; }
         public int TicketId { get; set; }
         public List<int> Priority { get; set; }
+        public int PageLength { get; internal set; }
     }
 }

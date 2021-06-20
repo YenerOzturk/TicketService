@@ -336,6 +336,7 @@
         data.push({ name: "productId", value: productId });
 
         FillDropDown("/JsonObject/GetProjectsForDropDown", "ProjectId", null, data);
+        $("[name='File']").val('');
     }
 
     function FillForm(id, event) {
@@ -524,6 +525,7 @@
         $("[name='frmSubTicket'] [name='AllDay']").prop('checked', false);
         $("[name='frmSubTicket'] [name='CloseTicket']").prop('checked', false);
         $("[name='Description']").html('');
+        $("[name='File']").val('');
     }
 
     function CancelTicket() {
@@ -551,6 +553,10 @@
 
         var data = $('#frmFilter').serializeArray();
 
+        var pageLength = $("#pageLength").val();
+
+        data.push({ name: "pageLength", value: pageLength });
+
         $.ajax({
             type: 'POST',
             url: "../../Ticket/GetTicketsForClient",
@@ -563,10 +569,11 @@
                 }
 
               table=  $('#ticketList').DataTable({
-                    dom: 'Bfrtip',
-                    data: result,
-                    "searching": false,
-                    "info": false,
+                  dom: 'Blfrtip',
+                  data: result,
+                  "searching": false,
+                  "lengthMenu": [[50, 100, 200, -1], [50, 100, 200, "All"]],
+                  "info": false,
                   "paging": false,
                   select: {
                       toggleable: false
@@ -913,7 +920,15 @@
                 </div>
             </div>
         </form>
-
+        <div class="col-lg-3" style="float:right">
+            <label style="margin-top:10px">Gösterilecek Kayıt Sayısı:</label>
+            <select class="form-control" style="width: 50%;float:right;" id="pageLength">
+                <option value="25">25</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+                <option value="-1">Hepsi</option>
+            </select>
+        </div>
         <table class="table table-bordered table-hover table-checkable" id="ticketList" style="width:100%">
             <thead>
                 <tr>
@@ -1225,6 +1240,10 @@ var table;
             RenderData();
         });
 
+        $("#pageLength").change(function () {
+            RenderData();
+        });
+
         GenerateTagify();
 
 
@@ -1241,6 +1260,11 @@ var table;
 
         table.button(3).trigger();
     });
+
+        $('#table').on('page.dt', function () {
+            var info = table.page.info();
+            $('#pageInfo').html('Showing page: ' + info.page + ' of ' + info.pages);
+        });
 
 
     });</script>

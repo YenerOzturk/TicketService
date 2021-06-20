@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Security.Claims;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -16,7 +17,7 @@ using Ticket.Presentation.ViewModels;
 
 namespace Ticket.Presentation.Controllers
 {
-    [Authorize]   
+    [Authorize]
     public class HomeController : BaseController
     {
 
@@ -25,7 +26,10 @@ namespace Ticket.Presentation.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var repositories = await HttpClientHelper.SendGetRequest<IEnumerable<CalendarModel>>("Calendar/get-all-by-userId?userId=0", CookieHelper.GetToken(Request, "oaut.Cookie"));
+
+            string userId = User.Claims.First(x => x.Type == ClaimTypes.Sid).Value;
+
+            var repositories = await HttpClientHelper.SendGetRequest<IEnumerable<CalendarModel>>("Calendar/get-all-by-userId?userId="+userId, CookieHelper.GetToken(Request, "oaut.Cookie"));
 
             Random rnd = new Random();
 
@@ -35,15 +39,13 @@ namespace Ticket.Presentation.Controllers
                 result.Add(new CalendarEventModel()
                 {
                     id = repo.Id,
-                    start = repo.StartDate.ToString("yyyy-MM-dd").Replace(" ", "T"),
-                    end = repo.EndDate.ToString("yyyy-MM-dd").Replace(" ", "T"),
+                    start = repo.StartDate.ToString("yyyy-MM-dd HH:mm").Replace(" ", "T"),
+                    end = repo.EndDate.ToString("yyyy-MM-dd HH:mm").Replace(" ", "T"),
                     description = repo.Description,
                     title = repo.Title,
                     className = colors[rnd.Next(0, 2)]
                 });
             }
-
-           
 
             ViewData["Events"] = result;
 
@@ -55,9 +57,24 @@ namespace Ticket.Presentation.Controllers
         public async Task<IActionResult> AddNewApp(CalendarModel model)
         {
 
+            string userId = User.Claims.First(x => x.Type == ClaimTypes.Sid).Value;
+            model.UserCode = userId;
+
             var result = await HttpClientHelper.SendPostRequest(model, "Calendar/create-appointment", CookieHelper.GetToken(Request, "oaut.Cookie"));
 
-            return Ok("Ok");
+            Random rnd = new Random();
+
+            CalendarEventModel retval = new CalendarEventModel()
+            {
+                id = model.Id,
+                start = model.StartDate.ToString("yyyy-MM-dd HH:mm").Replace(" ", "T"),
+                end = model.EndDate.ToString("yyyy-MM-dd HH:mm").Replace(" ", "T"),
+                description = model.Description,
+                title = model.Title,
+                className = colors[rnd.Next(0, 2)]
+            };
+
+            return Ok(retval);
         }
 
 
@@ -84,12 +101,12 @@ namespace Ticket.Presentation.Controllers
         }
 
 
-        
+
 
         public IActionResult Ticket()
         {
             return View();
         }
-        
+
     }
 }
