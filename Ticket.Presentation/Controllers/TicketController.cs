@@ -83,10 +83,13 @@ namespace Ticket.Presentation.Controllers
             }
 
 
+            urlParam += "&pageLength=-1";
+
             if (!string.IsNullOrEmpty(urlParam))
             {
                 url += "?" + urlParam.Remove(0, 1);
             }
+
 
 
             var repositories = await HttpClientHelper.SendGetRequest<IEnumerable<TicketListResultModel>>(url, CookieHelper.GetToken(Request, "oaut.Cookie"));
@@ -379,6 +382,13 @@ namespace Ticket.Presentation.Controllers
 
         public async Task<IActionResult> TicketList()
         {
+            var cardCode = User.Claims.First(x => x.Type == ClaimTypes.UserData).Value;
+
+            if (cardCode != "C0001")
+            {
+                return RedirectToAction("CustomerTickets", "Customer");
+            }
+
             return View();
         }
     }

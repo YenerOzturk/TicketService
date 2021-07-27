@@ -48,6 +48,7 @@ namespace Ticket.Presentation.Controllers
                 if (model.IsAdmin)
                     role = "Admin";
 
+
                 CookieHelper.SetToken(Response, "oaut.Cookie", token);
 
                 var identity = new ClaimsIdentity(new[] {
