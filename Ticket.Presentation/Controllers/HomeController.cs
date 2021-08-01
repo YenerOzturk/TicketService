@@ -26,10 +26,16 @@ namespace Ticket.Presentation.Controllers
 
         public async Task<IActionResult> Index()
         {
+            ViewData["Events"] = await GetEvents();
 
+            return View();
+        }
+
+        private async Task<List<CalendarEventModel>> GetEvents()
+        {
             string userId = User.Claims.First(x => x.Type == ClaimTypes.Sid).Value;
 
-            var repositories = await HttpClientHelper.SendGetRequest<IEnumerable<CalendarModel>>("Calendar/get-all-by-userId?userId="+userId, CookieHelper.GetToken(Request, "oaut.Cookie"));
+            var repositories = await HttpClientHelper.SendGetRequest<IEnumerable<CalendarModel>>("Calendar/get-all-by-userId?userId=" + userId, CookieHelper.GetToken(Request, "oaut.Cookie"));
 
             Random rnd = new Random();
 
@@ -47,9 +53,7 @@ namespace Ticket.Presentation.Controllers
                 });
             }
 
-            ViewData["Events"] = result;
-
-            return View();
+            return result;
         }
 
 
@@ -58,9 +62,17 @@ namespace Ticket.Presentation.Controllers
         {
 
             string userId = User.Claims.First(x => x.Type == ClaimTypes.Sid).Value;
-            model.UserCode = userId;
+            model.UserCode = Convert.ToInt32(userId);
 
-            var result = await HttpClientHelper.SendPostRequest(model, "Calendar/create-appointment", CookieHelper.GetToken(Request, "oaut.Cookie"));
+
+            if (model.Id == 0)
+            {
+                var result = await HttpClientHelper.SendPostRequest(model, "Calendar/create-appointment", CookieHelper.GetToken(Request, "oaut.Cookie"));
+            }
+            else
+            {
+                var result = await HttpClientHelper.SendPostRequest(model, "Calendar/update-appointment", CookieHelper.GetToken(Request, "oaut.Cookie"));
+            }
 
             Random rnd = new Random();
 
@@ -71,7 +83,8 @@ namespace Ticket.Presentation.Controllers
                 end = model.EndDate.ToString("yyyy-MM-dd HH:mm").Replace(" ", "T"),
                 description = model.Description,
                 title = model.Title,
-                className = colors[rnd.Next(0, 2)]
+                className = colors[rnd.Next(0, 2)],
+                isUpdate = model.Id == 0
             };
 
             return Ok(retval);
@@ -100,7 +113,13 @@ namespace Ticket.Presentation.Controllers
             return Ok(model);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> GetAllEvents()
+        {
+            var result = await GetEvents();
 
+            return Ok(result);
+        }
 
 
         public IActionResult Ticket()

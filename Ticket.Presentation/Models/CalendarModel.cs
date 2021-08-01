@@ -5,7 +5,7 @@ namespace Ticket.Presentation.Models
     {
         public int Id { get; set; }
 
-        public string UserCode { get; set; }
+        public int UserCode { get; set; }
 
         public string CardCode { get; set; }
 

@@ -3,6 +3,8 @@ namespace Ticket.Presentation.Models
 {
     public class CalendarEventModel
     {
+        internal bool isUpdate;
+
         public int id { get; set; }
         public string className { get; set; }
         public string title { get; set; }

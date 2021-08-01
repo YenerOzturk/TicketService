@@ -10,7 +10,7 @@
             </h3>
         </div>
         <div class="card-toolbar">
-            <a href="#" class="btn btn-light-primary font-weight-bold" data-toggle="modal" data-target="#exampleModalScrollable">
+            <a href="#" onclick="ClearForm()" class="btn btn-light-primary font-weight-bold" data-toggle="modal" data-target="#exampleModalScrollable">
                 <i class="ki ki-plus "></i> Yeni Kayıt
             </a>
         </div>
@@ -37,6 +37,7 @@
                     <div class="card card-custom gutter-b example example-compact">
                         <form class="form" name="frmAppointment">
                             <div class="card-body">
+                                <input type="hidden" name="Id" />
                                 <div class="form-group">
                                     <label>Müşteri:</label>
                                     <select class="form-control" name="CardCode">
@@ -88,8 +89,18 @@
 
 <script>
 
-    var calendarElm;
+    function ClearForm() {
 
+            $("[name='Description']").val('');
+            RenderDateTimePicker('StartDate', '');
+            RenderDateTimePicker('EndDate', '');
+            $("[name='Title']").val('');
+            $("[name='Id']").val(0);
+    }
+
+
+
+    var calendarElm;
     function Save() {
 
         var data = $('[name="frmAppointment"]').serializeArray();
@@ -106,20 +117,32 @@
             url: 'Home/AddNewApp',
             data: data,
             success: function (result) {
-                events = result;
-                calendarElm.addEvent({
-                    title: result.title,
-                    description: result.description,
-                    start: result.start,
-                    end: result.end,
-                    className: result.className
-                });
+
+                if (result.isUpdate) {
+
+                    calendarElm.addEvent({
+                        title: result.title,
+                        description: result.description,
+                        start: result.start,
+                        end: result.end,
+                        className: result.className
+                    });
+                }
+                else {
+
+                    var event = calendarElm.getEventById(result.id);
+                    event.setProp('title', result.title);
+                    event.setProp('description', result.description);
+                    event.setStart(result.start);
+                    event.setEnd(result.end);
+                }
 
                 $("[name='Description']").val('');
                 RenderDateTimePicker('StartDate', '');
                 RenderDateTimePicker('EndDate', '');
                 $("[name='Title']").val('');
-                
+                $("[name='Id']").val(0);
+
             }
         });
 
@@ -186,10 +209,29 @@
                     },
 
                     eventClick: function (info) {
-                        alert('Event: ' + info.event.title);
-                        
-                        // change the border color just for fun
-                        info.el.style.borderColor = 'red';
+
+                        $.ajax({
+                            type: 'GET',
+                            url: '../../Home/GetAppointmentById',
+                            data: { id: info.event.id },
+                            success: function (data) {
+
+                                RenderDateTimePicker('StartDate', data['startDate']);
+                                RenderDateTimePicker('EndDate', data['endDate']);
+                                $('[name="Title"]').val(data['title']);
+                                $('[name="Description"]').val(data['description']);
+                                $('[name="AppointmentType"]').val(data['appointmentType']);
+                                $('[name="CardCode"]').val(data['cardCode']);
+                                $('[name="Id"]').val(info.event.id);
+
+                                $('#exampleModalScrollable').modal();
+
+                            }
+                        });
+
+
+
+
                     },
 
                     eventResize: function (info) {
@@ -242,5 +284,7 @@
         $("#menuVersion").removeClass("menu-item-open menu-item-here");
         $("#menuCustomer").removeClass("menu-item-open menu-item-here");
         $("#menuReport").removeClass("menu-item-open menu-item-here");
+
+
     });
 </script>
