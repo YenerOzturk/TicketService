@@ -370,5 +370,61 @@ namespace Ticket.Presentation.Controllers
                 data = result.ToList()
             });
         }
+
+        public IActionResult OpenSubTicketsReport()
+        {
+            return View();
+        }
+
+        public async Task<IActionResult> GetOpenSubTicketsReport(JqueryDataTableParam param)
+        {
+            string url = $"Report/openSubTickets";
+
+           /* string urlParam = string.Empty;
+            if (param.StartDate != DateTime.MinValue)
+            {
+                urlParam += $"&StartDate={param.StartDate.ToString("yyyy-MM-dd")}";
+            }
+
+            if (param.EndDate != DateTime.MinValue)
+            {
+                urlParam += $"&EndDate={param.EndDate.ToString("yyyy-MM-dd")}";
+            }
+
+            if (!string.IsNullOrEmpty(urlParam))
+            {
+                url += "?" + urlParam.Remove(0, 1);
+            }*/
+
+            var repositories = await HttpClientHelper.SendGetRequest<IEnumerable<OpenSubTicketsReport>>(url, CookieHelper.GetToken(Request, "oaut.Cookie"));
+
+            var result = new List<OpenSubTicketsReportViewModel>();
+            foreach (var item in repositories)
+            {
+                int length = item.Description.Length < 150 ? item.Description.Length : 150;
+
+                result.Add(new OpenSubTicketsReportViewModel()
+                {
+                    Description = item.Description.Substring(0, length) + "...",
+                    EndDate = item.EndDate.ToString("dd.MM.yyyy HH:mm"),
+                    StartDate = item.StartDate.ToString("dd.MM.yyyy HH:mm"),
+                    Id = item.Id,
+                    NameSurname = item.NameSurname,
+                    TicketId = item.TicketId,
+                    CardName = item.CardName
+                });
+            }
+
+
+            return Json(new
+            {
+                draw = param.draw,
+                recordsTotal = result.Count(),
+                recordsFiltered = 0,
+                error = string.Empty,
+                data = result.ToList()
+            });
+        }
+
     }
 }

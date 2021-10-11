@@ -548,6 +548,26 @@
         });
     }
 
+    function CloseTicket() {
+
+        var fd = $('[name="frmTicket"]').serializeArray();
+
+        var data = [];
+        data.push({ name: "ticketId", value: fd[0].value });
+
+        $.ajax({
+            type: 'POST',
+            url: '../../Ticket/CloseTicket',
+            data: data,
+            success: function () {
+                RenderData();
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                Swal.fire("Hata!", "Hata Oluştu.", "error");
+            }
+        });
+    }
+
     var table;
     function RenderData() {
 
@@ -1165,6 +1185,7 @@
                 </div>
             </div>
             <div class="modal-footer">
+                <button type="button" class="btn btn-light-red font-weight-bold" onclick="CloseTicket()" data-dismiss="modal">Ticket Kapat</button>
                 <button type="button" class="btn btn-light-dark font-weight-bold" onclick="CancelTicket()" data-dismiss="modal">Ticket İptal</button>
                 <button type="button" onclick="TicketSaveChanges(false)" class="btn btn-primary font-weight-bold">Kaydet</button>
             </div>

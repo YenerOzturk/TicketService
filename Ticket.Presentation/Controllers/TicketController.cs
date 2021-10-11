@@ -373,6 +373,18 @@ namespace Ticket.Presentation.Controllers
             return Ok("Ok");
         }
 
+        public async Task<IActionResult> CloseTicket(int ticketId)
+        {
+            UpdateTicketStatusModel model = new UpdateTicketStatusModel();
+            model.Id = ticketId;
+            model.Status = 2;
+
+            await HttpClientHelper.SendPostRequest(model, "Ticket/update-ticket-status", CookieHelper.GetToken(Request, "oaut.Cookie"));
+
+            return Ok("Ok");
+        }
+
+
         public async Task<IActionResult> UpdatePriority(UpdateTicketPriorityModel model)
         {
             await HttpClientHelper.SendPostRequest(model, "Ticket/update-ticket-priority", CookieHelper.GetToken(Request, "oaut.Cookie"));
