@@ -847,6 +847,43 @@
 
     }
 
+    function SendMailForSubTicket(subTicketId) {
+
+        var ticketId = ticketNo
+
+        var row = table.rows({ selected: true })[0];
+        var rowIndex = 0;
+
+        if (row.length > 0) {
+            rowIndex = row[0];
+            ticketId = table.row(rowIndex).data().id;
+
+        } else {
+            ticketId = table.row(0).data().id;
+        }
+
+        var data = [];
+        data.push({ name: "ticketId", value: ticketId });
+        data.push({ name: "subTicketId", value: subTicketId });
+
+        $.ajax({
+            type: 'POST',
+            url: '../../Ticket/SendMailForSubTicket',
+            data: data,
+            success: function () {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Mail Gönderme Başarılı',
+                    showConfirmButton: true,
+                    timer: 1500
+                });
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                Swal.fire("Hata!", "Hata Oluştu.", "error");
+            }
+        });
+
+    }
 
 </script>
 <div class="card card-custom">

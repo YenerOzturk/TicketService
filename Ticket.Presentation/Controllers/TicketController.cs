@@ -362,6 +362,13 @@ namespace Ticket.Presentation.Controllers
             return Ok("Ok");
         }
 
+        public async Task<IActionResult> SendMailForSubTicket(TicketMailModel model)
+        {
+            await HttpClientHelper.SendPostRequest(model, "Ticket/send-ticket-mail", CookieHelper.GetToken(Request, "oaut.Cookie"));
+
+            return Ok("Ok");
+        }
+
         public async Task<IActionResult> CancelTicket(int ticketId)
         {
             UpdateTicketStatusModel model = new UpdateTicketStatusModel();

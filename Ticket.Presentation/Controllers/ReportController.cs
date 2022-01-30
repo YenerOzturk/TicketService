@@ -411,7 +411,7 @@ namespace Ticket.Presentation.Controllers
                     Id = item.Id,
                     NameSurname = item.NameSurname,
                     TicketId = item.TicketId,
-                    CardName = item.CardName
+                    //CardName = item.CardName
                 });
             }
 
@@ -426,5 +426,21 @@ namespace Ticket.Presentation.Controllers
             });
         }
 
+        public IActionResult ScmReport()
+        {
+            return View();
+        }
+
+        public async Task<IActionResult> ScmReportDetailReport(ServiceReportParams param)
+        {
+            string url = $"Report/scmReport?";
+
+            url += $"&StartDate={param.StartDate.ToString("yyyy-MM-dd")}";
+            url += $"&EndDate={param.EndDate.ToString("yyyy-MM-dd")}";
+
+            var repositories = await HttpClientHelper.SendGetRequest<IEnumerable<TicketDetailReport>>(url, CookieHelper.GetToken(Request, "oaut.Cookie"));
+
+            return Json(repositories.ToList());
+        }
     }
 }

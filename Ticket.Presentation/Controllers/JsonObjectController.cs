@@ -42,7 +42,6 @@ namespace Ticket.Presentation.Controllers
         {
             string url = $"Customer/get-Customers?isActive=true";
 
-
             var repositories = await HttpClientHelper.SendGetRequest<IEnumerable<CustomerModel>>(url, CookieHelper.GetToken(Request, "oaut.Cookie"));
 
             List<DropDownModel> retval = new List<DropDownModel>();
@@ -51,7 +50,6 @@ namespace Ticket.Presentation.Controllers
             {
                 retval.Add(new DropDownModel()
                 {
-
                     Desc = item.CardName,
                     Val = item.CardCode
                 });
@@ -82,6 +80,7 @@ namespace Ticket.Presentation.Controllers
             return Ok(retval);
         }
 
+
         public async Task<IActionResult> GetUsersForDropDown(string cardCode)
         {
             if (string.IsNullOrEmpty(cardCode))
@@ -105,6 +104,7 @@ namespace Ticket.Presentation.Controllers
 
             return Ok(retval);
         }
+
 
         public async Task<IActionResult> GetTicketLabels()
         {

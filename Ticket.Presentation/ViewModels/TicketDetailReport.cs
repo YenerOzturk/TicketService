@@ -3,6 +3,7 @@ namespace Ticket.Presentation.ViewModels
 {
     public class TicketDetailReport
     {
+        public string CardName { get; set; }
         public string TicketDetail { get; set; }
         public string SubTicketDetail { get; set; }
         public string CreatedBy { get; set; }
