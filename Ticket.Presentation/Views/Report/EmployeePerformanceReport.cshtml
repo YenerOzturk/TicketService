@@ -145,7 +145,7 @@
         RenderDatePicker("StartDate", new Date(new Date().setMonth(new Date().getMonth() - 1)));
         RenderDatePicker("EndDate", new Date());
 
-        FillDropDown("/JsonObject/GetUsersForDropDown", "UserId","@ViewData["UserId"]");
+        FillDropDown("/JsonObject/GetUsersForDropDown", "UserId", "@ViewData["UserId"]", null, null, true);
 
 
         setTimeout(function () { RenderTable();}, 1000);

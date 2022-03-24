@@ -38,20 +38,22 @@ namespace Ticket.Presentation.Controllers
 
             string url = $"Token/new?email={model.Email}&password={model.Password}";
 
-            var token = await HttpClientHelper.SendGetRequest<string>(url, "");
-
-            if (!string.IsNullOrEmpty(token))
+            try
             {
-                model = await HttpClientHelper.SendGetRequest<UserModel>("User/get-users-by-email?email=" + model.Email, token);
+                var token = await HttpClientHelper.SendGetRequest<string>(url, "");
 
-                string role = "User";
-                if (model.IsAdmin)
-                    role = "Admin";
+                if (!string.IsNullOrEmpty(token))
+                {
+                    model = await HttpClientHelper.SendGetRequest<UserModel>("User/get-users-by-email?email=" + model.Email, token);
+
+                    string role = "User";
+                    if (model.IsAdmin)
+                        role = "Admin";
 
 
-                CookieHelper.SetToken(Response, "oaut.Cookie", token);
+                    CookieHelper.SetToken(Response, "oaut.Cookie", token);
 
-                var identity = new ClaimsIdentity(new[] {
+                    var identity = new ClaimsIdentity(new[] {
                     new Claim(ClaimTypes.Name, model.Email),
                     new Claim(ClaimTypes.GivenName,model.NameSurname),
                     new Claim(ClaimTypes.Role,role),
@@ -59,18 +61,23 @@ namespace Ticket.Presentation.Controllers
                     new Claim(ClaimTypes.UserData,model.CardCode)
                 }, CookieAuthenticationDefaults.AuthenticationScheme);
 
-                var principal = new ClaimsPrincipal(identity);
+                    var principal = new ClaimsPrincipal(identity);
 
-                var login = HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal, new AuthenticationProperties()
-                {
-                    IsPersistent = true,
-                    ExpiresUtc = DateTime.Now.AddDays(7)
-                });
+                    var login = HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal, new AuthenticationProperties()
+                    {
+                        IsPersistent = true,
+                        ExpiresUtc = DateTime.Now.AddDays(7)
+                    });
 
-                if (model.CardCode != "C0001")
-                {
-                    returnUrl = "../../Customer/CustomerTickets";
+                    if (model.CardCode != "C0001")
+                    {
+                        returnUrl = "../../Customer/CustomerTickets";
+                    }
                 }
+            }
+            catch
+            {
+                return Ok("");
             }
 
             return Ok(returnUrl);

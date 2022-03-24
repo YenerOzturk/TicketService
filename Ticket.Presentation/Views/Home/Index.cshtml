@@ -2,6 +2,20 @@
 
 <link href="~/css/fullcalendar.bundle.css?v=7.0.4" rel="stylesheet" type="text/css" />
 
+<script>
+
+    function RefreshCalendar() {
+
+        var el = document.getElementsByName("UserId");
+
+        var userId = el[0].value;
+
+        window.location.href = "/Home/Index/" + userId;
+
+    }
+
+</script>
+
 <div class="card card-custom">
     <div class="card-header">
         <div class="card-title">
@@ -16,6 +30,13 @@
         </div>
     </div>
     <div class="card-body">
+        <div class="row">
+            <div class="col-lg-3 mb-lg-0 mb-6">
+                <label>Kullanıcı:</label>
+                <select name="UserId" class="form-control" onchange="RefreshCalendar()">
+                </select>
+            </div>
+        </div>
         <div id="kt_calendar"></div>
     </div>
 </div>
@@ -111,6 +132,8 @@
 
         data.push({ name:"StartDate", value:startDate })
         data.push({ name:'EndDate', value:endDate });
+
+
 
         $.ajax({
             type: 'POST',
@@ -269,13 +292,18 @@
             }
         };
     }();
+
     jQuery(document).ready(function () {
+
         KTCalendarBasic.init();
 
         FillDropDown("/JsonObject/GetCustomersForDropDown", "CardCode");
 
         RenderDateTimePicker('StartDate', '');
         RenderDateTimePicker('EndDate', '');
+
+        FillDropDown("/JsonObject/GetUsersForDropDown", "UserId","@ViewData["SelectedUserId"]");
+
 
         $("#menuUser").removeClass("menu-item-open menu-item-here");
         $("#menuTicket").removeClass("menu-item-open menu-item-here");

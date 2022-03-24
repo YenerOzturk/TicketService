@@ -1,19 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Security.Claims;
-using System.Text;
-using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using Ticket.Presentation.Helpers;
 using Ticket.Presentation.Models;
-using Ticket.Presentation.ViewModels;
 
 namespace Ticket.Presentation.Controllers
 {
@@ -24,17 +17,21 @@ namespace Ticket.Presentation.Controllers
         private readonly string[] colors = { "fc-event-success", "fc-event-primary", "fc-event-danger" };
 
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string id)
         {
-            ViewData["Events"] = await GetEvents();
+            if (string.IsNullOrEmpty(id))
+            {
+                id = User.Claims.First(x => x.Type == ClaimTypes.Sid).Value;
+            }
+
+            ViewData["Events"] = await GetEvents(id);
+            ViewData["SelectedUserId"] = id;
 
             return View();
         }
 
-        private async Task<List<CalendarEventModel>> GetEvents()
+        private async Task<List<CalendarEventModel>> GetEvents(string userId)
         {
-            string userId = User.Claims.First(x => x.Type == ClaimTypes.Sid).Value;
-
             var repositories = await HttpClientHelper.SendGetRequest<IEnumerable<CalendarModel>>("Calendar/get-all-by-userId?userId=" + userId, CookieHelper.GetToken(Request, "oaut.Cookie"));
 
             Random rnd = new Random();
@@ -114,9 +111,9 @@ namespace Ticket.Presentation.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllEvents()
+        public async Task<IActionResult> GetAllEvent(string userId)
         {
-            var result = await GetEvents();
+            var result = await GetEvents(userId);
 
             return Ok(result);
         }

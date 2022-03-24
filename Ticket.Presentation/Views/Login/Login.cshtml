@@ -47,7 +47,13 @@ License: You must have a valid license purchased only from themeforest(the above
                 url: '../../Login/Login',
                 data: data,
                 success: function (returnUrl) {
-                    document.location.href = returnUrl;
+
+                    if (returnUrl == "") {
+                        Swal.fire("Hata!", "Kullanıcı adı veya şifre hatalı.", "error");
+                    } else {
+
+                        document.location.href = returnUrl;
+                    }
                 }
             });
         }</script>
