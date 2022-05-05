@@ -37,7 +37,7 @@
                         formats: [
                             {
                                 "name": "",
-                                "decimalPlaces": 3,
+                                "decimalPlaces": 4,
                             }
                         ],
                         slice: {
@@ -188,7 +188,7 @@
 
             data.push({ name: "cardCode", value: cardCode });
 
-            FillMultiDropDown("/JsonObject/GetProjectsForDropDown", "ProjectId");
+            FillMultiDropDown("/JsonObject/GetProjectsForDropDown", "ProjectId","-1");
         };
 
 

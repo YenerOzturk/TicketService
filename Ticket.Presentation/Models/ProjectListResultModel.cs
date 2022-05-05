@@ -10,6 +10,7 @@ namespace Ticket.Presentation.Models
         public int ManHour { get; set; }
         public string Attachment { get; set; }
         public string ProductName { get; set; }
+        public string ProjectName { get; set; }
         public string Description { get; set; }
         public string TotalWorkingTime { get; set; }
         public string StartDateAsString { get; set; }

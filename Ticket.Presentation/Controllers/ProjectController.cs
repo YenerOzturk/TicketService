@@ -46,7 +46,6 @@ namespace Ticket.Presentation.Controllers
                 retval.Billing = model.Billing;
                 retval.ProjectOwners = model.ProjectOwners;
                 retval.Status = model.Status;
-
             }
             else
             {
