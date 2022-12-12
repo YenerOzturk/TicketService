@@ -7,6 +7,7 @@ namespace Ticket.Presentation.Models
     public class SubTicketModel
     {
         public string Description { get; set; }
+        public string Owner { get; set; }
         public int Status { get; set; }
         public int TicketId { get; set; }
         public int Id { get; set; }

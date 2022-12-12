@@ -28,5 +28,9 @@
     <Folder Include="wwwroot\css2\" />
     <Folder Include="wwwroot\css2\fonts\" />
     <Folder Include="Views\Ticket\" />
+    <Folder Include="Views\Public\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="Views\Public\" />
   </ItemGroup>
 </Project>

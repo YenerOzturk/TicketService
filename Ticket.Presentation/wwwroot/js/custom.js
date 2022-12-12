@@ -39,6 +39,9 @@ function FillMultiDropDown(url, id, selectedValue = null, data = null, callback 
         data: data,
         success: function (data) {
 
+
+            $('#' + id).empty();
+
             var selectedValues = [];
             if (selectedValue != null) {
                 selectedValues = selectedValue.split(',');

@@ -12,7 +12,10 @@ namespace Ticket.Presentation.Models
                                         "<div class=\"flex-grow-1 mt-1 mr-2\" data-toggle=\"view\"  style=\"max-width: 450px;min-width: 350px\">" +
                                             "<div class=\"mr-2\">{Description}</div>" +
                                             "<div class=\"mt-2\">" +
-                                                "<b>Yetkili:</b> {UserName}" +
+                                                "<b>Danışman:</b> {UserName}" +
+                                            "</div>" +
+                                             "<div class=\"mt-2\">" +
+                                                "<b>Talep Sahibi:</b> {Owner}" +
                                             "</div>" +
                                             "<div class=\"mt-2\">" +
                                                 "<b>Başlangıç Tarihi:</b> {StartDate}" +
@@ -39,7 +42,7 @@ namespace Ticket.Presentation.Models
                                         "<div class=\"flex-grow-1 mt-1 mr-2\" data-toggle=\"view\">" +
                                             "<div class=\"mr-2\">{Description}</div>" +
                                             "<div class=\"mt-2\">" +
-                                                "<b>Yetkili:</b> {UserName}" +
+                                                "<b>Danışman:</b> {UserName}" +
                                             "</div>" +
                                             "<div class=\"mt-2\">" +
                                                 "<b>Başlangıç Tarihi:</b> {StartDate}" +

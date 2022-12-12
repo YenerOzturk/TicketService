@@ -100,7 +100,6 @@ namespace Ticket.Presentation.Controllers
             return View();
         }
 
-
         [HttpPost]
         public async Task<IActionResult> ChangePassword(ChangePasswordModel model)
         {
@@ -125,5 +124,6 @@ namespace Ticket.Presentation.Controllers
 
            return Ok(new { Status = 1 });
         }
+
     }
 }
