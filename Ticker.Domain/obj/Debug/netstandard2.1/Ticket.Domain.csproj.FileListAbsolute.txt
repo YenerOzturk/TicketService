@@ -1,0 +1,8 @@
+/Users/yenerozturk/Projects/Yener/Ticker.Domain/bin/Debug/netstandard2.1/Ticket.Domain.deps.json
+/Users/yenerozturk/Projects/Yener/Ticker.Domain/bin/Debug/netstandard2.1/Ticket.Domain.dll
+/Users/yenerozturk/Projects/Yener/Ticker.Domain/bin/Debug/netstandard2.1/Ticket.Domain.pdb
+/Users/yenerozturk/Projects/Yener/Ticker.Domain/obj/Debug/netstandard2.1/Ticket.Domain.AssemblyInfoInputs.cache
+/Users/yenerozturk/Projects/Yener/Ticker.Domain/obj/Debug/netstandard2.1/Ticket.Domain.AssemblyInfo.cs
+/Users/yenerozturk/Projects/Yener/Ticker.Domain/obj/Debug/netstandard2.1/Ticket.Domain.csproj.CoreCompileInputs.cache
+/Users/yenerozturk/Projects/Yener/Ticker.Domain/obj/Debug/netstandard2.1/Ticket.Domain.dll
+/Users/yenerozturk/Projects/Yener/Ticker.Domain/obj/Debug/netstandard2.1/Ticket.Domain.pdb

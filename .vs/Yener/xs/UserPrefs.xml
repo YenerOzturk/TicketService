@@ -1,0 +1,36 @@
+﻿<Properties GitUserInfo="UsingGIT" StartupConfiguration="{7525B98C-3132-4FEF-AA5D-5742AF24C0C0}|Default">
+  <MonoDevelop.Ide.Workbench>
+    <Pads>
+      <Pad Id="ProjectPad">
+        <State name="__root__">
+          <Node name="Yener" expanded="True">
+            <Node name="Presentation" expanded="True">
+              <Node name="Ticket.Presentation" expanded="True">
+                <Node name="Controllers" expanded="True" />
+                <Node name="Views" expanded="True">
+                  <Node name="Home" expanded="True" />
+                  <Node name="Ticket" expanded="True">
+                    <Node name="TicketList.cshtml" selected="True" />
+                  </Node>
+                </Node>
+                <Node name="wwwroot" expanded="True" />
+              </Node>
+            </Node>
+          </Node>
+        </State>
+      </Pad>
+    </Pads>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.ItemProperties.Presentation.Ticket.Presentation PreferredExecutionTarget="/Applications/Google Chrome.app" />
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore>
+      <Breakpoint file="/Users/yenerozturk/Projects/Yener/Ticket.Presentation/Controllers/ProjectController.cs" relfile="Ticket.Presentation/Controllers/ProjectController.cs" line="131" column="1" />
+      <Breakpoint file="/Users/yenerozturk/Projects/Yener/Ticket.Presentation/Controllers/ReportController.cs" relfile="Ticket.Presentation/Controllers/ReportController.cs" line="183" column="1" />
+      <Breakpoint file="/Users/yenerozturk/Projects/Yener/Ticket.Presentation/Controllers/ReportController.cs" relfile="Ticket.Presentation/Controllers/ReportController.cs" line="204" column="1" />
+      <Breakpoint file="/Users/yenerozturk/Projects/Yener/Ticket.Presentation/Helpers/HttpClientHelper.cs" relfile="Ticket.Presentation/Helpers/HttpClientHelper.cs" line="70" column="1" />
+    </BreakpointStore>
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MultiItemStartupConfigurations />
+</Properties>
