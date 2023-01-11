@@ -6,6 +6,7 @@ namespace Ticket.Presentation.Models
         public int Id { get; set; }
         public string NameSurname { get; set; }
         public string CardName { get; set; }
+        public bool CardIsActive { get; set; }
         public string ProjectName { get; set; }
         public DateTime CreateDate { get; set; }
         public string SupportType { get; set; }

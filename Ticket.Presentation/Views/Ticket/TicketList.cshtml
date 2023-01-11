@@ -123,6 +123,10 @@
                     $("[name='Id']").val(0);
                     $("[name='Description']").val('');
                     GetSubTickets(ticketId, rowIndex);
+
+                    $('#modalSubTicket').modal('hide');
+
+
                 },
                 error: function (xhr, ajaxOptions, thrownError) {
                     Swal.fire("Hata!", "Hata Oluştu.", "error");
@@ -758,12 +762,16 @@
                             "render": function (data, type,row ,rowIndex) {
 
                                 var subTicketCount = row["subTicketCount"];
+                                var cardIsActive = row["cardIsActive"];
+
+                                var propDisabled = "disabled";
+                                if (cardIsActive)
+                                    propDisabled=""
 
 
-
-                                var retval = '<a onclick="GetSubTickets(' + data + ',' + rowIndex.row + ')" class="btn btn-light btn-sm">Alt İşler</a>';
+                                var retval = '<a onclick="GetSubTickets(' + data + ',' + rowIndex.row + ')" class="btn btn-light btn-sm ' + propDisabled + '">Alt İşler</a>';
                                 if (subTicketCount > 0) {
-                                    retval = '<a onclick="GetSubTickets(' + data + ',' + rowIndex.row + ')" class="btn btn-success btn-sm">Alt İşler</a>';
+                                    retval = '<a onclick="GetSubTickets(' + data + ',' + rowIndex.row + ')" class="btn btn-success btn-sm ' + propDisabled + '">Alt İşler</a>';
                                 }
 
                                 return retval;
@@ -1134,7 +1142,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-light-primary font-weight-bold" data-dismiss="modal">Kapat</button>
-                <button type="button" onclick="SubTicketAdd()" data-dismiss="modal" class="btn btn-primary font-weight-bold">Kaydet</button>
+                <button type="button" onclick="SubTicketAdd()" class="btn btn-primary font-weight-bold">Kaydet</button>
             </div>
         </div>
     </div>
