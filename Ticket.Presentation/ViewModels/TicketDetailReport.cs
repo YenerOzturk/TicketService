@@ -12,5 +12,6 @@ namespace Ticket.Presentation.ViewModels
         public double WorkDay { get; set; }
         public double WorkHour { get; set; }
         public string StartDate { get; set; }
+        public bool IsRejected { get; set; }
     }
 }
