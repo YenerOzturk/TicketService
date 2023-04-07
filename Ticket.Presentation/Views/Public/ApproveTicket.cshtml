@@ -4,29 +4,17 @@
 
 }
 <!DOCTYPE html>
-<!--
-Author: Keenthemes
-Product Name: Metronic - Bootstrap 5 HTML, VueJS, React, Angular & Laravel Admin Dashboard Theme
-Purchase: https://1.envato.market/EA4JP
-Website: http://www.keenthemes.com
-Contact: support@keenthemes.com
-Follow: www.twitter.com/keenthemes
-Dribbble: www.dribbble.com/keenthemes
-Like: www.facebook.com/keenthemes
-License: For each use you must have a valid license purchased only from above link in order to legally use the theme for your project.
--->
+
 <html lang="en">
 <!--begin::Head-->
 <head>
     <base href="../../">
-    <title>Metronic - the world's #1 selling Bootstrap Admin Theme Ecosystem for HTML, Vue, React, Angular &amp; Laravel by Keenthemes</title>
+    <title>Sentia Bilisim Onay</title>
     <meta charset="utf-8" />
-    <meta name="description" content="The most advanced Bootstrap Admin Theme on Themeforest trusted by 94,000 beginners and professionals. Multi-demo, Dark Mode, RTL support and complete React, Angular, Vue &amp; Laravel versions. Grab your copy now and get life-time updates for free." />
-    <meta name="keywords" content="Metronic, bootstrap, bootstrap 5, Angular, VueJs, React, Laravel, admin themes, web design, figma, web development, free templates, free admin themes, bootstrap theme, bootstrap template, bootstrap dashboard, bootstrap dak mode, bootstrap button, bootstrap datepicker, bootstrap timepicker, fullcalendar, datatables, flaticon" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta property="og:locale" content="en_US" />
     <meta property="og:type" content="article" />
-    <meta property="og:title" content="Metronic - Bootstrap 5 HTML, VueJS, React, Angular &amp; Laravel Admin Dashboard Theme" />
+    <meta property="og:title" content="NetTicket" />
     <meta property="og:url" content="https://keenthemes.com/metronic" />
     <meta property="og:site_name" content="Keenthemes | Metronic" />
     <link rel="canonical" href="https://preview.keenthemes.com/metronic8" />
@@ -38,26 +26,21 @@ License: For each use you must have a valid license purchased only from above li
     <link href="~/css/plugins.bundle.css" rel="stylesheet" type="text/css" />
     <link href="~/css/style.bundle.min.css" rel="stylesheet" type="text/css" />
 
-    <script>
+    <script>function Approve(id,status) {
 
-        function Approve(id) {
+    var desc = $("#Description").val();
 
-          var data = [{ name: "UserId", value: id }];
+    var data = [{ name: "UuId", value: id }, { name: "Status", value: status }, { name: "Description", value: desc }];
 
             $.ajax({
                 type: 'POST',
-                url: '../../Public/Approve',
+                url: '../../Public/ApproveTicket',
                 data: data,
                 success: function (result) {
 
 
                     if (result.status == 1) {
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'İşlem Başarılı',
-                            showConfirmButton: true,
-                            timer: 1500
-                        });
+                        window.location.href= "/Public/ApproveResult"
                     }
                     else {
                         Swal.fire("Hata!", result.message, "error");
@@ -65,16 +48,13 @@ License: For each use you must have a valid license purchased only from above li
                 }
             });
 
-        }
-        
-
-    </script>
+        }</script>
 
     <!--end::Global Stylesheets Bundle-->
 </head>
 <!--end::Head-->
 <!--begin::Body-->
-<body id="kt_body" class="auth-bg">
+<body id="kt_body" class="auth-bg" style="background-image: url(../../media/bg/bg-5.jpg);">
     <!--begin::Main-->
     <!--begin::Root-->
     <div class="d-flex flex-column flex-root">
@@ -84,31 +64,30 @@ License: For each use you must have a valid license purchased only from above li
             <div class="d-flex flex-column flex-column-fluid text-center p-10 py-lg-15">
                 <!--begin::Logo-->
                 <a href="#" class="mb-10 pt-lg-10">
-                    <img alt="Logo" src="~/media/firmaLogo2.png"/>
+                    <img src="~/media/firmaLogo3.png" class="max-h-200px" style="margin-right:20px" alt="" />
                 </a>
                 <!--end::Logo-->
                 <!--begin::Wrapper-->
                 <div class="pt-lg-10 mb-10">
                     <!--begin::Logo-->
-                    <h1 class="fw-bolder fs-2qx text-gray-800 mb-7">Aylık Kayıtları Onayla</h1>
+                    <h1 class="fw-bolder fs-2qx text-gray-800 mb-7" style="color:white">Ticket Onay</h1>
                     <!--end::Logo-->
                     <!--begin::Message-->
-                    <div class="fs-3 fw-bold text-muted mb-10">
-                       Bu ay ki ticket kayıtlarınız tamam ise aşağıdaki butona basınız.
+                    <div class="fs-3 fw-bold text-muted mb-1ü0">
+                        <textarea class="form-control" name="Description" id="Description" data-provide="markdown" rows="10"></textarea>
                     </div>
                     <!--end::Message-->
                     <!--begin::Action-->
                     <div class="text-center mb-10">
-                        <a onclick="Approve('@ViewBag.UserId')" class="btn btn-lg btn-primary fw-bolder">Onayla</a>
+                        <a onclick="Approve('@ViewBag.UuId',2)" class="btn btn-lg btn-primary fw-bolder">Ticket Onayla</a>
+                        <a onclick="Approve('@ViewBag.UuId',1)" class="btn btn-lg btn-secondary fw-bolder">Ticket Reddet</a>
                     </div>
                     <!--end::Action-->
                     <!--begin::Action-->
                     <!--end::Action-->
                 </div>
                 <!--end::Wrapper-->
-                <!--begin::Illustration-->
-                <div class="d-flex flex-row-auto bgi-no-repeat bgi-position-x-center bgi-size-contain bgi-position-y-bottom min-h-100px min-h-lg-350px" style="background-image: url(assets/media/illustrations/sketchy-1/17.png"></div>
-                <!--end::Illustration-->
+               
             </div>
         </div>
         <!--end::Authentication - Signup Verify Email-->

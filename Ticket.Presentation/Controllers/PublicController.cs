@@ -29,5 +29,30 @@ namespace Ticket.Presentation.Controllers
 
             return Ok(new { Status = 1 });
         }
+
+        [AllowAnonymous]
+        public IActionResult ApproveTicket(string id)
+        {
+            ViewBag.UuId = id;
+
+            return View();
+        }
+
+
+        [AllowAnonymous]
+        [HttpPost]
+        public async Task<IActionResult> ApproveTicket(ApproveTicketModel model) {
+
+            await HttpClientHelper.SendPostRequest(model, "Ticket/approve-ticket", CookieHelper.GetToken(Request, "oaut.Cookie"));
+
+            return Ok(new { Status = 1 });
+        }
+
+        [AllowAnonymous]
+        public IActionResult ApproveResult()
+        {
+            return View();
+        }
+
     }
 }

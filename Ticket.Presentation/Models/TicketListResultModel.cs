@@ -20,5 +20,6 @@ namespace Ticket.Presentation.Models
         public string CreatedUser { get; set; }
         public int Priority { get; set; }
         public int SubTicketCount { get; set; }
+        public string CardCode { get; set; }
     }
 }

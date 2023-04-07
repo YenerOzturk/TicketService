@@ -18,5 +18,7 @@ namespace Ticket.Presentation.Models
         public string Description { get; set; }
 
         public string Title { get; set; }
+
+        public string NameSurname { get; set; }
     }
 }

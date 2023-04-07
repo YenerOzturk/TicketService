@@ -13,5 +13,6 @@ namespace Ticket.Presentation.ViewModels
         public double ManHourPrice { get; set; }
         public double TotalPrice { get; set; }
         public string Currency { get; set; }
+        public bool IsRejected { get; set; }
     }
 }

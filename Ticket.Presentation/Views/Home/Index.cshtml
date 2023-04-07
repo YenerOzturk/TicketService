@@ -6,12 +6,19 @@
 
     function RefreshCalendar() {
 
-        var el = document.getElementsByName("UserId");
+        var data = $('#frmUser').serializeArray();
 
-        var userId = el[0].value;
+        $.ajax({
+            type: 'GET',
+            url: '../../Home/GetEvents',
+            data: data,
+            success: function (data) {
 
-        window.location.href = "/Home/Index/" + userId;
-
+                events = data;
+                calendar.render();
+            }
+        });
+        
     }
 
 </script>
@@ -31,11 +38,13 @@
     </div>
     <div class="card-body">
         <div class="row">
-            <div class="col-lg-3 mb-lg-0 mb-6">
-                <label>Kullanıcı:</label>
-                <select name="UserId" class="form-control" onchange="RefreshCalendar()">
-                </select>
-            </div>
+            <form id="frmUser">
+                <div class="col-lg-12 mb-lg-0 mb-12">
+                    <label>Kullanıcı:</label>
+                    <select name="UserId" id="UserId" class="form-control" multiple="multiple" onchange="RefreshCalendar()">
+                    </select>
+                </div>
+            </form>
         </div>
         <div id="kt_calendar"></div>
     </div>
@@ -174,23 +183,19 @@
 
     var events = @Html.Raw(Json.Serialize(ViewData["Events"]));
 
-    var KTCalendarBasic = function () {
-
-        return {
-            //main function to initiate the module
-            init: function () {
-                var todayDate = moment().startOf('day');
-                var YM = todayDate.format('YYYY-MM');
-                var YESTERDAY = todayDate.clone().subtract(1, 'day').format('YYYY-MM-DD');
-                var TODAY = todayDate.format('YYYY-MM-DD');
-                var TOMORROW = todayDate.clone().add(1, 'day').format('YYYY-MM-DD');
-
-                var calendarEl = document.getElementById('kt_calendar');
-                var calendar = new FullCalendar.Calendar(calendarEl, {
+  
+    var todayDate = moment().startOf('day');
+    var YM = todayDate.format('YYYY-MM');
+    var YESTERDAY = todayDate.clone().subtract(1, 'day').format('YYYY-MM-DD');
+    var TODAY = todayDate.format('YYYY-MM-DD');
+    var TOMORROW = todayDate.clone().add(1, 'day').format('YYYY-MM-DD');
+    
+    var calendarEl = document.getElementById('kt_calendar');
+    var calendar = new FullCalendar.Calendar(calendarEl, {
                     plugins: ['bootstrap', 'interaction', 'dayGrid', 'timeGrid', 'list'],
                     themeSystem: 'bootstrap',
 
-                    isRTL: KTUtil.isRTL(),
+        isRTL: false,
 
                     header: {
                         left: 'prev,next today',
@@ -285,24 +290,21 @@
                         }
                     }
                 });
-
-                calendar.render();
-
-                calendarElm = calendar;
-            }
-        };
-    }();
+    
+    calendar.render();
+    
+    calendarElm = calendar;
+    
 
     jQuery(document).ready(function () {
 
-        KTCalendarBasic.init();
 
         FillDropDown("/JsonObject/GetCustomersForDropDown", "CardCode");
 
         RenderDateTimePicker('StartDate', '');
         RenderDateTimePicker('EndDate', '');
 
-        FillDropDown("/JsonObject/GetUsersForDropDown", "UserId","@ViewData["SelectedUserId"]");
+        FillMultiDropDown("/JsonObject/GetUsersForDropDown", "UserId","@ViewData["SelectedUserId"]");
 
 
         $("#menuUser").removeClass("menu-item-open menu-item-here");

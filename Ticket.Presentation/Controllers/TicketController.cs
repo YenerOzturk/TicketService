@@ -237,6 +237,7 @@ namespace Ticket.Presentation.Controllers
                 model.Status = 1;
                 model.CreateDate = DateTime.Now;
                 model.CreatedBy = model.UserId;
+                model.UuId = Guid.NewGuid().ToString();
 
                 if (model.UserId == 0)
                 {

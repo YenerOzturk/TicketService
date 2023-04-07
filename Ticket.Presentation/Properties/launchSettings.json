@@ -11,10 +11,10 @@
     "Ticket.Presentation": {
       "commandName": "Project",
       "launchBrowser": true,
+      "applicationUrl": "https://localhost:35074;http://localhost:47636",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
-      },
-      "applicationUrl": "https://localhost:35074;http://localhost:47636"
+      }
     },
     "IIS Express": {
       "commandName": "IISExpress",

@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+
 namespace Ticket.Presentation.Models
 {
     public class TicketMailModel
@@ -6,5 +8,6 @@ namespace Ticket.Presentation.Models
         public int SubTicketId { get; set; }
         public int TicketId { get; set; }
         public string Message { get; set; }
+        public List<int> ToUsers { get; set; }
     }
 }

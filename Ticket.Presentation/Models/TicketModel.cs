@@ -8,6 +8,7 @@ namespace Ticket.Presentation.Models
     {
         public int Id { get; set; }
         public int UserId { get; set; }
+        public string UuId { get; set; }
         public string CardCode { get; set; }
         public int ProjectId { get; set; }
         public DateTime CreateDate { get; set; }

@@ -24,6 +24,7 @@
     .modal-open {
         overflow-y: hidden !important;
     }
+
 </style>
 <script>
 
@@ -43,7 +44,8 @@
 
                     var rowData = table.row(rowIndex).data();
 
-                    $('#subTicketTitle').text("Cari:" + rowData["cardName"]);
+                $('#subTicketTitle').text("Cari:" + rowData["cardName"]);
+                $("#sbCardCode").val(rowData["cardCode"]);
                     $('#subTicketSubTitle').text("#" + ticketId + " " + rowData["subject"]);
                     $('#subTickets').append(data);
                     $('#modalSubTicketList').modal();
@@ -826,6 +828,10 @@
 
     function SendMail() {
 
+        var data = $('#mailForm').serializeArray();
+
+        data.push({ name: "ToUsers", value: $('#ToUsers').val() })
+
         var ticketId = ticketNo
 
         var row = table.rows({ selected: true })[0];
@@ -839,7 +845,6 @@
             ticketId = table.row(0).data().id;
         }
 
-        var data = [];
         data.push({ name: "ticketId", value: ticketId });
 
 
@@ -862,7 +867,15 @@
 
     }
 
-    function SendMailForSubTicket(subTicketId) {
+    function SendMailForSubTicket() {
+
+
+        var data = $('#mailForm2').serializeArray();
+
+        if (sbId == 0) {
+            Swal.fire("Hata!", "Hata Oluştu.", "error");
+        }
+
 
         var ticketId = ticketNo
 
@@ -877,9 +890,10 @@
             ticketId = table.row(0).data().id;
         }
 
-        var data = [];
         data.push({ name: "ticketId", value: ticketId });
-        data.push({ name: "subTicketId", value: subTicketId });
+        data.push({ name: "subTicketId", value: sbId });
+
+        data.push({ name: "ToUsers", value: $('#ToUsers2').val() })
 
         $.ajax({
             type: 'POST',
@@ -897,7 +911,35 @@
                 Swal.fire("Hata!", "Hata Oluştu.", "error");
             }
         });
+    }
 
+    function PrepareMail() {
+
+        var callback = function () {
+             $('#modalMail').modal('show')
+        }
+
+        var cardCode = $('#sbCardCode').val()
+
+        var data = { "cardCode": cardCode }
+
+        FillMultiDropDown("/JsonObject/GetUsersForDropDown", "ToUsers", null, data, callback);
+    }
+
+    var sbId = 0;
+    function PrepareMailSubTicket(id) {
+
+        var callback = function () {
+            $('#modalMailSubTicket').modal('show')
+        }
+
+        var cardCode = $('#sbCardCode').val()
+
+        var data = { "cardCode": cardCode }
+
+        FillMultiDropDown("/JsonObject/GetUsersForDropDown", "ToUsers2", null, data, callback);
+
+        sbId = id;
     }
 
 </script>
@@ -1027,6 +1069,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h7 class="modal-title" id="subTicketTitle"></h7>
+                <input type="hidden" id="sbCardCode" />
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <i aria-hidden="true" class="ki ki-close"></i>
                 </button>
@@ -1036,7 +1079,7 @@
                     <div class="col-sm-12">
                         <h6 id="subTicketSubTitle"></h6>
                         <span class="btn btn-light-success btn-sm text-uppercase font-weight-bolder" style="float:right;margin-top:2px" onclick="ClearSubTicketForm()" data-toggle="modal" data-target="#modalSubTicket" title="Previose page">Yeni İş</span>
-                        <span class="btn btn-light-danger btn-sm text-uppercase font-weight-bolder" style="margin-right:2px;float:right;margin-top:2px" onclick="SendMail()" title="Previose page">Mail Gönder</span>
+                        <span class="btn btn-light-danger btn-sm text-uppercase font-weight-bolder" style="margin-right:2px;float:right;margin-top:2px" onclick="PrepareMail()" title="Previose page">Tümünü Mail Gönder</span>
                     </div>
                     <div class="card-body" id="subTickets" style="overflow: scroll;max-height:700px">
 
@@ -1159,7 +1202,6 @@
             </div>
             <div class="modal-body">
                 <div class="card card-custom">
-
                     <form name="frmTicket" class="form">
                         <input type="hidden" name="Id" />
                         <input type="hidden" name="Status" />
@@ -1251,6 +1293,47 @@
     </div>
 </div>
 
+<div id="modalMail" class="modal fade" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="staticBackdrop" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Mail Gönder</h5>
+            </div>
+            <div class="modal-body">
+            <div class="card card-custom">
+                <form id="mailForm">
+                    <select multiple="multiple" name="ToUsers" id="ToUsers" class="form-control datatable-input"></select>
+                </form>
+            </div>
+        </div>
+            <div class="modal-footer">
+            <button type="button" class="btn btn-light-green font-weight-bold" data-dismiss="modal" onclick="SendMail()">Gönder</button>
+            <button type="button" class="btn btn-light-red font-weight-bold" data-dismiss="modal">İptal</button>
+        </div>
+        </div>
+    </div>
+</div>
+
+<div id="modalMailSubTicket" class="modal fade" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="staticBackdrop" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Mail Gönder</h5>
+            </div>
+            <div class="modal-body">
+                <div class="card card-custom">
+                    <form id="mailForm2">
+                        <select multiple="multiple" name="ToUsers" id="ToUsers2" class="form-control datatable-input"></select>
+                    </form>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light-green font-weight-bold" data-dismiss="modal" onclick="SendMailForSubTicket()">Gönder</button>
+                <button type="button" class="btn btn-light-red font-weight-bold" data-dismiss="modal">İptal</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <script>
 var table;

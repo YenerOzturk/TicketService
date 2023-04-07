@@ -24,15 +24,16 @@ namespace Ticket.Presentation.Controllers
                 id = User.Claims.First(x => x.Type == ClaimTypes.Sid).Value;
             }
 
-            ViewData["Events"] = await GetEvents(id);
+
+            ViewData["Events"] = await GetEvents(new List<int>() { Convert.ToInt32(id) });
             ViewData["SelectedUserId"] = id;
 
             return View();
         }
 
-        private async Task<List<CalendarEventModel>> GetEvents(string userId)
+        public async Task<List<CalendarEventModel>> GetEvents(List<int> userId)
         {
-            var repositories = await HttpClientHelper.SendGetRequest<IEnumerable<CalendarModel>>("Calendar/get-all-by-userId?userId=" + userId, CookieHelper.GetToken(Request, "oaut.Cookie"));
+            var repositories = await HttpClientHelper.SendPostRequest<List<int>, IEnumerable<CalendarModel>>(userId, "Calendar/get-all-by-userId", CookieHelper.GetToken(Request, "oaut.Cookie")); ;
 
             Random rnd = new Random();
 
@@ -45,7 +46,7 @@ namespace Ticket.Presentation.Controllers
                     start = repo.StartDate.ToString("yyyy-MM-dd HH:mm").Replace(" ", "T"),
                     end = repo.EndDate.ToString("yyyy-MM-dd HH:mm").Replace(" ", "T"),
                     description = repo.Description,
-                    title = repo.Title,
+                    title = repo.Title +" - "+repo.NameSurname,
                     className = colors[rnd.Next(0, 2)]
                 });
             }
@@ -61,6 +62,7 @@ namespace Ticket.Presentation.Controllers
             string userId = User.Claims.First(x => x.Type == ClaimTypes.Sid).Value;
             model.UserCode = Convert.ToInt32(userId);
 
+            string userName=User.Claims.First(x => x.Type == ClaimTypes.GivenName).Value;
 
             if (model.Id == 0)
             {
@@ -79,7 +81,7 @@ namespace Ticket.Presentation.Controllers
                 start = model.StartDate.ToString("yyyy-MM-dd HH:mm").Replace(" ", "T"),
                 end = model.EndDate.ToString("yyyy-MM-dd HH:mm").Replace(" ", "T"),
                 description = model.Description,
-                title = model.Title,
+                title = model.Title +" - "+ userName,
                 className = colors[rnd.Next(0, 2)],
                 isUpdate = model.Id == 0
             };
@@ -111,9 +113,9 @@ namespace Ticket.Presentation.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllEvent(string userId)
+        public async Task<IActionResult> GetAllEvent(int userId)
         {
-            var result = await GetEvents(userId);
+            var result = await GetEvents(new List<int>() { Convert.ToInt32(userId) });
 
             return Ok(result);
         }

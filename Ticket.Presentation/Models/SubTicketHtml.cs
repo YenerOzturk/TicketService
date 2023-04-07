@@ -28,7 +28,7 @@ namespace Ticket.Presentation.Models
                                         "<div class=\"d-flex align-items-center justify-content-end flex-wrap\" data-toggle=\"view\">" +
                              "<a onclick=\"FillSubTicketForm({id})\" class=\"btn btn-icon btn-primary btn-sm\"><i class=\"flaticon2-pen\"></i></a>" +
                              "<a onclick=\"DeleteSubTicket({id},{ticketId})\" class=\"btn btn-icon btn-danger btn-sm\"><i class=\"flaticon2-trash\"></i></a>" +
-                             "<a onclick=\"SendMailForSubTicket({id})\" class=\"btn btn-icon btn-warning btn-sm\"><i class=\"flaticon-email\"></i></a>" +
+                             "<a onclick=\"PrepareMailSubTicket({id})\" class=\"btn btn-icon btn-warning btn-sm\"><i class=\"flaticon-email\"></i></a>" +
                                                                         "</div>" +
                                     "</div>";
 
