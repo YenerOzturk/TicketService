@@ -923,6 +923,10 @@
 
         var data = { "cardCode": cardCode }
 
+        $('#mailForm').empty();
+        $('#mailForm').append('<select multiple="multiple" name="ToUsers" id="ToUsers" class="form-control datatable-input"></select>');
+
+
         FillMultiDropDown("/JsonObject/GetUsersForDropDown", "ToUsers", null, data, callback);
     }
 
@@ -936,6 +940,9 @@
         var cardCode = $('#sbCardCode').val()
 
         var data = { "cardCode": cardCode }
+
+        $('#mailForm2').empty();
+        $('#mailForm2').append('<select multiple="multiple" name="ToUsers" id="ToUsers2" class="form-control datatable-input"></select>');
 
         FillMultiDropDown("/JsonObject/GetUsersForDropDown", "ToUsers2", null, data, callback);
 
@@ -1321,9 +1328,9 @@
                 <h5 class="modal-title" id="exampleModalLabel">Mail Gönder</h5>
             </div>
             <div class="modal-body">
-                <div class="card card-custom">
+                <div class="card card-custom" id="divUser2">
                     <form id="mailForm2">
-                        <select multiple="multiple" name="ToUsers" id="ToUsers2" class="form-control datatable-input"></select>
+                        
                     </form>
                 </div>
             </div>

@@ -1,38 +1,22 @@
-﻿<Properties GitUserInfo="UsingGIT" StartupConfiguration="{7525B98C-3132-4FEF-AA5D-5742AF24C0C0}|Default">
-  <MonoDevelop.Ide.Workbench ActiveDocument="Ticket.Presentation/Controllers/HomeController.cs">
+﻿<Properties StartupConfiguration="{7525B98C-3132-4FEF-AA5D-5742AF24C0C0}|Default" GitUserInfo="UsingGIT">
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MultiItemStartupConfigurations />
+  <MonoDevelop.Ide.ItemProperties.Presentation.Ticket.Presentation PreferredExecutionTarget="/Applications/Google Chrome.app" />
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Ticket.Presentation/Views/Ticket/TicketList.cshtml">
     <Files>
-      <File FileName="Ticket.Presentation/Controllers/HomeController.cs" Line="12" Column="2" />
-      <File FileName="Ticket.Presentation/Views/Report/TicketDetailReport.cshtml" />
-      <File FileName="Ticket.Presentation/Views/Report/BillingReportWithProject.cshtml" />
-      <File FileName="Ticket.Presentation/Views/Report/DailyBasedReport.cshtml" />
-      <File FileName="Ticket.Presentation/Views/Report/BillingReport.cshtml" />
-      <File FileName="Ticket.Presentation/Views/Report/NotAnsweredTicketReport.cshtml" />
-      <File FileName="Ticket.Presentation/Views/Report/OpenSubTicketsReport.cshtml" />
-      <File FileName="Ticket.Presentation/Views/Report/ScmReport.cshtml" />
-      <File FileName="Ticket.Presentation/Views/Report/ServiceReport.cshtml" />
-      <File FileName="Ticket.Presentation/Controllers/JsonObjectController.cs" />
-      <File FileName="Ticket.Presentation/Controllers/TicketController.cs" />
-      <File FileName="Ticket.Presentation/Controllers/CustomerController.cs" />
-      <File FileName="Ticket.Presentation/Views/Home/Index.cshtml" />
-      <File FileName="Ticket.Presentation/wwwroot/js/custom.js" />
-      <File FileName="Ticket.Presentation/Views/Ticket/TicketList.cshtml" />
-      <File FileName="Ticket.Presentation/Views/Home/Ticket.cshtml" />
-      <File FileName="Ticket.Presentation/Views/Shared/_Layout.cshtml" />
-      <File FileName="Ticket.Presentation/Views/Shared/_Layout3.cshtml" />
-      <File FileName="Ticket.Presentation/Views/Project/Index.cshtml" />
-      <File FileName="Ticket.Presentation/Views/Ticket.cshtml" />
+      <File FileName="Ticket.Presentation/Views/Ticket/TicketList.cshtml" Line="929" Column="1" />
+      <File FileName="Ticket.Presentation/wwwroot/js/custom.js" Line="34" Column="27" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State name="__root__">
           <Node name="Yener" expanded="True">
             <Node name="Presentation" expanded="True">
-              <Node name="Ticket.Presentation" expanded="True">
-                <Node name="Controllers" expanded="True">
-                  <Node name="HomeController.cs" selected="True" />
-                </Node>
+              <Node name="Ticket.Presentation" expanded="True" selected="True">
+                <Node name="Controllers" expanded="True" />
+                <Node name="ViewModels" expanded="True" />
                 <Node name="Views" expanded="True">
-                  <Node name="Home" expanded="True" />
                   <Node name="Ticket" expanded="True" />
                 </Node>
                 <Node name="wwwroot" expanded="True">
@@ -45,14 +29,11 @@
       </Pad>
     </Pads>
   </MonoDevelop.Ide.Workbench>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
-  <MultiItemStartupConfigurations />
-  <MonoDevelop.Ide.ItemProperties.Presentation.Ticket.Presentation PreferredExecutionTarget="/Applications/Google Chrome.app" />
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore>
       <Breakpoint file="/Users/yener.ozturk/Projects/TicketWeb/Ticket.Presentation/Controllers/TicketController.cs" relfile="Ticket.Presentation/Controllers/TicketController.cs" line="360" column="1" />
       <Breakpoint file="/Users/yener.ozturk/Projects/TicketWeb/Ticket.Presentation/Controllers/PublicController.cs" relfile="Ticket.Presentation/Controllers/PublicController.cs" line="46" column="1" />
+      <Breakpoint file="/Users/yener.ozturk/Projects/TicketWeb/Ticket.Presentation/Controllers/TicketController.cs" relfile="Ticket.Presentation/Controllers/TicketController.cs" line="367" column="1" />
     </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
 </Properties>
