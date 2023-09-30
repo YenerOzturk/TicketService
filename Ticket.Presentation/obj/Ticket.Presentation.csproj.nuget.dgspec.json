@@ -1,25 +1,26 @@
 {
   "format": 1,
   "restore": {
-    "/Users/yener.ozturk/Projects/TicketWeb/Ticket.Presentation/Ticket.Presentation.csproj": {}
+    "/Users/yenerozturk/Documents/GitHub/TicketWeb/Ticket.Presentation/Ticket.Presentation.csproj": {}
   },
   "projects": {
-    "/Users/yener.ozturk/Projects/TicketWeb/Ticket.Presentation/Ticket.Presentation.csproj": {
+    "/Users/yenerozturk/Documents/GitHub/TicketWeb/Ticket.Presentation/Ticket.Presentation.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/yener.ozturk/Projects/TicketWeb/Ticket.Presentation/Ticket.Presentation.csproj",
+        "projectUniqueName": "/Users/yenerozturk/Documents/GitHub/TicketWeb/Ticket.Presentation/Ticket.Presentation.csproj",
         "projectName": "Ticket.Presentation",
-        "projectPath": "/Users/yener.ozturk/Projects/TicketWeb/Ticket.Presentation/Ticket.Presentation.csproj",
-        "packagesPath": "/Users/yener.ozturk/.nuget/packages/",
-        "outputPath": "/Users/yener.ozturk/Projects/TicketWeb/Ticket.Presentation/obj/",
+        "projectPath": "/Users/yenerozturk/Documents/GitHub/TicketWeb/Ticket.Presentation/Ticket.Presentation.csproj",
+        "packagesPath": "/Users/yenerozturk/.nuget/packages/",
+        "outputPath": "/Users/yenerozturk/Documents/GitHub/TicketWeb/Ticket.Presentation/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "/Users/yener.ozturk/.nuget/NuGet/NuGet.Config"
+          "/Users/yenerozturk/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "netcoreapp3.1"
         ],
         "sources": {
+          "/usr/local/share/dotnet/sdk/7.0.307/Sdks/Microsoft.NET.Sdk.Web/library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -96,7 +97,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/7.0.202/RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/7.0.307/RuntimeIdentifierGraph.json"
         }
       }
     }

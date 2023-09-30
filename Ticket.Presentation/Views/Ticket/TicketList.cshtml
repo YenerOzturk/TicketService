@@ -26,6 +26,7 @@
     }
 
 </style>
+
 <script>
 
     var ticketNo = 0;
@@ -950,6 +951,7 @@
     }
 
 </script>
+
 <div class="card card-custom">
     <div class="card-header flex-wrap border-0 pt-6 pb-0">
         <div class="card-title">
@@ -1345,6 +1347,13 @@
 <script>
 var table;
     $(document).ready(function () {
+
+        $('[name="Description"]').on('keyup', function (e) {
+            if (e.key === 'Enter' || e.keyCode === 13) {
+                var txt = $('[name="Description"]').val()+"<br/>"
+                $('[name="Description"]').text()
+            }
+        });
 
         $('#Status').multiselect({
             enableFiltering: true,
